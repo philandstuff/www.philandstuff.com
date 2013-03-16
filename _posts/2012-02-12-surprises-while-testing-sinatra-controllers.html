@@ -107,7 +107,7 @@ could just stub out the repository on the app and we&rsquo;d be done. Sadly
 not; the app called the real <code>repository</code> method, not our stubbed
 version.</p>
 
-<blockquote class="posterous_short_quote"><p><strong>Surprise #1: HelloWorld and HelloWorld.new are both Rack applications!</strong></p></blockquote>
+<blockquote><p><strong>Surprise #1: HelloWorld and HelloWorld.new are both Rack applications!</strong></p></blockquote>
 
 <p>Sinatra provides your controller classes with a <code>call</code> method, which
 internally implements the Singleton pattern and will new up a
@@ -149,7 +149,7 @@ describe <span class="string"><span class="delimiter">'</span><span class="conte
 to stub out its dependency, right? Wrong. It still calls the real
 <code>repository</code> method.</p>
 
-<blockquote class="posterous_short_quote"><p><strong>Surprise #2: HelloWorld.new doesn&rsquo;t create an instance of HelloWorld.</strong></p></blockquote>
+<blockquote><p><strong>Surprise #2: HelloWorld.new doesn&rsquo;t create an instance of HelloWorld.</strong></p></blockquote>
 
 <p>Seriously, have a look yourself:</p>
 
@@ -207,7 +207,7 @@ describe <span class="string"><span class="delimiter">'</span><span class="conte
 instance of HelloWorld and we really are stubbing <code>repository</code> on
 it. Why?</p>
 
-<blockquote class="posterous_short_quote"><p><strong>Surprise #3: Sinatra <code>dup</code>s your controller before handling an HTTP request</strong></p></blockquote>
+<blockquote><p><strong>Surprise #3: Sinatra <code>dup</code>s your controller before handling an HTTP request</strong></p></blockquote>
 
 <p>From &lsquo;sinatra/base.rb&rsquo;:</p>
 

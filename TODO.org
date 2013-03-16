@@ -3,7 +3,7 @@
 * DONE index.html
 * DONE pagination
 * DONE upload to S3
-* TODO remove posterous cruft
+* DONE remove posterous cruft
 * TODO upload source to github
 * TODO get domain name
 * TODO atom feed
