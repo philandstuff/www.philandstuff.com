@@ -1,2 +1,3 @@
 exclude: ['Rakefile']
 paginate: 5
+author: Philip Potter
