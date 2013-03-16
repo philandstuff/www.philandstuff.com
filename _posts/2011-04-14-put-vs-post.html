@@ -1,0 +1,19 @@
+---
+layout: post
+title: PUT vs POST
+published: true
+---
+<p>HTTP has four standard-usage verbs: POST, GET, PUT, and DELETE. They do not correspond to CRUD (Create, Read, Update, Delete). Forget about the distinction between create and update; it won't help you here. Both POST and PUT can be used for create and update operations in different situations. So what exactly is the difference between PUT and POST?</p>
+<p>In a nutshell: use PUT if and only if you know both the URL where the resource will live, and the entirety of the contents of the resource. Otherwise, use POST.</p>
+<p>POST is an incredibly general verb. Because it promises neither safety nor idempotence, and it has a relatively loosely-worded description in the RFC, you can use it for pretty much anything. In fact, you could make all of your requests POST requests because POST makes very few promises; it can behave like a GET, a PUT, or a DELETE if it wants to. It also can do some things that no other verb can do - it can create a new resource at a URL different from the URL in the HTTP request; and it can modify part of a resource without changing the whole thing (although the proposed but not widely-accepted PATCH method can do something similar).</p>
+<p>PUT is a much more restrictive verb. It takes a complete resource and stores it at the given URL. If there was a resource there previously, it is replaced; if not, a new one is created. These properties support idempotence, which a naive create or update operation might not. I suspect this may be why PUT is defined the way it is; it's an idempotent operation which allows the client to send information to the server.</p>
+<p>Very often, POST is used for creation because the server is responsible for assigning URLs to resources. As an example, a forum post is likely to be POSTed because the server must assign it a unique URL. If PUT were used, it would force clients to choose URLs for forum posts, and there would be no arbiter to prevent collisions when two clients chose the same URL.</p>
+<p>Very often, PUT is used for update because the resource already has a URL which the client knows about. The client just has to supply a modified version of the resource.</p>
+<p>Sometimes, PUT is used for creation. Generally this will be in a level 2 richardson maturity model situation, where the client knows about the structure of URLs and how to create them. For example, if I know a server has a URL scheme where users live at <a href="http://example.com/users/username">http://example.com/users/username</a>, I could create myself a user account by doing a PUT to <a href="http://example.com/users/rhebus">http://example.com/users/rhebus</a>, because I already know what my desired username is, and therefore, which URL my user account will live at. [In theory, PUT could also be used for creation at level 3 richardson, where the server tells the client about URLs where resources may be created. If anyone has experienced this situation, I would love to hear about it.]</p>
+<p>Sometimes, POST is used for update because only part of the resource is being updated. PUT requires a complete resource; but the client may not know the full contents of the resource or the client may not wish to send the full contents of the resource down the wire. (This is the use-case that PATCH would cover.) For example, a client may wish to append to a log file on the server, without caring about the existing contents of the file.</p>
+<p>References:</p>
+<ul>
+<li>RFC 2616 - HTTP 1.1</li>
+<li>RFC 5789 - PATCH method for HTTP</li>
+<li>Martin Fowler, the <a href="http://martinfowler.com/articles/richardsonMaturityModel.html">Richardson Maturity Model</a></li>
+</ul>

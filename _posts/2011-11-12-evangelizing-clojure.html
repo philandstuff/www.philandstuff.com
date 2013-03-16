@@ -1,0 +1,115 @@
+---
+layout: post
+title: Evangelizing Clojure
+published: true
+---
+<p>I&rsquo;m currently attending the second annual
+<a href="http://clojure-conj.org/">Clojure Conj</a>, the premiere
+Clojure-specific conference. One of the themes that has been emerging
+is evangelizing Clojure: getting more people to use it, and convincing
+people to use Clojure who otherwise wouldn&rsquo;t choose to use it.</p>
+
+<p>This was in fact the central theme of
+<a href="http://www.nealford.com/">Neal Ford</a>&rsquo;s talk &ldquo;Neal&rsquo;s Master Plan for
+Clojure Enterprise Mindshare Domination&rdquo;, in which he put forward his
+ideas for how to get large organizations full of institutional inertia
+to adopt Clojure. Phil Bagwell also made reference to this in the
+introduction to his talk, in which he asked everyone using Clojure in
+their day job to put their hand up, then asked everyone who&rsquo;s never
+deployed Clojure to production to put their hand up, then asked group
+2 to talk to the nearest person in group 1 and ask them how they got
+to work in Clojure.</p>
+
+<p>Clojure evangelism has also been a common theme of Q&amp;A sessions after
+talks: a talk on ClojureScript will often be followed with a question
+such as &ldquo;How do you fit this into an existing JavaScript project?&rdquo;</p>
+
+<p>There are a few key themes emerging:</p>
+
+<h2>Know your enemy</h2>
+
+<p>There&rsquo;s a lot of competition amongst the new language communities,
+particularly between Scala, Clojure, and Groovy. This is absolutely
+fine and as it should be. Furthermore, if Scala is successful, this is
+<em>in no way</em> directly detrimental to Clojure.</p>
+
+<p>Scala, Clojure and Groovy are in competition, but they are not enemies
+of each other. The real enemy is the <strong>status quo</strong>. It is the nasty
+feeling that people have when they say things like:</p>
+
+<ul>
+<li>&ldquo;Taking on Clojure is a big risk &ndash; I want to be certain&rdquo;</li>
+<li>&ldquo;I think Clojure might be a better choice than Java, but because
+Java is an industry standard, I am more likely to get blamed if I
+choose Clojure and the project fails.&rdquo;</li>
+<li>&ldquo;If I choose Clojure, I don&rsquo;t know I&rsquo;ll be able to hire developers
+who know it&rdquo;</li>
+</ul>
+
+
+<p>Ultimately, these statements reflect a sentiment that staying with the
+same old technology is safer than trying to improve productivity by
+choosing a newer, but less well-known, technology.</p>
+
+<p>If a client has switched from Java to Groovy, Scala, or JRuby, they
+have <em>already rejected the status quo</em>. Encouraging an environment in
+which people feel able to explore new technologies will make more
+people who are interested in Clojure overcome their fears and try it
+out. In other words, a rising tide raises all ships.</p>
+
+<h2>Be positive about the new possibilities, not negative about the status quo</h2>
+
+<p>By and large the feeling of the conference has been upbeat and
+positive, rather than tribal. That is why, when a couple of
+off-hand jokes about Ruby were made, people immediately
+<a href="http://twitter.com/#!/gga/status/135025877552599040">called it out</a>
+as nonconstructive.</p>
+
+<p>Clojure and Scala in particular are languages which make many things
+possible which simply aren&rsquo;t possible in other languages. This can
+lead to a feeling of superiority. <em>Fight that feeling!</em> Clojure is not
+going to gain mindshare by denigrating Ruby and Java; it is going to
+gain mindshare by promoting itself and solving problems
+effectively.</p>
+
+<p>Furthermore, there are many problem domains where the existing tools
+are entirely appropriate &mdash; Rails is a fine framework, and although it
+has limitations, those limitations don&rsquo;t manifest in most
+use cases. Even some of the clojure.core team use Rails for most of
+their work, and Clojure only for the difficult problems. Denigrating
+Rails builds walls, when we want to be building bridges.</p>
+
+<h2>Build grassroots through the back door</h2>
+
+<p>Many recent successes in language proliferation have been achieved
+simply by providing great tools in those languages. Even if someone
+doesn&rsquo;t particularly want Ruby, they might well want Cucumber. If they
+don&rsquo;t want Groovy, they might still want Gradle.</p>
+
+<p>On my current project, we&rsquo;re using <a href="http://nodejs.org/">node.js</a> for a
+test stub, even though none of us is a particular JavaScript
+advocate. Node was just the best tool for the job, so we used it. But
+that&rsquo;s caused a lot of us to look at JavaScript in a new way, and I&rsquo;d
+say we&rsquo;re all more likely to use JavaScript again in future as a
+result.</p>
+
+<p>This is a great way to build up mindshare. I think one tool I&rsquo;ve
+learned about at the conj which could fill this role is
+<a href="https://github.com/heroku/pulse">pulse</a> from Heroku, described in
+<a href="http://markmcgranaghan.com/">Mark McGranaghan</a>&rsquo;s &ldquo;Logs as Data&rdquo;
+talk. Pulse is a tool for processing logs not as a stream of bytes but
+as a stream of events and rich data objects. Another is
+<a href="https://github.com/nathanmarz/cascalog">Cascalog</a>, from Nathan Marz
+at Twitter, which is a high-level abstraction over Hadoop MapReduce,
+which creates a very nice internal DSL for modelling MapReduce
+computations as queries and predicates.</p>
+
+<h2>In summary</h2>
+
+<p>It&rsquo;s been a really exciting conference for me, because Clojure is both
+a great language, and at a key point in its history. It has reached
+maturity, it is being used by a few people in production to solve
+interesting and difficult problems; but the next step is to evangelize
+Clojure, to get it used in earnest by more and more people.</p>
+
+<p>Happy hacking!</p>

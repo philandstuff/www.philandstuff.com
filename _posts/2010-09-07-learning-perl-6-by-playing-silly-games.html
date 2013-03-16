@@ -1,0 +1,57 @@
+---
+layout: post
+title: Learning Perl 6 by playing silly games
+published: true
+---
+<p>So I decided to take the plunge and see what Rakudo* has to offer and what
+Perl 6 is like as a language. I&rsquo;ve always found the best way to learn
+programming is through examples and by doing tasks, so when I found the
+<a href="http://github.com/perl6/perl6-examples">perl6-examples</a> collection, I started
+to go through the
+<a href="http://github.com/perl6/perl6-examples/blob/master/99-problems/99-problems.pod">99-problems</a>
+one by one.</p>
+
+<p> Although I started out writing &ldquo;baby&rdquo; perl 6, I quickly found that
+other people&rsquo;s solutions to the problems were shorter &ndash; <em>and</em> clearer
+&ndash; than my own. It&rsquo;s quickly become clear that the menagerie of perl 6
+operators is more expressive than I ever imagined possible. I&rsquo;ve never
+complained that a language lacked a particular operator, or that a
+language should be extended by adding more operators. Perl 6 may be
+changing my mind.</p>
+
+<p>Today all this was made clear by a silly example in #perl6: noughts
+and crosses! (or tic-tac-toe, if you prefer.) The problem: given a
+noughts-and-crosses grid, where the players are 1,-1 and the empty
+squares 0, determine who, if anyone, has won. Here&rsquo;s the first example
+that <a href="http://use.perl.org/~masak/">masak</a> made:</p>
+
+<p><script src="https://gist.github.com/568359.js"></script></p>
+
+<p>He uses a <code>slicel</code> function to create cross-cutting slices of
+multidimensional arrays, and uses his list of lines to go through all
+possibilities, finding a winner. He also takes advantage of the <code>[==]</code>
+reduction metaoperator: <code>[==]</code> results in <code>a == b &amp;&amp; b == c</code>. The
+reduction metaoperator can also create such useful functions as <code>[+]</code>
+sum and <code>[*]</code> product, which in other languages would require a
+separate function call. In Perl 5, for example, product is <code>reduce {
+$a * $b }</code> using <code>reduce</code> from <code>List::Util</code>.</p>
+
+<p>Here&rsquo;s my improvement:</p>
+
+<p><script src="https://gist.github.com/568382.js"></script></p>
+
+<p>By flattening the board array, I avoided the need for a <code>slicel</code>
+function; I also used the <code>X+</code> cross metaoperator to shorten creating
+the lines. <code>Xop &lt;1 2 3&gt;</code> gives <code>a op 1, a op 2, a op 3, b op 1, b op
+2, b op 3, c op 1, c op 2, c op 3</code>. Then
+<a href="http://perlgeek.de/en/">moritz_</a> pointed out that <code>0,1,2</code> can be
+written using the upto operator: <code>^3</code>:</p>
+
+<p><script src="https://gist.github.com/568390.js"></script></p>
+
+<p>Further refinements are possible: <code>0,3,6</code> is <code>^3 »*» 3</code>, using the
+hyper operator to multiply each of <code>0,1,2</code> by 3. But by this point,
+we&rsquo;re just using different Perl 6 operators for the sake of it, not
+because it makes the code clearer. Like code golf, this is hackers at
+play; and while the product is not something necessarily useful, the
+learning I&rsquo;ve gained from it is invaluable.</p>

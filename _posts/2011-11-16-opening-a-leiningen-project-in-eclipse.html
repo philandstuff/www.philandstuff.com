@@ -1,0 +1,42 @@
+---
+layout: post
+title: Opening a leiningen project in eclipse
+published: true
+---
+<p>I was wanting to play around with counterclockwise, the eclipse plugin
+for clojure, recently, when I got stuck trying to open an existing
+leiningen project in eclipse. If I were coding Java, I&rsquo;d have no
+trouble with the analagous problem of importing a maven project into
+IntelliJ, but I struggled a bit with this one enough that I thought
+I&rsquo;d miniblog it so I&rsquo;d remember in future.</p>
+
+<p>This post assumes you have
+<a href="https://github.com/technomancy/leiningen">Leiningen</a>,
+<a href="http://www.eclipse.org/">eclipse</a> and
+<a href="http://code.google.com/p/counterclockwise/">counterclockwise</a>
+installed.</p>
+
+<p>Install the <code>lein-eclipse</code> plugin. (You may want to check the
+<a href="http://clojars.org/search?q=lein-eclipse">latest version</a> on
+clojars. As of writing, there seems to be a rival 1.1.0 from
+robertrolandorg; I&rsquo;m not sure of the difference.</p>
+
+<div class="CodeRay">
+  <div class="code"><pre>$ lein plugin install lein-eclipse 1.0.0
+Including lein-eclipse-1.0.0.jar
+Created lein-eclipse-1.0.0.jar</pre></div>
+</div>
+
+
+<p>Run <code>lein eclipse</code> to create the files eclipse needs:</p>
+
+<div class="CodeRay">
+  <div class="code"><pre>$ lein eclipse
+Copying 15 files to /Users/philippotter/src/mobile/jquery-mobile-experiment/lib
+Created .classpath
+Created .project</pre></div>
+</div>
+
+
+<p>Then, in eclipse, do &ldquo;File->Import->Existing Project into
+Workspace&rdquo;. You should now have your project imported.</p>

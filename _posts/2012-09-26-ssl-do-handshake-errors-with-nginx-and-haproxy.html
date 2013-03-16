@@ -1,0 +1,32 @@
+---
+layout: post
+title: SSL_do_handshake errors with nginx and haproxy
+published: true
+---
+<p>A short post about a problem we were having.</p>
+
+<p>If you are load balancing https traffic with haproxy in tcp
+mode, and you are fronting this with nginx, and you get 502 errors
+accompanied by these SSL errors in nginx&rsquo;s error log:</p>
+
+<div class="CodeRay">
+  <div class="code"><pre>SSL_do_handshake() failed (SSL: error:1408C095:SSL routines:SSL3_GET_FINISHED:digest check failed)</pre></div>
+</div>
+
+
+<p>then you need to turn off the
+<a href="http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_ssl_session_reuse"><code>proxy_ssl_session_reuse</code> option</a>:</p>
+
+<div class="CodeRay">
+  <div class="code"><pre>proxy_ssl_session_reuse off;</pre></div>
+</div>
+
+
+<p>By default, nginx tries to reuse ssl sessions for an https upstream;
+but when HAProxy is round-robining the tcp connections between
+different backends, the ssl session will not be valid from one
+tcp connection to the next.</p>
+
+<hr />
+
+<p>UPDATE: <a href="https://twitter.com/zaargy">@zaargy</a> points out that the <a href="http://haproxy.1wt.eu/download/1.5/doc/configuration.txt">development branch of haproxy</a> has https support. Awesome!</p>

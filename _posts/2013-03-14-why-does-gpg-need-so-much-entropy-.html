@@ -1,0 +1,88 @@
+---
+layout: post
+title: Why does GPG need so much entropy?
+published: true
+---
+<p>Today I have a case of conflicting advice from different tools.</p>
+
+<p>I&rsquo;m trying to generate GPG keys on virtual machines. The usual way of
+generating cryptographically secure keys is to use a good entropy
+source, such as <code>/dev/random</code>. However, this source gets most of its
+entropy from physical devices attached to the machine, such as
+keyboards, mice, and disks, none of which are available to a
+VM. Therefore, when generating GPG keys, it&rsquo;s quite common to find
+yourself starved of entropy, with a message like:</p>
+
+<div class="CodeRay">
+  <div class="code"><pre>We need to generate a lot of random bytes. It is a good idea to perform
+some other action (type on the keyboard, move the mouse, utilize the
+disks) during the prime generation; this gives the random number
+generator a better chance to gain enough entropy.
+
+Not enough random bytes available.  Please do some other work to give
+the OS a chance to collect more entropy! (Need 280 more bytes)</pre></div>
+</div>
+
+
+<p>However, things got more curious when I looked at the manpage for
+<code>/dev/random</code> (which you can find with <code>man 4 random</code>):</p>
+
+<blockquote class="posterous_medium_quote"><p>While some safety margin above that minimum is reasonable, as a
+guard against flaws in the CPRNG algorithm, no cryptographic
+primitive available today can hope to promise more than 256 bits of
+security, so if any program reads more than 256 bits (32 bytes) from
+the kernel random pool per invocation, or per reasonable reseed
+interval (not less than one minute), that should be taken as a sign
+that its cryptography is not skilfully imple- mented.</p></blockquote>
+
+<p>I did a bit of reading into the meaning behind this. The argument goes
+something like this:</p>
+
+<ul>
+<li>there is no cryptographic primitive available today which can
+guarantee more than 256 bits of protection</li>
+<li>the attack we&rsquo;re trying to protect against by using true entropy
+rather than a pseudorandom number generator (PRNG) is that
+somebody guesses the seed value</li>
+<li>if guessing the seed value is at least as hard as just
+brute-forcing the key, then your PRNG is not detracting from the
+security of the system.</li>
+</ul>
+
+
+<p>Breaking a GPG key requires less than 256-bits' worth of effort: I
+don&rsquo;t remember the details, but a 2048-bit GPG key requires something
+in the region of 100-200 bits' worth of effort to crack, as you are
+performing a prime factorization.</p>
+
+<p>So, why is GPG greedily asking <code>/dev/random</code> for 280 <em>bytes</em> of
+entropy, when all it conceivably needs is 32? I&rsquo;m not sure, and I&rsquo;d be
+delighted to learn, but it seems that <code>/dev/random</code> and GPG
+fundamentally disagree on what the contract is between them. What this
+means for me as a user, however, is that GPG is massively gorging
+itself on entropy from my entropy-starved VM, which means it takes
+forever and a day to generate GPG keys on a VM.</p>
+
+<p>Interestingly, OS X implements its <code>/dev/random</code> device differently;
+it uses Schneier, Kelsey and Ferguson&rsquo;s
+<a href="en.wikipedia.org/wiki/Yarrow_algorithm">Yarrow algorithm</a>, which
+operates on a similar basis to that given above: once you have
+achieved a certain minimal level of true entropy, you can use that as
+a seed to a PRNG to feed cryptographic key generators with no loss of
+security in the system. That means that once it has gathered its
+initial 256 bits (or whatever) of entropy, OS X&rsquo;s <code>/dev/random</code> will
+continue generating random bits effectively forever, making it a much
+better choice for PRNG on a VM.</p>
+
+<p>PS: Instead of brute-forcing the seed, there is a potential
+alternative attack against the PRNG, which is that someone finds a way
+to predict the PRNG output with much less computational effort than
+brute-force guessing the seed. But this is much the same kind of
+attack as &ldquo;someone finds a problem with AES&rdquo; or &ldquo;someone finds a
+problem with GPG&rdquo; &mdash; ie we presume our cryptographic primitives are
+good because no known attack against them has been discovered, not
+because we are able to prove that no attack is possible. Using true
+entropy instead of a PRNG guards against attacks against your PRNG,
+but you still need to worry about attacks against your crypto
+algorithm if you&rsquo;re being that paranoid. IOW, I don&rsquo;t think GPG&rsquo;s
+strategy here seems to be the right tradeoff.</p>

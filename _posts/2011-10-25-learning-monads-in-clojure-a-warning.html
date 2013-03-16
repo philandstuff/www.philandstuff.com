@@ -1,0 +1,115 @@
+---
+layout: post
+title: ! 'Learning monads in Clojure: a warning'
+published: true
+---
+<p>I was inspired to learn about monads by
+<a href="http://literateprogrammer.blogspot.com/">Chris Ford</a> recently; his
+description of encapsulating impurity safely within a pure language
+had me intrigued immediately. I decided that I wanted to learn about
+monads in Clojure, a language I am currently diving into.</p>
+
+<p>However, I found learning about monads in Clojure full of
+<a href="http://tvtropes.org/pmwiki/pmwiki.php/Main/FakeDifficulty">fake difficulty</a>
+(or accidental complexity, if you will). Here I document the issues I
+found. And the key issue I came across was this:</p>
+
+<h2>Learning monads requires reasoning about types</h2>
+
+<p>You probably know where I&rsquo;m going with this. Clojure is dynamically
+typed. Haskell, the spiritual home of monads, is statically
+typed. For me, the key to understanding monads was reasoning about
+types &mdash; in particular, drawing a clear distinction between the
+ordinary type and the type of a monadic expression.</p>
+
+<p>In drawing this distinction, it helped me reason about the behaviour
+of the monadic functions. By learning that <code>m-bind</code> must return a
+monadic expression and not a simple value, I learned a key fact about
+monads; but the number of times I tried to write <code>m-bind</code> expressions
+beforehand which did not return monadic expressions beforehand was too
+many.</p>
+
+<p>It&rsquo;s quite possible to reason about types in a dynamically typed
+language, but it&rsquo;s made much harder. If your reasoning is faulty, the
+program will try to carry on regardless, and in Clojure&rsquo;s case, give
+an incredibly cryptic error message. This is not an environment that
+makes learning easy. If I had been learning in Haskell, my failure to
+understand the distinction between monadic expression and ordinary
+value would have immediately been set right by the type checker.</p>
+
+<p>But it&rsquo;s worse than just making learning hard: Clojure&rsquo;s dynamic
+typing has led to a pervasive failure of type reasoning.</p>
+
+<p>A key example of this is that Clojure&rsquo;s implementation of the maybe
+monad, <code>maybe-m</code>, breaks the monad laws! It does this because it does
+not properly distinguish between the monadic expression and the
+underlying type. The law in question is the first monad law, expressed
+here as a Midje test:</p>
+
+<div class="CodeRay">
+  <div class="code"><pre><span class="comment">;;; given a monad which defines m-bind and m-result,</span>
+<span class="comment">;;;       f, an arbitrary function, and</span>
+<span class="comment">;;;       val, an arbitrary value</span>
+(fact <span class="string"><span class="delimiter">&quot;</span><span class="content">The first monad law</span><span class="delimiter">&quot;</span></span>
+    (m-bind (m-result <span class="keyword">val</span>) f)
+    =&gt; (f <span class="keyword">val</span>))</pre></div>
+</div>
+
+
+<p>The failure of <code>maybe-m</code> to adhere to this law is demonstrated thus:</p>
+
+<div class="CodeRay">
+  <div class="code"><pre><span class="comment">;;; failing midje test</span>
+(fact <span class="string"><span class="delimiter">&quot;</span><span class="content">maybe-m should adhere to the first monad law</span><span class="delimiter">&quot;</span></span>
+    (with-monad maybe-m
+        (m-bind (m-result <span class="predefined-constant">nil</span>) <span class="keyword">not</span>))
+    =&gt; (<span class="keyword">not</span> <span class="predefined-constant">nil</span>))</pre></div>
+</div>
+
+
+<p>The reason that this law is violated is that the <code>maybe-m</code> monadic
+expression type is no different from the underlying value type. It is
+therefore possible to find a value such that <code>(m-result val)</code> is
+<code>nil</code>, the maybe monad&rsquo;s value for failure.</p>
+
+<p>The Haskell Maybe monad is not so sloppy:</p>
+
+<div class="CodeRay">
+  <div class="code"><pre>&gt; let myNot x = Just (x == Nothing)
+&gt; (return Nothing :: Maybe (Maybe Char)) &gt;&gt;= myNot
+Just True
+&gt; myNot (Nothing :: Maybe (Maybe Char))
+Just True</pre></div>
+</div>
+
+
+<p>This is because in Haskell, there is no value <code>foo</code> such that <code>Nothing
+== return foo</code>; in Clojure, there is such a value: <code>(= nil (m-result
+nil))</code>.</p>
+
+<p>The repercussions of <code>maybe-m</code>&rsquo;s violation of the first monad law are
+relatively minor: it means that when using <code>maybe-m</code>, the value <code>nil</code>
+has been appropriated and given a new meaning; which means that if you
+had any other meaning for it, you&rsquo;re stuffed.</p>
+
+<p>For example, suppose you wanted to implement a distributed hash table
+retrieval, where failure could be caused by a network outage. You want
+a function behaviour similar to <code>(get {:a 1} :b)</code>, where if the value
+is not in the table you return nil. If you use <code>maybe-m</code> to perform
+this calculation, you cannot tell the difference between failing to
+communicate with the DHT, and successfully determining that the DHT
+does not contain anything under the key <code>:b</code>; both will result in the
+value <code>nil</code>. Worse, if you want to use this value later in the
+computation, the <code>maybe-m</code> will assume a value missing in the DHT to
+be a failure, and cut your computation short &mdash; even if that&rsquo;s not
+what you wanted.</p>
+
+<h2>Summary</h2>
+
+<p>If you want to learn monads, do it in Haskell.</p>
+
+<p>If you must do it in Clojure, the key is to understand and distinguish
+the various types in play. The monadic type is distinct from the
+underlying type. <code>m-result</code> takes an underlying value and gives you an
+equivalent value in the monadic type. <code>m-bind</code> takes a monadic value,
+and a function from an underlying value to a monadic value.</p>

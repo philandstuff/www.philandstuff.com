@@ -1,0 +1,24 @@
+---
+layout: post
+title: Specifying dependencies in rspec-puppet
+published: true
+---
+<p>This doesn&rsquo;t seem to be specified anywhere in the rspec-puppet documentation, so I thought I&rsquo;d leave it here for the moment. Suppose you have a puppet type which always depends on another:</p>
+
+<div class="CodeRay">
+  <div class="code"><pre>define foo () {
+    file { &quot;/etc/${name}&quot;: }
+    Bar[$name] -&gt; Foo[$name]
+}</pre></div>
+</div>
+
+
+<p>If you want to write an rspec-puppet unit test for this, it will fail because it can&rsquo;t find the resource <code>Bar[$name]</code>, unless you define it as a precondition:</p>
+
+<div class="CodeRay">
+  <div class="code"><pre>describe <span class="string"><span class="delimiter">'</span><span class="content">foo</span><span class="delimiter">'</span></span>, <span class="symbol">:type</span> =&gt; <span class="symbol">:define</span> <span class="keyword">do</span>
+    let(<span class="symbol">:title</span>) { <span class="string"><span class="delimiter">'</span><span class="content">my-foo</span><span class="delimiter">'</span></span> }
+    let(<span class="symbol">:pre_condition</span>) { <span class="string"><span class="delimiter">'</span><span class="content">bar { &quot;my-foo&quot; }</span><span class="delimiter">'</span></span> }
+    it { should contain_file(<span class="string"><span class="delimiter">'</span><span class="content">/etc/my-foo</span><span class="delimiter">'</span></span>) }
+<span class="keyword">end</span></pre></div>
+</div>

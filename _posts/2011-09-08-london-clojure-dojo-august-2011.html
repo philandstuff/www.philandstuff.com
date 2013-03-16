@@ -1,0 +1,87 @@
+---
+layout: post
+title: London Clojure Dojo, August 2011
+published: true
+---
+<p><em>Prologue: I&rsquo;m going to start blogging every month&rsquo;s London clojure dojo here. For more details, see epilogue.</em></p>
+
+<p>August&rsquo;s dojo, like most of them, was a bit of an experiment. The wonderful Dale Thatcher had prepared a tournament environment for all of our clojure programs to compete in.</p>
+
+<p>The format was this: every ten minutes, we had to upload a working clojure program to a tournament server. The server would then play each team&rsquo;s program against every other program and determine the winner each time. Points would be scored and added to a running leaderboard.</p>
+
+<p>After settling in with a few rounds of rock, paper, scissors, we started the main feature: noughts and crosses! Your program is given a command line argument of the form</p>
+
+<p><code>xx0-0----</code></p>
+
+<p>representing a noughts and crosses grid. You have to output a number from the range 0-8 indicating your next move. One snag is that you are not told whether you are noughts or crosses, and have to determine this fact with the knowledge that noughts go first.</p>
+
+<p>So for example, in the above board layout, you would instantly win if you output 6, because you are noughts, and you would have formed a line top-right-to-bottom-left.</p>
+
+<p>I was on team 4 &mdash; you can grab the code and follow on from <a href="https://github.com/ppotter/clojure-dojo-aug-2011">github</a>.</p>
+
+<h1>Lesson 1 &mdash; automate common tasks</h1>
+
+<p>Since we were to be uploading a new contender every 10 minutes, the first thing we did was write a script called <code>gen-zip</code> which did just that. This script bundled our app into a zip file and uploaded our entry to the tournament server in one step. Hey presto, continuous delivery! Furthermore, this script also automatically committed to git, keeping a history of every single program we uploaded to the tournament server (from the second round onwards, at least).</p>
+
+<h1>Lesson 2 &mdash; start simple and evolve</h1>
+
+<p>Our first entry for noughts and crosses was simply <code>(println 5)</code>. It was basically the fastest thing we could write which wasn&rsquo;t simply guaranteed to lose. Since deployment is cheap, we uploaded it, although it wasn&rsquo;t captured in the git history. Our second entry (<code>aed257</code>) simply searched for the first free space and went there:</p>
+
+<div class="CodeRay">
+  <div class="code"><pre>(<span class="keyword">defn</span> <span class="function">choice</span> [board]
+  (<span class="keyword">inc</span> (<span class="keyword">.</span>indexOf board <span class="string"><span class="delimiter">&quot;</span><span class="content">-</span><span class="delimiter">&quot;</span></span>)))</pre></div>
+</div>
+
+
+<p>The simplicity of this is astonishing:</p>
+
+<ul>
+<li>no need to parse the board string into an actual board object</li>
+<li>no need to determine which player we are</li>
+</ul>
+
+
+<p>Instead, we just use Java&rsquo;s native String.indexOf() method to find the first free space and output the index corresponding to that space.</p>
+
+<p>Our next contender (<code>2db1fc1</code>) was only slightly more complex:</p>
+
+<div class="CodeRay">
+  <div class="code"><pre>(<span class="keyword">defn</span> <span class="function">choice</span> [board]
+  (<span class="keyword">cond</span> (<span class="keyword">=</span> <span class="char">\-</span> (<span class="keyword">nth</span> board <span class="integer">4</span>)) <span class="integer">5</span>
+    (<span class="keyword">=</span> <span class="char">\-</span> (<span class="keyword">nth</span> board <span class="integer">0</span>)) <span class="integer">0</span>
+    (<span class="keyword">=</span> <span class="char">\-</span> (<span class="keyword">nth</span> board <span class="integer">6</span>)) <span class="integer">6</span>
+    (<span class="keyword">=</span> <span class="char">\-</span> (<span class="keyword">nth</span> board <span class="integer">2</span>)) <span class="integer">2</span>
+    (<span class="keyword">=</span> <span class="char">\-</span> (<span class="keyword">nth</span> board <span class="integer">8</span>)) <span class="integer">8</span>
+    <span class="symbol">:else</span> (<span class="keyword">inc</span> (<span class="keyword">.</span>indexOf board <span class="string"><span class="delimiter">&quot;</span><span class="content">-</span><span class="delimiter">&quot;</span></span>))))</pre></div>
+</div>
+
+
+<p>Here we use the fact that clojure strings are sequences and can have <code>nth</code> called on them just like anything else. Once more, we don&rsquo;t need to parse the string into a board; we work only with the flattened string, and we add a bunch of special cases to make a brute-force strategy of getting the middle and then each corner in turn. If all are taken, we revert to our original strategy of the first available space.</p>
+
+<h1>Lesson 3a &mdash; understand the problem before rushing to a solution</h1>
+
+<h1>Lesson 3b &mdash; get frequent, rapid feedback</h1>
+
+<p>You may have noticed some oddities in the above code. What is that <code>inc</code> doing there before <code>.indexOf</code>? Why do we say <code>(cond (= \- (nth board 4)) 5 ...)</code> not <code>(cond (= \- (nth board 4)) 4 ...)</code>? This is because we made the faulty assumption that the grid indexing was 1-based, not 0-based. As a result, we were often going one square to the right of where we actually had intended to go!</p>
+
+<p>We only discovered this because one member of our team was checking each tournament result to see which other teams we lost to and why. He noticed that we were making invalid moves &mdash; something we thought we had avoided by always aiming for an empty space.</p>
+
+<p>Our next version (<code>d83b9a6c</code>) fixed this problem. It also started work on a significant new effort &mdash; parsing the board and detecting if it was possible to win outright from the current position.</p>
+
+<h1>Lesson 4 &mdash; doing something simple correctly is better than doing something sophisticated but wrong</h1>
+
+<p>By this time our work on instant-win to determine if there was an instant winner was the most significant part of our efforts. The next step was a function to determine which player we were. This was deemed a challenging enough task that we wrote a test for the function. Next we wrote a test for our instant win function, and aimed towards putting together the pieces which could make that function pass. However, all of this was a waste, because we simply didn&rsquo;t have the time or phenomenal brains required to solve the problem in the half hour we had remaining.</p>
+
+<p>By contrast, the only significant refinements we made to our program in these rounds were based on feedback from tournament results:</p>
+
+<ul>
+<li>in <code>8e4e524</code>, grabbing square 2 earlier, to stop us losing to those enemy programs who just filled the grid in order (as our example in <code>aed257</code> had done).</li>
+<li>in <code>244c97c</code>, changing from 4-2-0-6-8 to 4-2-6-0-8 to fill the 2-4-6 line one move faster.</li>
+</ul>
+
+
+<p>Our final version had reams of abortive attempts at sophistication, all commented out using the <code>#_</code> reader macro. But the real reward had come from those old tactics, rapid feedback and gradual evolution.</p>
+
+<p><em>Epilogue : the London clojure dojo happens on the last Tuesday of every month. During the dojo, we split into groups of four or five around a single computer, and each person takes a turn at the keyboard. This ensures that even if you have zero clojure experience, you will get the opportunity to write some code at the event.</em></p>
+
+<p><em>Entry to the dojo is free, but advance booking is required. Listen for announcements on the London clojurians mailing list.</em></p>

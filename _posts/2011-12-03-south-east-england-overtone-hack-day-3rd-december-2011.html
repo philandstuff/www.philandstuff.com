@@ -1,0 +1,84 @@
+---
+layout: post
+title: South East England Overtone Hack Day, 3rd December 2011
+published: true
+---
+<p>Today was the inaugural South East England Overtone Hack Day. We met
+up in Cambridge to hack on <a href="http://overtone.github.com/">Overtone</a>, a
+live music performance environment in Clojure. Here are some of the
+things we covered:</p>
+
+<h2>Audiocubes</h2>
+
+<p>Tom (didn&rsquo;t catch his surname, unfortunately) brought some
+<a href="http://www.percussa.com/">AudioCubes</a>, a set of control
+interfaces. They have infrared detectors and can detect nearby
+surfaces and other AudioCubes.</p>
+
+<p>We discussed interfacing them to Overtone. They come with midi and OSC
+interfaces, which would be easy to work with; but the real power
+apparently comes from the C API, which allows you to discover the
+network topology of the AudioCubes. We discussed the possibilities for
+working with the C API from Clojure.</p>
+
+<h2>Other controllers</h2>
+
+<p>Tom and I also discussed some other controllers:</p>
+
+<ul>
+<li><a href="http://hexler.net/software/touchosc">TouchOSC</a>
+
+<ul>
+<li>very low barrier to entry</li>
+<li>not nice to rely on wireless connections in a live environment</li>
+</ul>
+</li>
+<li><a href="http://www.novationmusic.com/products/midi_controllers/launchpad/">Launchpad</a>
+
+<ul>
+<li>cost effective introduction to real hardware</li>
+</ul>
+</li>
+</ul>
+
+
+<h2>Environment setup</h2>
+
+<p>As is inevitable, some time was spent getting people set up with
+Eclipse, Counterclockwise, leiningen, overtone, and so on. I made use
+of my previous blogpost on
+<a href="http://rhebus.posterous.com/opening-a-leiningen-project-in-eclipse">lein eclipse</a>,
+which i had totally forgotten about&hellip;</p>
+
+<h2>Overtone basics</h2>
+
+<p>I went through my
+<a href="https://github.com/ppotter/skillsmatter-overtone-examples">skillsmatter talk</a>
+with Stefan, Tak and Edmund, to show them the basics of creating
+instruments, oscillators, and filters; and scheduling beats and tunes
+in time.</p>
+
+<h2>Signal processing basics</h2>
+
+<p>We also had an impromptu introduction to signal processing &ndash; time
+domain vs frequency domain, linear filters &mdash; low pass, high pass,
+band pass,
+<a href="http://en.wikipedia.org/wiki/Fourier_series">Fourier series</a>, and suchlike.</p>
+
+<h2>Clojure basics</h2>
+
+<p>Finally, we discussed resources for learning clojure itself:
+<a href="https://github.com/relevance/labrepl">labrepl</a> and
+<a href="http://www.4clojure.com/">4clojure</a>.</p>
+
+<h2>Overtone documentation</h2>
+
+<p>I also made a start on writing a
+<a href="https://github.com/overtone/overtone/wiki/Filters">filters</a> page for
+the overtone wiki.</p>
+
+<h2>Summary</h2>
+
+<p>We all had a great time, we all learned something and achieved
+something, and there was a lot of interest for another event next
+month in London. So I will see you all next time!</p>

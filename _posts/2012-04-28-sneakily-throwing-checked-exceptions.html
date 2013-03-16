@@ -1,0 +1,154 @@
+---
+layout: post
+title: Sneakily throwing checked exceptions
+published: true
+---
+<p>I was reading the Clojure source code the other day when I noticed
+this curious snippet in
+<a href="https://github.com/clojure/clojure/blob/master/src/jvm/clojure/lang/LispReader.java">LispReader.java</a>:</p>
+
+<div class="CodeRay">
+  <div class="code"><pre><span class="directive">static</span> <span class="directive">public</span> <span class="type">int</span> read1(<span class="predefined-type">Reader</span> r){
+    <span class="keyword">try</span>
+        {
+        <span class="keyword">return</span> r.read();
+        }
+    <span class="keyword">catch</span>(<span class="exception">IOException</span> e)
+        {
+        <span class="keyword">throw</span> <span class="predefined-type">Util</span>.sneakyThrow(e);
+        }
+}</pre></div>
+</div>
+
+
+<p>I immediately thought to myself: &ldquo;what does <code>sneakyThrow</code> do?&rdquo; It
+looks like it is a magic way to throw a checked exception without
+needing a <code>throws</code> declaration. But how does it work?</p>
+
+<p>First, a little background. Checked exceptions are effectively a
+static analysis tool: there are no runtime checks on checked
+exceptions. Rather, <code>javac</code> will refuse to compile code where a
+checked exception is thrown with no <code>catch</code> block to catch it nor
+<code>throws</code> declaration to declare its propagation.</p>
+
+<p>It&rsquo;s
+<a href="http://www.javaworld.com/javaworld/javaqa/2003-02/02-qa-0228-evilthrow.html?page=2">possible to throw a checked exception</a>
+using bytecode manipulation, or Thread.stop(Throwable), and these
+techniques have been known for at least a decade. However bytecode
+manipulation is messy, and Thread.stop(Throwable) has been deprecated
+for at least a decade too. Is there a pure-Java way to throw a checked
+exception sneakily?</p>
+
+<p>C-family languages normally provide typecasts, a trapdoor to escape
+their static typing system when you think it is more hindrance than
+help. So a first attempt might go something like <code>throw
+(RuntimeException) e;</code>. However if you try this in the above code, you
+will get a <code>ClassCastException</code> at runtime, because <code>IOException</code> is
+not an instance of <code>RuntimeException</code>. It would seem that there is no
+pure-Java way to throw a checked exception.</p>
+
+<p>So how does <code>sneakyThrow</code> work? Here it is, in all its glory:</p>
+
+<div class="CodeRay">
+  <div class="code"><pre><span class="comment">/**
+ * Throw even checked exceptions without being required
+ * to declare them or catch them. Suggested idiom:
+ * throw sneakyThrow( some exception );
+ */</span>
+<span class="directive">static</span> <span class="directive">public</span> <span class="exception">RuntimeException</span> sneakyThrow(<span class="predefined-type">Throwable</span> t) {
+    <span class="comment">// http://www.mail-archive.com/javaposse@googlegroups.com/msg05984.html</span>
+    <span class="keyword">if</span> (t == <span class="predefined-constant">null</span>)
+        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="exception">NullPointerException</span>();
+    <span class="predefined-type">Util</span>.sneakyThrow0(t);
+    <span class="keyword">return</span> <span class="predefined-constant">null</span>;
+}
+
+<span class="annotation">@SuppressWarnings</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">unchecked</span><span class="delimiter">&quot;</span></span>)
+<span class="directive">static</span> <span class="directive">private</span>  <span class="type">void</span> sneakyThrow0(<span class="predefined-type">Throwable</span> t) <span class="directive">throws</span> T {
+    <span class="keyword">throw</span> (T) t;
+}</pre></div>
+</div>
+
+
+<p>That
+<a href="http://www.mail-archive.com/javaposse@googlegroups.com/msg05984.html">link</a>
+in the comments gives credit to Reinier Zwitserloot who, as far as I
+know, had the first mention of this technique in 2009 on the java
+posse mailing list.</p>
+
+<p>What we have here is a severe abuse of Java. Util.sneakyThrow(t) calls
+Util.sneakyThrow0; then within sneakyThrow0() we
+cast to the parameterized type <code>T</code>. In this case that type is
+<code>RuntimeException</code>. At runtime, however, the generic types have been
+erased, so that there is no <code>T</code> type anymore to cast to, so the cast
+disappears.</p>
+
+<p>In other words, we&rsquo;ve managed to convince the compiler and the runtime
+that they&rsquo;re seeing different things. The compiler sees the code with
+the cast:</p>
+
+<div class="CodeRay">
+  <div class="code"><pre>throw (RuntimeException) t;</pre></div>
+</div>
+
+
+<p>so it allows the now-unchecked exception to propagate. The runtime
+doesn&rsquo;t see the generic types, so it sees no cast:</p>
+
+<div class="CodeRay">
+  <div class="code"><pre>throw t;</pre></div>
+</div>
+
+
+<p>and therefore it doesn&rsquo;t complain about a <code>ClassCastException</code>.</p>
+
+<p>There was one last nagging thought I had about the original code:</p>
+
+<div class="CodeRay">
+  <div class="code"><pre>throw Util.sneakyThrow(e);</pre></div>
+</div>
+
+
+<p>Given that Util.sneakyThrow(e) throws the exception itself, why does
+the calling code also use <code>throw</code>? The answer is, once more, to make
+the compiler happy. Without the <code>throw</code>, the compiler will demand a
+<code>return</code> statement afterwards.</p>
+
+<hr />
+
+<p>Reinier Zwitserloot added this functionality to
+<a href="http://projectlombok.org/index.html">Project Lombok</a> as the
+<a href="http://projectlombok.org/features/SneakyThrows.html"><code>@SneakyThrows</code></a>
+annotation, so now you can propagate checked exceptions sneakily with
+minimal boilerplate. The @SneakyThrows page also summarizes neatly
+some use-cases for why you would ever actually want to throw a checked
+exception:</p>
+
+<ul>
+<li>You are calling a method which literally can never throw the
+exception that it declares. The example given is <code>new
+String(someByteArray, "UTF-8")</code>, which declares that it throws
+UnsupportedEncodingException but UTF-8 is guaranteed by the Java
+spec to always be present.</li>
+<li>You are implementing a strict interface where you don&rsquo;t have the
+option for adding a <code>throws</code> declaration, and yet throwing an
+exception is entirely appropriate &mdash; the canonical example is
+Runnable.run(), which does not throw any checked exceptions.</li>
+</ul>
+
+
+<p>The first case is clear &mdash; the <code>throws</code> declaration is a nuisance and
+any solution to silence it with minimal boilerplate is welcome.</p>
+
+<p>The second case has one common alternative: wrapping the checked
+exception in a RuntimeException so that you can throw it. Both
+approaches will have their critics. Wrapping an exception just to gain
+the privelege of throwing it results in a stacktrace with spurious
+exceptions which contribute no information about what actually went
+wrong. On the other hand, throwing checked exceptions may violate the
+principle of least surprise; it will no longer be enough to catch
+<code>RuntimeException</code> to be able to guarantee catching all possible
+exceptions.</p>
+
+<p>It will be up to any given project to decide which is the lesser of
+two evils and establish a standard on their codebase.</p>

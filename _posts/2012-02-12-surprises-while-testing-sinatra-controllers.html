@@ -1,0 +1,243 @@
+---
+layout: post
+title: Surprises while testing Sinatra controllers
+published: true
+---
+<p>I&rsquo;ve been working with Ruby and Sinatra this week to write some
+RESTful interfaces. I&rsquo;m new to Ruby and Sinatra, but I&rsquo;m not new to
+dynamic languages, RESTful services, or the
+<a href="http://rack.rubyforge.org/">Rack</a> /
+<a href="http://en.wikipedia.org/wiki/Web_Server_Gateway_Interface">WSGI</a> /
+<a href="http://plackperl.org/">PSGI</a> /
+<a href="https://github.com/mmcgrana/ring">Ring</a> view of web applications. I
+figured that this shouldn&rsquo;t be a difficult task. Boy was I wrong.</p>
+
+<p>Sinatra offers a very nice DSL for describing HTTP controllers. For
+example, a simple &ldquo;Hello, world&rdquo; controller looks like this:</p>
+
+<div class="CodeRay">
+  <div class="code"><pre>require <span class="string"><span class="delimiter">'</span><span class="content">sinatra/base</span><span class="delimiter">'</span></span> <span class="comment"># this is 'modular' style</span>
+
+<span class="keyword">class</span> <span class="class">HelloWorld</span> &lt; <span class="constant">Sinatra</span>::<span class="constant">Base</span>
+  get <span class="string"><span class="delimiter">'</span><span class="content">/*</span><span class="delimiter">'</span></span> <span class="keyword">do</span>
+    <span class="string"><span class="delimiter">'</span><span class="content">Hello, world!</span><span class="delimiter">'</span></span>
+  <span class="keyword">end</span>
+<span class="keyword">end</span></pre></div>
+</div>
+
+
+<p>Sinatra also conforms to the Rack specification: that is, Sinatra
+controllers expose a <code>call</code> method which (to a first approximation)
+takes an HTTP request and returns an HTTP response. We thought that
+having a nice simple interface to talk to the controller would make
+testing and test-driving very easy; and in fact Rack::Test::Methods
+provides a pleasing DSL for testing Rack applications through the call
+method:</p>
+
+<div class="CodeRay">
+  <div class="code"><pre>require <span class="string"><span class="delimiter">'</span><span class="content">rspec</span><span class="delimiter">'</span></span>
+require <span class="string"><span class="delimiter">'</span><span class="content">rack/test</span><span class="delimiter">'</span></span>
+require <span class="string"><span class="delimiter">'</span><span class="content">hello-world</span><span class="delimiter">'</span></span>
+
+describe <span class="string"><span class="delimiter">'</span><span class="content">Hello World application</span><span class="delimiter">'</span></span> <span class="keyword">do</span>
+  include <span class="constant">Rack</span>::<span class="constant">Test</span>::<span class="constant">Methods</span>
+
+  <span class="keyword">def</span> <span class="function">app</span>
+    <span class="constant">HelloWorld</span>
+  <span class="keyword">end</span>
+
+  it <span class="string"><span class="delimiter">'</span><span class="content">should return Hello, world at root URL</span><span class="delimiter">'</span></span> <span class="keyword">do</span>
+    get <span class="string"><span class="delimiter">'</span><span class="content">/</span><span class="delimiter">'</span></span>
+    last_response.body.should match <span class="regexp"><span class="delimiter">/</span><span class="content">Hello, world</span><span class="delimiter">/</span></span>
+  <span class="keyword">end</span>
+<span class="keyword">end</span></pre></div>
+</div>
+
+
+<p>The trouble started because we wanted to stub out dependencies of the
+controller. Our &ldquo;Hello, world&rdquo; controller grew to look something like
+this:</p>
+
+<div class="CodeRay">
+  <div class="code"><pre>require <span class="string"><span class="delimiter">'</span><span class="content">sinatra/base</span><span class="delimiter">'</span></span> <span class="comment"># this is 'modular' style</span>
+
+<span class="keyword">class</span> <span class="class">HelloWorld</span> &lt; <span class="constant">Sinatra</span>::<span class="constant">Base</span>
+  <span class="keyword">def</span> <span class="function">repository</span>
+    raise <span class="constant">NotImplementedException</span>
+  <span class="keyword">end</span>
+
+  get <span class="string"><span class="delimiter">'</span><span class="content">/*</span><span class="delimiter">'</span></span> <span class="keyword">do</span>
+    repository.get(<span class="string"><span class="delimiter">'</span><span class="content">foo</span><span class="delimiter">'</span></span>)
+  <span class="keyword">end</span>
+<span class="keyword">end</span></pre></div>
+</div>
+
+
+<p>We&rsquo;re practising top-down TDD, where we don&rsquo;t try to create
+dependencies until we&rsquo;ve found a need for them at a higher level. At
+this point, we wanted a test to check this code. To do this, we&rsquo;re
+going to have to stub out the repository with a test fake Here&rsquo;s
+attempt #1:</p>
+
+<div class="CodeRay">
+  <div class="code"><pre>require <span class="string"><span class="delimiter">'</span><span class="content">rspec</span><span class="delimiter">'</span></span>
+require <span class="string"><span class="delimiter">'</span><span class="content">rack/test</span><span class="delimiter">'</span></span>
+require <span class="string"><span class="delimiter">'</span><span class="content">hello-world</span><span class="delimiter">'</span></span>
+
+describe <span class="string"><span class="delimiter">'</span><span class="content">Hello World application</span><span class="delimiter">'</span></span> <span class="keyword">do</span>
+  include <span class="constant">Rack</span>::<span class="constant">Test</span>::<span class="constant">Methods</span>
+
+  <span class="keyword">def</span> <span class="function">app</span>
+    <span class="constant">HelloWorld</span>
+  <span class="keyword">end</span>
+
+  it <span class="string"><span class="delimiter">'</span><span class="content">should return Hello, world at root URL</span><span class="delimiter">'</span></span> <span class="keyword">do</span>
+    mock_repo = mock(<span class="string"><span class="delimiter">'</span><span class="content">repository</span><span class="delimiter">'</span></span>)
+    mock_repo.stub(<span class="symbol">:get</span>).with(<span class="string"><span class="delimiter">'</span><span class="content">foo</span><span class="delimiter">'</span></span>).and_return(<span class="string"><span class="delimiter">'</span><span class="content">bar</span><span class="delimiter">'</span></span>)
+    app.stub(<span class="symbol">:repository</span>).and_return(mock_repo)
+    get <span class="string"><span class="delimiter">'</span><span class="content">/</span><span class="delimiter">'</span></span>
+    last_response.body.should == <span class="string"><span class="delimiter">'</span><span class="content">bar</span><span class="delimiter">'</span></span>
+  <span class="keyword">end</span>
+<span class="keyword">end</span></pre></div>
+</div>
+
+
+<p>We figured that since <code>app</code> defines the application under test, we
+could just stub out the repository on the app and we&rsquo;d be done. Sadly
+not; the app called the real <code>repository</code> method, not our stubbed
+version.</p>
+
+<blockquote class="posterous_short_quote"><p><strong>Surprise #1: HelloWorld and HelloWorld.new are both Rack applications!</strong></p></blockquote>
+
+<p>Sinatra provides your controller classes with a <code>call</code> method, which
+internally implements the Singleton pattern and will new up a
+controller instance before delegating the <code>call</code> to the controller
+instance.</p>
+
+<p>I have just one question: <em>why?</em>. Is it just so that I can save 4
+characters by typing <code>def app; HelloWorld; end</code> rather than <code>def app;
+HelloWorld.new; end</code>? Sure, it saved typing, but it confused the hell
+out of us.</p>
+
+<p>Okay, let&rsquo;s leave the controller class magic behind. Here&rsquo;s attempt
+two:</p>
+
+<div class="CodeRay">
+  <div class="code"><pre>require <span class="string"><span class="delimiter">'</span><span class="content">rspec</span><span class="delimiter">'</span></span>
+require <span class="string"><span class="delimiter">'</span><span class="content">rack/test</span><span class="delimiter">'</span></span>
+require <span class="string"><span class="delimiter">'</span><span class="content">hello-world</span><span class="delimiter">'</span></span>
+
+describe <span class="string"><span class="delimiter">'</span><span class="content">Hello World application</span><span class="delimiter">'</span></span> <span class="keyword">do</span>
+  include <span class="constant">Rack</span>::<span class="constant">Test</span>::<span class="constant">Methods</span>
+
+  <span class="keyword">def</span> <span class="function">app</span>
+    <span class="constant">HelloWorld</span>.new <span class="comment">#let's have an instance now</span>
+  <span class="keyword">end</span>
+
+  it <span class="string"><span class="delimiter">'</span><span class="content">should return Hello, world at root URL</span><span class="delimiter">'</span></span> <span class="keyword">do</span>
+    mock_repo = mock(<span class="string"><span class="delimiter">'</span><span class="content">repository</span><span class="delimiter">'</span></span>)
+    mock_repo.stub(<span class="symbol">:get</span>).with(<span class="string"><span class="delimiter">'</span><span class="content">foo</span><span class="delimiter">'</span></span>).and_return(<span class="string"><span class="delimiter">'</span><span class="content">bar</span><span class="delimiter">'</span></span>)
+    app.stub(<span class="symbol">:repository</span>).and_return(mock_repo)
+    get <span class="string"><span class="delimiter">'</span><span class="content">/</span><span class="delimiter">'</span></span>
+    last_response.body.should == <span class="string"><span class="delimiter">'</span><span class="content">bar</span><span class="delimiter">'</span></span>
+  <span class="keyword">end</span>
+<span class="keyword">end</span></pre></div>
+</div>
+
+
+<p>Now, <code>app</code> is pointing to a HelloWorld instance, so we should be able
+to stub out its dependency, right? Wrong. It still calls the real
+<code>repository</code> method.</p>
+
+<blockquote class="posterous_short_quote"><p><strong>Surprise #2: HelloWorld.new doesn&rsquo;t create an instance of HelloWorld.</strong></p></blockquote>
+
+<p>Seriously, have a look yourself:</p>
+
+<div class="CodeRay">
+  <div class="code"><pre>$ irb
+&gt;&gt; require 'hello-world'
+=&gt; true
+&gt;&gt; HelloWorld.new.class
+=&gt; Sinatra::ShowExceptions</pre></div>
+</div>
+
+
+<p>WAT.</p>
+
+<p>What is going on here? Well, Sinatra has overridden Object#new with
+its own new method, so that when you new up a Sinatra controller you
+get all sorts of Rack middleware for free. This middleware does nice
+things like catching and formatting exceptions. That&rsquo;s all fine. But
+<em>why</em> is Sinatra&rsquo;s method of attaching middleware the wholesale
+replacement of a core language feature?</p>
+
+<p>What this means is that we weren&rsquo;t stubbing <code>repository</code> on our app at
+all; we were stubbing it on Sinatra::ShowExceptions, the outermost
+middleware layer. Deep down the middleware stack, our app still had
+its real <code>repository</code> method intact.</p>
+
+<p>Thankfully, Sinatra aliases the original Object#new as <code>new!</code> in your
+code, so if you want a naked controller, you can still get one. Here&rsquo;s
+attempt #3:</p>
+
+<div class="CodeRay">
+  <div class="code"><pre>require <span class="string"><span class="delimiter">'</span><span class="content">rspec</span><span class="delimiter">'</span></span>
+require <span class="string"><span class="delimiter">'</span><span class="content">rack/test</span><span class="delimiter">'</span></span>
+require <span class="string"><span class="delimiter">'</span><span class="content">hello-world</span><span class="delimiter">'</span></span>
+
+describe <span class="string"><span class="delimiter">'</span><span class="content">Hello World application</span><span class="delimiter">'</span></span> <span class="keyword">do</span>
+  include <span class="constant">Rack</span>::<span class="constant">Test</span>::<span class="constant">Methods</span>
+
+  <span class="keyword">def</span> <span class="function">app</span>
+    <span class="constant">HelloWorld</span>.new! <span class="comment">#let's have an unadulterated instance now</span>
+  <span class="keyword">end</span>
+
+  it <span class="string"><span class="delimiter">'</span><span class="content">should return Hello, world at root URL</span><span class="delimiter">'</span></span> <span class="keyword">do</span>
+    mock_repo = mock(<span class="string"><span class="delimiter">'</span><span class="content">repository</span><span class="delimiter">'</span></span>)
+    mock_repo.stub(<span class="symbol">:get</span>).with(<span class="string"><span class="delimiter">'</span><span class="content">foo</span><span class="delimiter">'</span></span>).and_return(<span class="string"><span class="delimiter">'</span><span class="content">bar</span><span class="delimiter">'</span></span>)
+    app.stub(<span class="symbol">:repository</span>).and_return(mock_repo)
+    get <span class="string"><span class="delimiter">'</span><span class="content">/</span><span class="delimiter">'</span></span>
+    last_response.body.should == <span class="string"><span class="delimiter">'</span><span class="content">bar</span><span class="delimiter">'</span></span>
+  <span class="keyword">end</span>
+<span class="keyword">end</span></pre></div>
+</div>
+
+
+<p>Unfortunately, this still doesn&rsquo;t work, even though we have a real
+instance of HelloWorld and we really are stubbing <code>repository</code> on
+it. Why?</p>
+
+<blockquote class="posterous_short_quote"><p><strong>Surprise #3: Sinatra <code>dup</code>s your controller before handling an HTTP request</strong></p></blockquote>
+
+<p>From &lsquo;sinatra/base.rb&rsquo;:</p>
+
+<div class="CodeRay">
+  <div class="code"><pre># Rack call interface.
+def call(env)
+  dup.call!(env)
+end</pre></div>
+</div>
+
+
+<p>So when you call your Sinatra instance&rsquo;s <code>call</code> method, it&rsquo;s not
+your instance at all that handles it, it&rsquo;s a <code>dup</code> of that
+instance. And the <code>dup</code> doesn&rsquo;t have its methods stubbed like the
+original did.</p>
+
+<hr />
+
+<p>At this point, I pause and realise that if I&rsquo;m fighting something this
+hard, it&rsquo;s probably because my mental model doesn&rsquo;t match Sinatra&rsquo;s,
+and that there&rsquo;s probably a way to achieve what I want which doesn&rsquo;t
+involve having to dig around in Sinatra&rsquo;s source code to work out what
+deep magic it is wreaking with my controllers.</p>
+
+<p>The problem I have is that <em>I already have a mental model</em> for web
+application development, which is based at the Rack level. I&rsquo;ve used
+Ring and understood it; and that means I can then go and learn Rack in
+about 10 minutes. Rack is simple. I like Rack.</p>
+
+<p>Sinatra, on the other hand, seems to be trying to hide Rack from
+me. It&rsquo;s a shame, because Rack seems to be the only part of the system
+that I understand. As a result, I&rsquo;m left flailing in Sinatra&rsquo;s magical
+kingdom wondering why the ground keeps shifting under my feet.</p>

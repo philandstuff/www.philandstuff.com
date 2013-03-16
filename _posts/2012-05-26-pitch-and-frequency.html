@@ -1,0 +1,198 @@
+---
+layout: post
+title: Pitch and Frequency
+published: true
+---
+<p>I&rsquo;ve just come back from
+<a href="http://euroclojure.com/2012/">EuroClojure 2012</a>, where there were a
+number of Overtone talks and a number of tweets asking for music
+theory resources aimed at computer scientists. This will hopefully
+blog number 1 in a series on that theme.</p>
+
+<p>Note that the code examples are designed to be pasted into a Clojure
+repl, so that you can take the code and play with it yourself.</p>
+
+<hr />
+
+<p>The basic atoms of synthesizing sounds in Overtone are
+oscillators. An oscillator takes a frequency and makes a noise. Here
+are some examples:</p>
+
+<div class="CodeRay">
+  <div class="code"><pre>(use 'overtone.live)
+(demo (sin-osc 440))  ; sine wave
+(demo (saw 440))      ; saw-tooth wave
+(demo (square 440))   ; square wave</pre></div>
+</div>
+
+
+<p>In each of these, we&rsquo;re making an oscillator and giving it a frequency
+of 440 Hz &mdash; or equivalently, 440 cycles per second (cps). The problem
+we find is that most music isn&rsquo;t defined in terms of frequency, it&rsquo;s
+defined in terms of notes of the scale: C D E F G A B C and all the
+sharps and flats in between. How do we play a tune on a sine wave
+generator when the tune is made of notes rather than frequencies?</p>
+
+<p>First, let&rsquo;s write some helpers to play a sequence of frequencies
+through a sine wave:</p>
+
+<div class="CodeRay">
+  <div class="code"><pre>(definst sine-wave [freq 440]
+   (sin-osc freq))
+;=&gt; #&lt;instrument: sine-wave&gt;
+(defn play-freqs
+      ([freqs] (play-freqs freqs (now) (sine-wave (first freqs))))
+      ([freqs time inst]
+        (if-let [freqs (seq freqs)]
+          (do (at time (ctl (:id inst) :freq (first freqs)))
+              (apply-at (+ time 300) #'play-freqs [(rest freqs) (+ time 300) inst]))
+          (at time (kill (:id inst))))))
+;=&gt; #'user/play-freqs
+(play-freqs [440 660 330 440 220 880 220])
+; *beautiful melody*
+;=&gt; #&lt;ScheduledJob id: 76, created-at: Sat 09:32:26s, initial-delay: 0, desc: &quot;Overtone delayed fn&quot;, scheduled? false&gt;</pre></div>
+</div>
+
+
+<p>We define a simple intrument, <code>sine-wave</code>, which has one parameter,
+<code>freq</code>. We can start the instrument with a particular frequency by
+writing <code>(sine-wave 440)</code>; this returns a map of data about the
+particular oscillator instance which is generating the note. We can
+change the freq parameter of a running instrument by using
+<code>(ctl (:id inst) :freq 660)</code>. Finally, we can stop a running inst with
+<code>(kill (:id inst))</code>. (And if it all goes horribly wrong, we can stop
+absolutely everything with <code>(stop)</code>).</p>
+
+<p>Our goal is to be able to use <code>play-freqs</code> to play tunes made of
+keywords rather than frequencies: <code>[:c4 :d4 :e4 :d4 :c4]</code>.</p>
+
+<h2>Frequency of notes from first principles</h2>
+
+<p>You can calculate frequency from pitch using only four fundamental
+axioms:</p>
+
+<ol>
+<li>When an orchestra tunes up at the start of a rehearsal, they tune to
+A. A is normally defined to be 440 Hz.</li>
+<li>Going up one octave is the same as doubling the frequency. That
+is, one octave above tuning A is 880 Hz, and one octave below is
+220 Hz.</li>
+<li>There are twelve semitones in an octave.</li>
+<li>All semitones are equally sized.</li>
+</ol>
+
+
+<p>If going up an octave doubles the frequency, then going up twelve
+semitones must also double the frequency. This means we must find the
+number <code>semitone</code>, where:</p>
+
+<div class="CodeRay">
+  <div class="code"><pre>(nth (iterate #(* semitone %) 440) 12)
+;=&gt; 880</pre></div>
+</div>
+
+
+<p>In other words, we want <code>semitone^12 == 2</code>, so semitone must be the
+twelfth root of 2:</p>
+
+<div class="CodeRay">
+  <div class="code"><pre>; from the contrib library [org.clojure/math.numeric-tower &quot;0.0.1&quot;]
+(require '([clojure.math.numeric-tower :as 'math]))
+;=&gt; nil
+(def semitone (math/expt 2 1/12))
+;=&gt; #'user/semitone
+(nth (iterate #(* semitone %) 440) 12)
+;=&gt; 880.0000000000003
+; or alternatively:
+(* (math/expt semitone 12) 440)
+;=&gt; 880.0000000000003</pre></div>
+</div>
+
+
+<p>We can now define a function to find a frequency a given number of
+semitones from tuning A:</p>
+
+<div class="CodeRay">
+  <div class="code"><pre>(defn semitones-from-a [semis]
+  (* (math/expt semitone semis) 440))
+;=&gt; #'user/semitones-from-a
+(semitones-from-a 0)
+;=&gt; 440.0
+(semitones-from-a 12)
+;=&gt; 880.0000000000003
+(semitones-from-a 3)
+;=&gt; 523.2511306011974
+(semitones-from-a -9)
+;=&gt; 261.6255653005985</pre></div>
+</div>
+
+
+<p>Normally, however, we use MIDI notes as a numerical representation of
+notes, rather than displacement from tuning A. In the MIDI note
+system, tuning A is defined to be 69, and going up or down one
+semitone increases or decreases the note value by one. So, for
+example, middle C is 60. We can get from midi notes to frequencies
+like this:</p>
+
+<div class="CodeRay">
+  <div class="code"><pre>(defn midi-to-hz [midi-note]
+  (semitones-from-a (- midi-note 69)))
+;=&gt; #'user/midi-to-hz
+(midi-to-hz 69)
+;=&gt; 440.0
+(midi-to-hz 81)
+;=&gt; 880.0000000000003
+(midi-to-hz 72)
+;=&gt; 523.2511306011974
+(midi-to-hz 60)
+;=&gt; 261.6255653005985</pre></div>
+</div>
+
+
+<p>In fact, Overtone provides a function <code>midi-&gt;hz</code> to do exactly this
+transformation:</p>
+
+<div class="CodeRay">
+  <div class="code"><pre>(midi-&gt;hz 69)
+;=&gt; 440.0
+(midi-&gt;hz 81)
+;=&gt; 880.0
+(midi-&gt;hz 72)
+;=&gt; 523.2511306011972
+(midi-&gt;hz 60)
+;=&gt; 261.6255653005986</pre></div>
+</div>
+
+
+<p>So with a melody as MIDI notes, we can play it as follows:</p>
+
+<div class="CodeRay">
+  <div class="code"><pre>(play-freqs (map midi-&gt;hz [60 62 64 62 60 72 67 60]))</pre></div>
+</div>
+
+
+<hr />
+
+<p>If you&rsquo;ve got this far, the maths is over. The last mile is to be able
+to use keywords instead of raw MIDI values. Overtone provides a
+function for this called <code>note</code>:</p>
+
+<div class="CodeRay">
+  <div class="code"><pre>(note :a4)
+;=&gt; 69
+(note :a5)
+;=&gt; 81
+(note :c5)
+;=&gt; 72
+(note :c4)
+;=&gt; 60</pre></div>
+</div>
+
+
+<p>So we can play our tune by chaining this with <code>midi-&gt;hz</code>:</p>
+
+<div class="CodeRay">
+  <div class="code"><pre>(play-freqs (map (comp midi-&gt;hz note)
+    [:c4 :c5 :e4 :f4 :g4 :f4 :e4 :d4 :c4 :c4]))
+; *beautiful music*</pre></div>
+</div>

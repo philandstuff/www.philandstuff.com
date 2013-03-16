@@ -1,0 +1,73 @@
+---
+layout: post
+title: Interview with John Allspaw on continuous delivery
+published: true
+---
+<p>I just finished watching this great interview of John Allspaw on
+<a href="http://continuousdelivery.com/2012/09/john-allspaw-discusses-devops/">Devops and Continuous Delivery</a>. John
+Allspaw is SVP of Tech Operations at Etsy.</p>
+
+<p>It&rsquo;s worth watching the full talk, but here are some of the things I
+took from it:</p>
+
+<h1>Gradually approaching continuous delivery</h1>
+
+<blockquote class="posterous_medium_quote"><p>&ldquo;We may deploy 20 times a day, but we wouldn&rsquo;t deploy 20 times a day if
+we went down 20 times a day. The only reason we got to 20 times a day,
+is that the first time we deployed 5 times a day, it worked out.&rdquo;</p></blockquote>
+
+<p>I have nothing to add to this.</p>
+
+<h1>Devops does not mean one big team</h1>
+
+<p>I particularly liked the question &ldquo;What&rsquo;s the role of operations in an
+organization that wants to practice devops?&rdquo; There is an idea floating
+around that devops means that there should no longer be separate
+development and operations teams &mdash; and while there is a lot of merit
+in forming cross-functional teams, this doesn&rsquo;t necessarily mean that
+we can (or should) do away with operations entirely.</p>
+
+<p>Certainly, product-focussed teams should be taking on a lot of what
+was traditionally operational responsibility &mdash; but they don&rsquo;t have to
+take it all on. For example, John describes this process at etsy as
+freeing the operations from &ldquo;reactive work&rdquo; &mdash; eg deployments &mdash; and
+allowing them to focus instead on &ldquo;proactive work&rdquo; &mdash; eg designing
+infrastructure.</p>
+
+<h1>Continuous delivery and database migrations</h1>
+
+<p>I have previously been a developer, writing Java code and using
+<a href="http://dbdeploy.com/">dbdeploy</a> to migrate the database schema in
+line with deploying a new version of code which requires a schema
+change. I have also been on a more operational team, where I was
+deploying other people&rsquo;s ruby code to production using capistrano,
+where the deploy:migrations target handles database migrations in sync
+with an application deployment. Database migrations have always made
+me nervous &mdash; they are in general irreversible, and the database is
+such a core part of the system that a failed migration can be
+disastrous to try to recover from.</p>
+
+<p>John Allspaw has worked on places that deploy 50 times a day. He has
+fielded the question &ldquo;If you deploy 50 times a day, how do you change
+the database 50 times a day?&rdquo; The answer is quite simply: you don&rsquo;t.</p>
+
+<p>He instead describes his previous experience at flickr, where frequent
+code deployments were enabled by <em>separating code and database
+deployment</em>. The database is migrated maybe once a week, and the
+schemas are in place before the code that needs to use those schemas
+is deployed.</p>
+
+<p>This is one of those obvious-in-hindsight revelations. Working with
+Clojure has previously encouraged me to look for entangled concerns in
+code and to decompose code into simple pieces. John&rsquo;s solution to the
+database migration problem is the same approach in a different sphere
+&mdash; we want to deploy frequently, but database deployment is
+risky. Ergo, we should decouple code deployment from database deployment.</p>
+
+<hr />
+
+<p>That&rsquo;s what I got from the talk, but he spoke about a whole bunch more
+topics beyond that. Give it a watch!</p>
+
+<p>Link again:
+<a href="http://continuousdelivery.com/2012/09/john-allspaw-discusses-devops/">John Allspaw on Devops and Continuous Delivery</a></p>

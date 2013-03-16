@@ -1,0 +1,197 @@
+---
+layout: post
+title: ! '''lvalue'' considered harmful'
+published: true
+---
+<p>If there is one term I would like to erase from computing terminology
+forever, it is &lsquo;lvalue&rsquo;. It is a confusing and distracting term, and
+far from making a discussion more precise, it makes it less so.</p>
+
+<p>The problem is that there are multiple competing definitions for lvalue.</p>
+
+<h2>1. A storage location: The C Standard definition</h2>
+
+<p>A C <em>lvalue</em> is an expression which refers to a location which can
+store a value.</p>
+
+<p>This is the definition I am most familiar with. Given the C code:</p>
+
+<div class="CodeRay">
+  <div class="code"><pre><span class="predefined-type">int</span> a[<span class="integer">30</span>];
+<span class="predefined-type">int</span> i=<span class="integer">3</span>,j=<span class="integer">5</span>,k=<span class="integer">10</span>;
+a[i] = k;</pre></div>
+</div>
+
+
+<p>the following are <em>all</em> lvalues:</p>
+
+<div class="CodeRay">
+  <div class="code"><pre>a
+i
+j
+k
+a[i]
+a[j]
+a[k]</pre></div>
+</div>
+
+
+<p>because every one of these expressions refers to a memory location
+which holds a value. The standard suggests in a footnote that it is
+helpful to think of &ldquo;lvalue&rdquo; as short for <em>locator value</em>.</p>
+
+<h2>2. Something which can be assigned to: The C Standard &ldquo;modifiable lvalue&rdquo;</h2>
+
+<p>In C, a <em>modifiable lvalue</em> is an expression which <em>may</em> appear on the
+left-hand side of an assignment.</p>
+
+<p>Note that this is not contingent on there being such an assignment;
+only that assignment is <em>possible</em>. As a result, given the same C
+example code, the following are modifiable lvalues:</p>
+
+<div class="CodeRay">
+  <div class="code"><pre>i
+j
+k
+a[i]
+a[j]
+a[k]</pre></div>
+</div>
+
+
+<p>Notably missing is a. a is an lvalue but not a modifiable lvalue,
+because it refers to a location in memory but can not appear as the
+left side of an assignment. In C, you cannot assign to a whole array,
+only to one cell at a time.</p>
+
+<p>In contexts outside of C, this is often simply referred to as an
+lvalue, but when talking about C you should stick to Standard
+terminology to be as precise as possible. Especially if you&rsquo;re asking
+questions on comp.lang.c.</p>
+
+<h2>3. Something on the left of an assignment: the &ldquo;left-hand side&rdquo; definition</h2>
+
+<p>This definition is of a totally different character to the C Standard
+definitions. In the perl code:</p>
+
+<div class="CodeRay">
+  <div class="code"><pre>my $array = [];
+my $i = 3;
+my $j = 5;
+$array-&gt;[$i] = $j++;</pre></div>
+</div>
+
+
+<p>this definition states that the <em>only</em> lvalue is $array->[$i] because
+it&rsquo;s on the left-hand side. $array->[$i] is an lvalue <em>only</em> in the
+context of this assignment; in another assignment (say, $foo = $bar)
+$array->[$i] is no longer an lvalue, $foo is instead.</p>
+
+<p>There is an obvious problem in this example that $array->[$i] is not the
+only expression which gets written to: $j is also written to by the
+autoincrement operator.</p>
+
+<p>I believe when people use this definition, they really mean definitions 4 or 2
+but are using sloppy language. Nevertheless it is a definition which
+people use.</p>
+
+<h2>4. Something which is written to</h2>
+
+<p>This is similar to the above argument, but states more precisely that
+an lvalue is something which is written to in an expression. In the
+above example, there are two lvalues: $array->[$i] and $j, both of which
+are written to as a result of the code. I like it more than definition 3 for
+this reason, but you can start to see how thinking of &lsquo;lvalue&rsquo; and
+&lsquo;rvalue&rsquo; as analogous to &lsquo;left&rsquo; and &lsquo;right&rsquo; breaks down.</p>
+
+<h2>Mutual incompatibility</h2>
+
+<p>These four definitions are mutually incompatible. The biggest problem
+is that definitions #1 and #2 are absolute, while #3 and #4 are
+contingent on a particular assignment. Under #3 and #4, a variable can
+be an lvalue in one line of code, but on the next line it is not an
+lvalue because it is not written to. Under #1, a variable is <em>always</em>
+an lvalue because it always refers to a location in memory. Under #2,
+a variable is <em>always</em> an lvalue unless it is of some type unsuitable
+for assignment &mdash; a constant, for example.</p>
+
+<p>In other words, definition #2 says an lvalue <em>can</em> appear on the
+left-hand side of an assignment, while definition #3 says an lvalue
+<em>does</em> appear on the left-hand side of an assignment.</p>
+
+<p>Definitions #1 and #2 are incompatible in programming languages which
+have storage locations which cannot be assigned to. Such a location is
+a #1-lvalue but not a #2-lvalue. The chief problem requiring separate
+definitions in C is the existence of array and structure types &mdash;
+these cannot be directly assigned to. In modern programming languages,
+arrays and structures can typically be assigned, so this problem is
+moot.</p>
+
+<p>The other main type of location which cannot be assigned to is a
+variable with constant type. There are many languages in which you can
+declare variables constant. A reasonable modification can be made to
+definition 2 to say &ldquo;an lvalue is an expression which could be on the left-hand
+side of an assignment, ignoring constant qualifiers&rdquo;; but then there
+exist lvalues which cannot be assigned to. Nevertheless outside of the
+context of C there are situations in which it is reasonable to
+conflate #1 and #2.</p>
+
+<h2>A survey of definitions</h2>
+
+<p>I did a search of various programming resources I know for definitions
+of lvalue. Here is what I came up with:</p>
+
+<ul>
+<li><a href="http://www.itu.dk/courses/BPRD/E2009/fundamental-1967.pdf">Strachey&rsquo;s seminal
+paper</a> in
+which he coins the term L-value: &ldquo;An L-value represents an area of the
+store of the computer.&rdquo; pretty explicitly #1</li>
+<li><a href="http://en.wikipedia.org/wiki/Lvalue">Wikipedia</a>: &ldquo;A value (computer
+science) that has an address&rdquo; #1 as of time of writing</li>
+<li><a href="http://en.wiktionary.org/wiki/lvalue">Wiktionary</a>: &ldquo;A value that
+can be treated as an address  or storage location.&rdquo; #1 as of time of
+writing.</li>
+<li><a href="http://www.drdobbs.com/cpp/208808373">Computer Programming and Precise
+Terminology</a>, a Dr Dobbs
+article: #1</li>
+<li>C Standard (read a <a href="http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1256.pdf">free draft
+here</a>): #1
+(and #2 for modifiable lvalue).</li>
+<li><a href="http://foldoc.org/lvalue">Foldoc</a>: &ldquo;A reference to a location, an
+expression which can appear as the destination of an assignment
+operator indicating where a value should be stored.&rdquo; #1 and #2 in the
+same sentence.</li>
+<li><a href="http://cplus.about.com/od/glossar1/g/lvalue.htm">about.com</a>: #3
+(top google hit for lvalue definition)</li>
+<li><a href="http://c2.com/cgi/wiki?LeftValue">c2.com</a>: Direct quoting of Strachey; #1</li>
+<li><a href="http://msdn.microsoft.com/en-us/library/f90831hc.aspx">msdn</a>: &ldquo;An
+lvalue refers to an object that persists beyond a single expression.
+You can think of an lvalue as an object that has a name.&rdquo; #1</li>
+<li><a href="http://perldoc.perl.org/perlglossary.html#L">perldoc perlglossary</a>: #2</li>
+<li><a href="http://oreilly.com/catalog/9780596516178">The Ruby Programming
+Language</a>: page 92, #2</li>
+<li><a href="http://oreilly.com/catalog/9780596000271">The Camel Book, 3rd
+edition</a>: page 52, #2</li>
+</ul>
+
+
+<p>I must be honest here and say I fully expected more instances of
+definitions #3 and #4 than I found. I have come across people using #3
+and #4 on mailing lists and in fora enough for the term to be a source
+of confusion &mdash; in fact, just today I saw somebody using definition
+4. The mnemonic value of &lsquo;lvalue&rsquo; and &lsquo;rvalue&rsquo; versus &lsquo;left&rsquo; and
+&lsquo;right&rsquo; encourages people to think of lvalues as something to do with
+assignment, rather than as something to do with persistent storage
+locations.</p>
+
+<p>In any case, in my experience there are enough people confusing the
+term &lsquo;lvalue&rsquo; that I feel that it should not be used at all. I would
+instead recommend the term &lsquo;location&rsquo;. If you must use the term
+lvalue, please use definition #1.</p>
+
+<h2>On rvalues</h2>
+
+<p>I haven&rsquo;t mentioned the term rvalue at all here. It doesn&rsquo;t get used
+nearly as much, for which I am thankful; I believe the reason it isn&rsquo;t
+used is because the term <em>value</em> does the same job much better, or
+where more precision is required, <em>value of an expression</em>.</p>

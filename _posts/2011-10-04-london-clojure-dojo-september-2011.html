@@ -1,0 +1,136 @@
+---
+layout: post
+title: London Clojure Dojo, September 2011
+published: true
+---
+<p>The latest clojure dojo was on a subject suggested by <a href="http://rrees.wordpress.com/">Robert
+Rees</a>: write a program to play 20
+Questions, such that the program starts with a small dataset of known
+celebrities, but each time it fails to guess someone, you teach it a
+new question. So, for example, if it had guessed Barack Obama but I
+was thinking of Abraham Lincoln, I could teach it to ask &ldquo;Are you
+alive?&rdquo; to distinguish between these two people later.</p>
+
+<p>I decided to take the idea and extend it by writing a shared server
+which everyone could use. They would download the initial dataset,
+play a game locally, then when they were finished, upload their
+dataset back to the server to share with everyone else.</p>
+
+<p>The code for the server is on <a href="https://github.com/ppotter/questions-server">my
+github</a>. It operates via
+simple HTTP &mdash; there is one URL at /20-questions/latest which accepts
+either a GET request to pull down the data, or a PUT to push it back
+up.</p>
+
+<p>Once again, I learned a number of lessons &mdash; last time, they were
+about participating in a dojo, this time, they were about organizing a
+dojo.</p>
+
+<h1>Lesson 1: User input is hard.</h1>
+
+<p>It&rsquo;s upsetting that I hadn&rsquo;t thought about this beforehand, but just
+like in every other language, user input in Clojure is painful, and
+difficult to get anything done with in the time constraints of a dojo.
+Although one or two of the dojo teams managed to wrestle with
+read-line enough to get it working, the rest of the teams ended up
+writing internal DSLs (or, less grandiosely, functions) to play the
+game without having to solve some accidental complexity. In hindsight,
+I might have thought more deeply about how to deal with user input.</p>
+
+<h1>Lesson 2: Error handling feedback is important</h1>
+
+<p>A number of the teams had problems uploading to the server. Uploading
+is always going to be harder than downloading, because you have to
+generate the data in the correct format, and there&rsquo;s more ways for
+that to go wrong than for parsing the downloaded data.</p>
+
+<p>The server had actually been set up to issue useful responses to
+problems: if it thought a request was not well formatted, or that it
+didn&rsquo;t resemble a tree of questions, it would return a 400 (Bad
+request) code. If, on the other hand, it received a valid question
+tree, but one which was based on out of date data, it would return a
+409 (Conflict) response. An example of the latter situation is where
+you try to upload a tree, but somebody else adds a new celebrity and
+beats you to it. In order to prevent people from wiping out each
+other&rsquo;s progress, the server would reject the request and issue a 409.</p>
+
+<p>Two problems prevented this from being useful feedback. The first was
+that I just didn&rsquo;t explain this at all; I felt that it might be too
+much detail to go in before people had gotten their teeth into it. But
+I could have at least mentioned that the error codes were meaningful
+and that they could have asked me for help once they had reached the
+point of trying to upload.</p>
+
+<p>The second problem was that clj-http, the library we were using, did
+not show very much feedback when the error responses were received.
+The server had, in fact, filled in a full request body, explaining the
+situation in plain english; but clj-http just threw an exception which
+said &ldquo;400&rdquo; or &ldquo;409&rdquo; &ndash; not even a &ldquo;Bad request&rdquo; or &ldquo;Conflict&rdquo;! This
+made the fact that there was more information available very
+undiscoverable.</p>
+
+<p>So all in all, as I could see these problems happening, people
+struggling with user input or seemingly random HTTP response codes, I
+was getting more and more nervous that nobody would be able to upload
+anything to the central server &mdash; whose data, by the way, was being
+projected onto a big screen for everyone to see. Thankfully, after a
+while, one of the teams successfully uploaded, and shortly thereafter,
+a number of the other teams did too. By the time we were ready for
+show and tell, we had built up quite a question tree:</p>
+
+<div class="CodeRay">
+  <div class="code"><pre>{<span class="symbol">:no</span>
+ {<span class="symbol">:no</span>
+  {<span class="symbol">:no</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Elizabeth I</span><span class="delimiter">&quot;</span></span>,
+   <span class="symbol">:question</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Did you find Nemo?</span><span class="delimiter">&quot;</span></span>,
+   <span class="symbol">:yes</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Nemo's Mum</span><span class="delimiter">&quot;</span></span>},
+  <span class="symbol">:question</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Are you a king?</span><span class="delimiter">&quot;</span></span>,
+  <span class="symbol">:yes</span>
+  {<span class="symbol">:no</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Richard the 3rd</span><span class="delimiter">&quot;</span></span>,
+   <span class="symbol">:question</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Do you have blue suede shoes</span><span class="delimiter">&quot;</span></span>,
+   <span class="symbol">:yes</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Elvis</span><span class="delimiter">&quot;</span></span>}},
+ <span class="symbol">:question</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Are you alive?</span><span class="delimiter">&quot;</span></span>,
+ <span class="symbol">:yes</span>
+ {<span class="symbol">:no</span>
+  {<span class="symbol">:no</span>
+   {<span class="symbol">:no</span>
+    {<span class="symbol">:no</span>
+     {<span class="symbol">:no</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Chuck Norris</span><span class="delimiter">&quot;</span></span>,
+      <span class="symbol">:question</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Are you in the building?</span><span class="delimiter">&quot;</span></span>,
+      <span class="symbol">:yes</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Elvis</span><span class="delimiter">&quot;</span></span>},
+     <span class="symbol">:question</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Who's the Daddy?</span><span class="delimiter">&quot;</span></span>,
+     <span class="symbol">:yes</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">The Daddy</span><span class="delimiter">&quot;</span></span>},
+    <span class="symbol">:question</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Are you a panda?</span><span class="delimiter">&quot;</span></span>,
+    <span class="symbol">:yes</span>
+    {<span class="symbol">:no</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Kung fu Panda</span><span class="delimiter">&quot;</span></span>,
+     <span class="symbol">:question</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Are you ling ling</span><span class="delimiter">&quot;</span></span>,
+     <span class="symbol">:yes</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Ling Ling</span><span class="delimiter">&quot;</span></span>}},
+   <span class="symbol">:question</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Are you a kung fu expert?</span><span class="delimiter">&quot;</span></span>,
+   <span class="symbol">:yes</span>
+   {<span class="symbol">:no</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Bruce Durling</span><span class="delimiter">&quot;</span></span>,
+    <span class="symbol">:question</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Are you (not Bruce Durling)?</span><span class="delimiter">&quot;</span></span>,
+    <span class="symbol">:yes</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Not Bruce Durling</span><span class="delimiter">&quot;</span></span>}},
+  <span class="symbol">:question</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">are you a newsreader?</span><span class="delimiter">&quot;</span></span>,
+  <span class="symbol">:yes</span>
+  {<span class="symbol">:no</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Trevor McDonald</span><span class="delimiter">&quot;</span></span>,
+   <span class="symbol">:question</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Are you the Irish newsreader (the only one)?</span><span class="delimiter">&quot;</span></span>,
+   <span class="symbol">:yes</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Sharon Ni Bheolan</span><span class="delimiter">&quot;</span></span>}}}</pre></div>
+</div>
+
+
+<p>I think I&rsquo;ve never seen such a great example of the GIGO principle.</p>
+
+<p>If you want to see some of the client code, <a href="https://github.com/tuor713/20-questions">team
+4</a> and <a href="https://github.com/NeillAlexander/london-clojure-dojo-20-questions-group-5">team
+5</a>
+uploaded theirs. Also, after the dojo, Uday created a <a href="https://github.com/uday-rayala/20QuestionsClient">zipper-based
+client</a>.</p>
+
+<p><em>The London clojure dojo happens on the last Tuesday of every month.
+During the dojo, we split into groups of four or five around a single
+computer, and each person takes a turn at the keyboard. This ensures
+that even if you have zero clojure experience, you will get the
+opportunity to write some code at the event.</em></p>
+
+<p><em>Entry to the dojo is free, but advance booking is required. Listen
+for announcements on the London clojurians mailing list.</em></p>

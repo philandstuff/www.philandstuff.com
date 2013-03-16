@@ -1,0 +1,277 @@
+---
+layout: post
+title: ! 'Rpm, Ruby, and Bundler  '
+published: true
+---
+<p>I was on a project recently where we wanted to deploy a Ruby Sinatra
+application to a CentOS 6.2 production environment. Our means of
+distributing software to all our environments was RPM &ndash; we took our
+sinatra app, packaged it into an RPM, and stuck it in
+production. Installing all our software via RPM has certain
+advantages:</p>
+
+<ul>
+<li>On a production system, all installed files belong to some RPM. This
+means that any given file in production can be traced, via the RPM
+it belongs to, back to the Jenkins job which created it and the
+source code version which defined it.</li>
+<li>We were using puppet for configuration management, and puppet has
+good support for installing RPM packages via the package resource
+type. This resource type ensures idempotency and enables the ability
+to roll versions of software forward or backward with confidence.</li>
+</ul>
+
+
+<p>Any nontrivial ruby application will want to depend on some gems, and
+ours was no different. We used bundler to manage our gem
+dependencies. This carries its own advantages:</p>
+
+<ul>
+<li>We don&rsquo;t have to care about transitive dependencies. Bundler pulls
+them in for us.</li>
+<li>Conversely, we can lock the transitive dependencies we&rsquo;ve pulled in
+using Gemfile.lock and by checking our gems into vendor/cache.</li>
+<li>Our gems are isolated from those belonging to other applications, so
+different apps can use different versions of the same gem in safety.</li>
+<li>Bundler is quite capable of managing different sets of gems for
+build, test, and deployment. This means we can also control which
+version of rake, rspec, rack-test etc will be used to build and test
+our application in CI.</li>
+</ul>
+
+
+<p>We were also following the advice of
+<a href="http://ryan.mcgeary.org/2011/02/09/vendor-everything-still-applies/">vendor everything</a>
+&mdash; we were running <code>bundle package</code> to download gem files to
+vendor/cache and checking them into source control. This practice means:</p>
+
+<ul>
+<li>CI doesn&rsquo;t need to talk to rubygems.org to build our app. We have
+faster and more reliable builds.</li>
+<li>We are firmly locked to a particular set of gems. You might think
+that Gemfile.lock does this, but you&rsquo;d be wrong. Gemfile.lock
+doesn&rsquo;t by default carry specific versions of transitive
+dependencies, only constrained versions. For example, we use the
+passenger gem, which pulls in fastthread. Our Gemfile.lock has a
+dependency on fastthread (>= 1.0.1), meaning that we don&rsquo;t know
+specifically which version of fastthread will be used. By vendoring
+everything, we know exactly which version of which gem is used by
+any given version of our source code, because it is the version
+saved in vendor/cache.</li>
+</ul>
+
+
+<hr />
+
+<p>However, we quickly hit a number of issues with bundler which made it
+difficult to package up our RPM satisfactorily:</p>
+
+<ul>
+<li>Bundler wants to be run on the target machine at deployment time,
+not on the CI server at build time</li>
+<li>Bundler has lots of implicit configuration in .bundle/config and in
+environment variables</li>
+</ul>
+
+
+<h2>RPM and Bundler&rsquo;s competing installation practices</h2>
+
+<p>In order to get bundler to install the gems that we have previously
+stored in the vendor/cache directory, we need to run <code>bundle install
+--deployment</code>. The <code>--deployment</code> option combines all sorts of
+desirable options for a production environment:</p>
+
+<ul>
+<li>Bundler normally installs gems to the system gem path. In deployment
+mode, they are installed to vendor/bundle instead. This provides
+isolation from gems used by other apps on the same machine.</li>
+<li>Bundler normally will update Gemfile.lock if you have made changes
+to your Gemfile. In deployment mode, this is considered an error, as
+it indicates that the checked-in gems do not match those specified
+in the Gemfile.</li>
+</ul>
+
+
+<p>A fundamental question we had was: at what point in the
+build/test/deploy process should we run <code>bundle install --deployment</code>?
+The bundler docs are pretty clear about this: all of the
+<a href="http://gembundler.com/deploying.html">deployment examples</a> run
+<code>bundle install</code> on the target machine; the
+<a href="http://gembundler.com/bundle_install.html">bundle install</a> overview
+page says of <code>--deployment</code>: &ldquo;Do <strong>not</strong> use this flag on a
+development machine.&rdquo;, though it offers no reason why. (The man page
+says: &ldquo;it will cause in an error when the Gemfile is modified&rdquo;, but it
+doesn&rsquo;t say why <em>this</em> will happen. For that, see the next section.)</p>
+
+<p>Conversely, the philosophy of RPM is pretty clear too: <code>bundle install
+--deployment</code> should <em>not</em> be run on the target machine, because it
+creates a vendor/bundle directory which does not belong to any
+RPM. This means that when we uninstall or upgrade the RPM, the
+vendor/bundle directory will be left behind, potentially poisoning the
+bundle for future versions of the app. We could add a %preun script in
+our RPM specfile to remove the bundle and the .bundle/config file, but
+it&rsquo;s a hack. What we really want is to deploy our gems into their
+final locations on the CI server, and package them up into an RPM.</p>
+
+<p>It seems that bundler and RPM have competing design principles, so
+they don&rsquo;t want to play nicely together.</p>
+
+<h2>Bundler&rsquo;s implicit state</h2>
+
+<p>Bundler also has a confusing habit of implicitly creating and storing
+all sorts of state. There are two main culprits here: the
+.bundle/config file, and environment variables.</p>
+
+<p>The .bundler/config file, which lives in the same place as the
+Gemfile, is the reason that you shouldn&rsquo;t run <code>bundle install
+--deployment</code> on a development system. Bundler will save state to this
+file about the installation that it has done: location of installed
+gems, excluded groups, whether or not the gemfile is frozen, etc.</p>
+
+<p>Bundler also sets up some environment variables which mean that
+bundler is not reentrant. We came up against problems during our build
+process, where within our Rakefile we had the line:</p>
+
+<div class="CodeRay">
+  <div class="code"><pre>bundle install \
+  --path %{buildroot}/usr/lib/%{name}/vendor/bundle/ \
+  --deployment \
+  --binstubs %{buildroot}/usr/lib/%{name}/vendor/bin/ \
+  --without test</pre></div>
+</div>
+
+
+<p>If we ran the rakefile using plain old <code>rake package</code>, it would create
+our package with no issues. However, we want to use bundler to manage
+all of our gems &mdash; build, test and production dependencies. We want to
+use a bundler-provided rake, not a system-installed one. But if we ran
+rake using <code>bundle exec rake package</code>, it would fail with the
+following errors:</p>
+
+<div class="CodeRay">
+  <div class="code"><pre>$ bundle exec rake package
+# ... lots of output ...
++ bundle install --path /home/ppotter/src/node-api/BUILDROOT/node-api-0.0.3-9001.x86_64/usr/lib/node-api/vendor/bundle/ --deployment --binstubs /home/ppotter/src/node-api/BUILDROOT/node-api-0.0.3-9001.x86_64/usr/lib/node-api/vendor/bin/ --without test
+Could not find rake-0.9.2.2 in any of the sources
+Run `bundle install` to install missing gems.</pre></div>
+</div>
+
+
+<p>This is confusing &mdash; <code>bundle install --deployment</code> shouldn&rsquo;t care
+about the rake gem, because in our Gemfile we&rsquo;ve declared it in the
+test group, which we are excluding using <code>--without
+test</code>. Furthermore, the working directory for this command is
+/home/ppotter/src/node-api/BUILD/node-api, which is different from the
+directory where we are running <code>bundle exec rake package</code>, so any
+/home/ppotter/src/node-api/.bundle/config file which the outer bundler
+process has created should not conflict.</p>
+
+<p>The error occurs because bundler achieves much of its magic by
+setting various environment variables. To prevent the outer bundler
+instance &mdash; the one that runs rake &mdash; from interfering with the inner
+bundler instance &mdash; the one that installs our gems in deployment mode
+to the BUILDROOT directory &mdash; we need to unset those environment
+variables:</p>
+
+<div class="CodeRay">
+  <div class="code"><pre>env -u BUNDLE_GEMFILE -u BUNDLE_BIN_PATH -u RUBYOPT -u GEM_HOME -u GEM_PATH \
+bundle install \
+  --path %{buildroot}/usr/lib/%{name}/vendor/bundle/ \
+  --deployment \
+  --binstubs %{buildroot}/usr/lib/%{name}/vendor/bin/ \
+  --without test</pre></div>
+</div>
+
+
+<h2>Modifying the .bundle/config file</h2>
+
+<p>The .bundle/config file (which lives in the same place as the Gemfile)
+contains configuration which tells bundler where it has installed its
+gems. If we want to package our bundler-installed gems into an RPM, we
+need to also package .bundle/config so that bundler will know where
+the gems live on the target machine. Here is mine, after running the
+above command:</p>
+
+<div class="CodeRay">
+  <div class="code"><pre>---
+BUNDLE_WITHOUT: test
+BUNDLE_FROZEN: &quot;1&quot;
+BUNDLE_BIN: /home/ppotter/src/node-api/BUILDROOT/node-api-0.0.3-9001.x86_64/usr/lib/node-api/vendor/bin/
+BUNDLE_PATH: /home/ppotter/src/node-api/BUILDROOT/node-api-0.0.3-9001.x86_64/usr/lib/node-api/vendor/bundle/
+BUNDLE_DISABLE_SHARED_GEMS: &quot;1&quot;</pre></div>
+</div>
+
+
+<p>This is clearly going to cause problems if we package this file as-is,
+because the gems are not going to live in these directories but
+instead in /usr/lib/node-api/vendor/bundle. We need to strip the
+leading BUILDROOT path from the directories in this file before we can
+package it. We do this with a sed script in the %install section of
+the RPM specfile:</p>
+
+<div class="CodeRay">
+  <div class="code"><pre>sed -i -e 's,%{buildroot},,' %{buildroot}/usr/lib/${name}/.bundle/config</pre></div>
+</div>
+
+
+<p>I&rsquo;m sure that this is not the &ldquo;bundler way&rdquo; of doing things, but as I
+have said before, bundler and RPM&rsquo;s worldview are seemingly
+irreconcilable and something like this is necessary to get them to
+work together.</p>
+
+<h2>Architecture-specific code</h2>
+
+<p>The process of installing gems can also install system-specific
+extensions which will not be as portable as pure ruby code, nor as
+portable as the source .gem files from the vendor/cache
+directory. This is another reason for recommending that you run
+<code>bundle install --deployment</code> on the target machine rather than in the
+build environment.</p>
+
+<p>RPM, however, also has a way of coping with this portability problem,
+by marking packages as architecture-specific. If you don&rsquo;t specify an
+architecture yourself, rpmbuild will even autodetect any
+system-specific binaries in your RPM and give it an appropriate
+tag. We relied on this behaviour and sure enough, our resultant RPM is
+considered x86_64 code rather than noarch. This is fine for our
+production environment, where all machines run the same hardware and OS.</p>
+
+<h2>Installing bundler itself</h2>
+
+<p>We still need bundler to be present on the target machine. We used the
+fantastic <a href="https://github.com/jordansissel/fpm">fpm</a> tool to create a
+rubygem-bundler RPM, and made our node-api RPM depend on
+rubygem-bundler.</p>
+
+<p>We could have used fpm to package every single gem as a separate
+RPM. We didn&rsquo;t go with this option, because it doesn&rsquo;t enable
+separation of sets of gems used by different applications, and it
+doesn&rsquo;t allow us to know exactly which gems will be used by a
+particular source code version.</p>
+
+<h2>Future possibilities</h2>
+
+<p>Bundler 1.1 (which hasn&rsquo;t yet been released) provides a <code>--standalone</code>
+option which allows you to install gems in such a way that they don&rsquo;t
+depend on bundler. I&rsquo;d be very interested to investigate this option
+for packaging ruby apps as RPMs, although since we were running our
+ruby through Phusion Passenger I wonder whether it would work for us,
+or if it only works for the bundler-created binstubs.</p>
+
+<h2>Outcome</h2>
+
+<p>After all of this work, we have a solution which combines the
+advantages of both RPM and bundler:</p>
+
+<ul>
+<li>Every file we create on the target machine belongs to an RPM, and
+can be traced back to a particular Jenkins job which created that
+RPM</li>
+<li>The gems our application uses are isolated from any other gems on
+the target machine</li>
+<li>We can use bundler to handle transitive dependencies, while at the
+same time locking in the versions of all gems for a particular
+source code version. This means we have confidence that exactly the
+same gems were used in testing on the CI server as are used in
+production.</li>
+</ul>
