@@ -1,0 +1,11 @@
+
+* DONE extract from posterous
+* DONE index.html
+* DONE pagination
+* TODO upload to S3
+* TODO get domain name
+* TODO atom feed
+* TODO register with planet TW
+* TODO calendar
+* TODO tags
+* TODO links to twitter/github
