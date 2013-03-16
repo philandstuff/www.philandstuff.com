@@ -1,1 +1,2 @@
 exclude: ['Rakefile']
+paginate: 5
