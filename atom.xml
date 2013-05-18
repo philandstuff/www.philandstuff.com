@@ -3,7 +3,7 @@ layout: nil
 ---
 <?xml version="1.0"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title>www.philandstuff.com</title>
+  <title>Philip Potter</title>
   <link href="http://www.philandstuff.com/"/>
   <link type="application/atom+xml" rel="self" href="http://www.philandstuff.com/atom.xml"/>
   <updated>{{ site.time | date_to_xmlschema }}</updated>
