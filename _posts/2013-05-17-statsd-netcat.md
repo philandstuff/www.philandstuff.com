@@ -1,7 +1,9 @@
 ---
 layout: post
 title: The curious case of statsd and netcat
-tags: statsd networking
+tags:
+  - networking
+  - statsd
 ---
 At [GDS][] we are using [statsd][], a great tool from etsy for
 aggregating statistics and submitting them to [graphite][]. I was
@@ -236,10 +238,19 @@ treatments of how to close a TCP connection. If you're getting
 unexpected behaviour from piping echo into netcat, it may be due to
 odd connection teardown in your netcat.
 
+## Acknowledgements
+
+Thanks to [bob][] for helping dig some of this stuff out, and for
+suggesting I try different netcat implementations. Thanks to the
+[stanford networking course][stanford] for teaching me solid
+foundations to draw on while investigating this.
+
 [324267c]: https://github.com/etsy/statsd/commit/324267c527133b97f8902f4479af676bc0d7ce58
+[bob]: http://randomness.org.uk/
 [GDS]: http://digital.cabinetoffice.gov.uk/
 [graphite]: http://graphite.readthedocs.org/
 [RFC1122]: http://tools.ietf.org/html/rfc1122
+[stanford]: https://f12.class2go.stanford.edu/networking/Fall2012
 [statsd]: https://github.com/etsy/statsd
 [statsd-mgmt]: https://github.com/etsy/statsd/blob/master/docs/admin_interface.md
 [TCP]: http://en.wikipedia.org/wiki/Transmission_Control_Protocol
