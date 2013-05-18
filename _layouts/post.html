@@ -1,12 +1,7 @@
 ---
 layout: default
 ---
-<div class="span8">
-<h1><a href="{{ page.url }}">{{ page.title }}</a></h1>
-<p class="muted">Posted on {{ page.date | date_to_long_string }}</p>
-{{ content }}
-</div>
-<div class="span3 offset1">
+<div class="span3">
 <nav>
 <ul class="nav nav-tabs nav-stacked">
 <li><a href="/">Home</a></li>
@@ -18,4 +13,9 @@ Source to this page</a></li>
 {% for tag in page.tags %}
 <span class="label">{{ tag }}</span>
 {% endfor %}
+</div>
+<div class="span9">
+<h1><a href="{{ page.url }}">{{ page.title }}</a></h1>
+<p class="muted">Posted on {{ page.date | date_to_long_string }}</p>
+{{ content }}
 </div>
