@@ -1,0 +1,162 @@
+---
+title: Keeping a record
+layout: post
+date: 2014/02/15
+tags:
+  - org-mode
+  - emacs
+---
+
+People who work with me soon get to know that I keep meticulous
+records of meetings, conferences, user groups, and so on. If you
+haven't seen examples, here are my notes from [[https://github.com/philandstuff/fosdem2013][FOSDEM 2013]] and
+[[https://github.com/philandstuff/devopsdaysparis][devopsdays Paris]]: as you can see, I write down a /lot/ of material. I
+do exactly the same at meetings in my workplace, at user groups, and
+suchlike.
+
+I do this because, like many people, I think that meetings are an
+incredibly unproductive way to spend time. I therefore want to ensure
+that the meetings that we do have count for something. I have attended
+too many meetings at which a decision was made but not written down,
+only for the team to later forget what the decision was, and have to
+call another meeting to discuss the whole issue again. I have also
+seen people attend meetings where they had nothing to contribute, they
+only wanted to listen to the discussion and understand the outcome.
+
+Taking comprehensive notes solves problems like these. Decisions made
+are recorded, action items are recorded along with who has taken
+responsibility for them, and to ensure everyone has a common
+understanding of what took place, I email a copy of my notes to all
+attendees. For those who were interested in the outcome rather than
+the discussion, they no longer have to attend the meeting and can
+instead skim my notes afterwards, saving them time.
+
+Having said that, I rarely read the notes that I take. I find that the
+act of writing things down has benefits in itself: it forces me to
+engage more -- I can recognise when I'm drifting off because I stop
+taking notes; it forces me to restate the ideas I'm hearing in an
+abridged form, which means I'm not just passively listening but
+actively encoding. The combination of these effects mean that even if
+I were to save all my notes to /dev/null, it would still have been a
+massively beneficial activity, increasing my understanding and recall
+of what was said.
+
+* How I take notes
+
+When taking notes, speed is everything. You can't ask those present to
+slow down so you can capture all the detail. It's not possible (or not
+possible for me, anyway) to take a full transcript of who said what,
+so some editorial judgement is necessary. I'm constantly trying to
+digest what is being said into key points to write down, and
+distilling out fluff, rhetoric, repetition, and extraneous detail.
+
+I am a touch-typist. I don't think it's possible to take comprehensive
+notes without this. At a conference, I will be looking at the speaker
+and the slides while typing; having to look at the keyboard to find
+keys would slow me down far too much. Sadly, I don't think there's any
+silver bullet here; learning to touch-type is a long and difficult
+process, but it's necessary to be able to take comprehensive notes at
+a live event.
+
+I take notes using [[http://orgmode.org/][org-mode]] for emacs. I find org-mode a great fit for
+note-taking, because it is fast, intensely keyboard-focussed, and
+provides sufficient structure to be able to manage my notes. Here's an
+example of the notes I might take in a meeting:
+
+#+BEGIN_SRC org
+  ,* meeting to discuss design of widget processing
+    [2014-02-15]
+  ,* present
+    - me
+    - fred
+    - jim
+    - sheila
+  ,* introduction by fred
+  ,** we need to perform widget processing
+     - required by user journey x
+     - enables users to deal with widgets but export as doohickeys
+     - some prior art, but none seems to exactly match what we need
+  ,* sheila
+    - what about widgets.io? they do widget processing as a service
+      - expensive, but probably cheaper than development effort to
+        reimplement it
+      - jim: not sure we can justify sending data about sensitive
+        widgets to third parties
+      - sheila: we could probably anonymise user data before processing
+  ,* fred
+    - I've previously used pydgets, a python widget-processing library
+    - sheila: all our code is ruby/rails/sinatra at the moment
+      - fred: we could create a separate python service for it
+        - communicate using HTTP and json
+        - sheila: I'm skeptical that our ruby folks would be happy
+          writing python
+        - me: we should investigate anyway, see if it's the right tool
+          for the job
+  ,* Actions
+  ,** spike: investigate pydgets and python RESTful services - fred
+  ,** spike: investigate widgets.io and anonymisation - sheila
+#+END_SRC
+
+Org-mode is great because the source format is human-readable. I don't
+need to tell the recipients that my notes are in org-mode; I just
+paste them into an email and send them verbatim.
+
+The headings and bullets are my bread-and-butter of
+note-taking. Org-mode provides shortcuts for easy and fast
+manipulation of headings and bullets: =C-RET= new heading, =M-RET= new
+bullet, =M-up/M-down= move heading or bullet up/down, =M-left/right=
+promote/demote heading, =C-c -= convert heading to bullet, =C-c C-w=
+refile heading under different toplevel heading. These manipulation
+functions mean that I don't have to stick to taking notes in
+chronological order; I can easily move notes around to other parts of
+the file.
+
+The first heading I make is always a list of people present; the last
+heading is always a list of actions. It's worth remembering that most
+meetings are called to make decisions about what actions to take; by
+taking notes on actions, I am focussed on ensuring that the meeting
+isn't drifting into endless discussion and is actually making
+decisions. If someone says they will do something, I capture that as a
+new heading and refile at the bottom, keeping all actions together for
+easy review.
+
+* Why I take notes
+
+I take notes primarily for my own benefit. By taking notes, I force
+myself to listen actively, not just hearing the words that are being
+spoken but grappling with the concepts and ideas being talked about,
+trying to reword them into a concise form by getting at the essence of
+what's being said. This can confuse people: once, as I started taking
+notes, a speaker told me "you don't need to take notes, I'll send you
+my slides"; I responded "it's just what I do". The psychology
+literature talks about note-taking having the complementary functions
+of "encoding" and "storage" -- I primarily use notes for encoding, and
+treat storage as secondary.
+
+I also take notes so that we have a record of decisions made. If
+there's any confusion later on, I can return to my record and consult
+it. There should also be a record of the constraints that were
+considered when making the decision, so that we can later determine if
+they are still valid or if the decision should be revisited.
+
+Finally, I take notes and send them out to those present because my
+colleagues keep giving me good feedback about them. This feedback is
+invaluable because I almost never read my own notes, so the only sense
+I get of how useful they are to read is from other people's reports.
+
+The way I take notes affects the way I participate in meetings. If I
+can see from my notes that we haven't agreed on an action, I will push
+for a decision so that my "actions" heading starts to fill
+up. Sometimes I create an "agenda" heading near the top as a scratch
+space for notes I want to talk about but haven't yet had the
+opportunity. My note-taking habit has got to the point that I can't
+imagine /not/ taking notes in a meeting anymore; it just has so many
+benefits that it would seem ludicrous not to.
+
+-----
+
+Incidentally, this post is the first in my blog written using
+org-mode. Previously I have been writing in markdown, because that's
+the default for jekyll, but now that I've got org-mode working I'm
+thoroughly converted. Click on the source link to the left to see the
+source on github.
