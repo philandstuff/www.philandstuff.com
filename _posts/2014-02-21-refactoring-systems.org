@@ -1,0 +1,192 @@
+---
+layout: post
+title: Refactoring systems
+tags:
+  - devops
+date: 2014/02/21
+---
+
+#+BEGIN_QUOTE
+"Refactoring is the process of changing a software system in such a
+way that it does not alter the external behavior of the code yet
+improves its internal structure." -- Martin Fowler, in Refactoring
+#+END_QUOTE
+
+As a developer who fell into operations work by accident, I often
+relate what I see in production systems to my experiences manipulating
+code in an editor. One thing I've been thinking about recently is
+refactoring. When I was working on Java day-to-day, I would routinely
+use IntelliJ IDEA's refactoring support: extract method, extract
+class, rename method, move method. Refactoring was an intrinsic part
+of good design: you never hit the perfect design first try, so you
+rely on refactoring to gradually improve your code from the first
+slap-dash implementation.
+
+It actually took some time before I read the original [[http://martinfowler.com/books/refactoring.html][refactoring
+book]]. If you haven't read it, go read it now! Even 14 years after it
+was written, it's still relevant. It describes how to do refactoring
+when you don't have fancy refactoring tools: through a series of
+small, incremental changes, which at no point cause the code to break,
+you can evolve from a poor design towards a better design.
+
+If I have one criticism of the book, it's that it doesn't reach far
+enough. The book's subtitle is "Improving the Design of Existing
+Code"; but I think it should have been "Improving the Design of
+Existing /Systems/". The approach of taking small, incremental changes
+to an existing system, to improve the overall design while at no point
+breaking anything, is by no means limited to code. This is
+acknowledged by the 2007 book [[http://www.martinfowler.com/books/refactoringDatabases.html][Refactoring Databases]]; but it also
+applies to other aspects of system design such as DNS naming, network
+topology and mapping of functions to particular applications.
+
+The importance of maintaining a working system throughout a
+refactoring is high when developing, but it's critical when modifying
+a production system. After all, when you're developing code, the worst
+that can happen is a failing test, but the consequences in production
+are much more severe. And you don't get any of IntelliJ's automagical
+refactoring tools to help you.
+
+Sometimes you will need to make a deployment to production in between
+steps of a refactoring: perhaps to ensure you have introduced a new
+service name before configuring any consumers of that service to use
+it. As a result, refactoring whole systems can be slower and more
+laborious than refactoring code. Nevertheless, it's the only way to
+improve the design of an existing system, short of creating an
+entirely new production in parallel and switching traffic over to it.
+
+Here are some recent refactorings I have performed on production
+systems:
+
+*** Rename service
+
+Problem: the name of a service, as it appears in DNS, does not
+describe its purpose.
+
+Solution: introduce a new name for the service. Gradually find each of
+the service's consumers, and reconfigure them to use the new
+name. When the old name is no longer needed, remove it.
+
+*** Rename entire domain
+
+Problem: the name of a domain does not describe its purpose.
+
+Solution: introduce a new domain as a copy of the old. Modify the
+search domain of resolvers in that domain to search the new domain as
+well as the old. Find any references in configuration to
+fully-qualified domain names mentioning the domain, and change them to
+use the new domain. When no more consumers reference the old domain
+name, remove it from the search path, and finally remove the old
+domain entirely.
+
+I recently performed this dance to rename an entire environment from
+"test" to "perf", to give it a more intention-revealing name. Using
+shortnames as much as possible, rather than fully-qualified names,
+made the job much easier. (There are other reasons for using
+shortnames: by standardizing on particular shortnames for services,
+you [[http://www.markhneedham.com/blog/2012/10/24/configuration-in-dns/][reduce the amount of environment-specific configuration]] needed.)
+
+*** Change IP address of service
+
+Problem: you want to shift a service from one public IP address to
+another.
+
+Solution: introduce a route from the new public IP to the service.
+Test the service works at the new IP -- the curl =--resolve= option is
+very useful for testing this without having to modify DNS or
+/etc/hosts entries. Ensure any firewall rules which applied to the old
+IP address are copied to apply to the new address. When certain that
+the new IP address works, change your public DNS record from the old
+IP address to the new. Wait for the TTL to expire before using the old
+IP address for any other purpose. Finally, remove any stale firewall
+rules referring to the old address.
+
+This might seem like an odd thing to want to do, so here's the
+context: in one of our environments, we had three public IP addresses
+listening on port 443. I wanted to expose a new service on port 443,
+but restricted at the firewall to only certain source addresses, so it
+couldn't be a shared virtual host on an existing IP. One of our IPs
+was used by a reverse proxy with several virtual hosts proxying
+various management services -- graphite, sensu, kibana. Our CI server,
+however, was occupying a public IP all to itself. If I created a new
+virtual host on our reverse proxy to front the CI server, I could
+serve it from the same IP address as our other management services,
+freeing up a public IP for a new service with separate access control
+restrictions.
+
+*** Merge sensu servers
+
+Problem: you have two [[http://sensuapp.org/][sensu]] servers monitoring separate groups of
+clients, when you would rather have one place to monitor everything.
+
+Solution: choose one of the servers to keep. Reconfigure the clients
+of the other server to point at the original server. Remove the
+now-unused sensu server.
+
+Note: this refactoring assumes that the two servers have equivalent
+configuration in terms of checks and handlers, which in our situation
+was true. If not, you may need to do some initial work bringing the
+two sensu servers into alignment, before reconfiguring the clients.
+
+*** Remove intermediate http proxy
+
+Problem: On your application servers, you are using nginx to terminate
+TLS and reverse proxy a jetty application server. You wish to remove
+this extra layer by having jetty terminate TLS itself.
+
+Solution: Add a second connector to jetty, listening for https
+connections. Reconfigure consumers to talk to jetty directly, rather
+than talking to nginx. Once nothing is configured to talk to nginx,
+remove it.
+
+In our specific situation, we were using DropWizard 0.7, which makes
+it easy to add a second https connector. DropWizard 0.6 assumes that
+you have exactly one application connector, and it's /either/ http
+/or/ https, but not both. We have some apps that are running
+DropWizard 0.6; our refactoring plan for them involves first upgrading
+to DropWizard 0.7, followed by repeating the steps above.
+
+** It's not a catalog, it's a way of thinking
+
+The original refactoring book presented refactoring as a catalog of
+recipes for achieving certain code transformations. This is a
+fantastic pedagogical device: by showing you example after example,
+you can immediately see the real-world benefit. Then once you've seen
+a few examples of refactoring, it starts to become natural to come up
+with more. The same tricks turn up again and again: introduce new way
+of doing things, migrate consumers from old way to new way, remove old
+way. This general scheme applies to all sorts of refactoring from
+simple method renames to system-wide reconfiguration.
+
+** Data makes everything harder
+
+The easiest part of the system to refactor is the application
+server. Given a good load balancer, a properly stateless application
+with a good healthcheck, and a good database, you can create a
+completely new design of application server, add it to the load
+balancer pool, test everything still works correctly, and remove the
+old design.
+
+Refactoring the system at the data layer is much harder. Migrating
+data from one DBMS to another is painful. Splitting a single database
+server shared between two applications into two database servers is
+painful. For certain types of migration, the ability to put the system
+into read-only mode might be necessary (or at least incredibly
+helpful).
+
+** You won't get the design right first time
+
+The reason that refactoring is important is that you won't get the
+design right first time. You will inevitably need to make changes to
+accommodate new information. And so when you wistfully imagine the
+system as you'd like it to be, you have to discover the small steps
+which will get you there from the system you currently have. The way
+to reach a truly great design is to start with an okay design and
+evolve it.
+
+** I don't claim any of this is new
+
+I'm sure that these strategies have been used by operations people for
+years, without calling it "refactoring". My main point is that the
+activities of code refactoring and system refactoring are based on the
+same underlying principles, of identifying small changes which do not
+change external behaviour in order to improve internal structure.
