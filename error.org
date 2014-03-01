@@ -1,5 +1,7 @@
 ---
-layout: post
+layout: page
 title: Not found
 ---
+* Not found
+
 There is nothing to be found here.
