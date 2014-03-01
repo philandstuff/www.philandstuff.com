@@ -1,0 +1,5 @@
+---
+layout: post
+title: Not found
+---
+There is nothing to be found here.
