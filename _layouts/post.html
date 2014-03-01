@@ -1,7 +1,7 @@
 ---
 layout: default
 ---
-<div class="span3">
+<div class="col-md-3">
 <nav>
 <ul class="nav nav-tabs nav-stacked">
 <li><a href="/">Home</a></li>
@@ -14,7 +14,7 @@ Source to this page</a></li>
 <span class="label">{{ tag }}</span>
 {% endfor %}
 </div>
-<div class="span9">
+<div class="col-md-9">
 <h1><a href="{{ page.url }}">{{ page.title }}</a></h1>
 <p class="muted">Posted on {{ page.date | date_to_long_string }}</p>
 {{ content }}
