@@ -1,0 +1,187 @@
+---
+layout: post
+title: London emacs meetup, 20th May 2014
+tags:
+  - emacs
+date: 2014/05/21
+---
+
+Last night was the [[http://www.meetup.com/London-Emacs-Hacking/events/182697852/?comment_table_id%3D356566102&comment_table_name%3Devent_comment][second London emacs meetup]].  Here are my
+rough-and-ready notes, taken in org-mode, [[/2014/02/15/keeping-a-record.html][like all my notes]].
+
+** emacsspeak: emacs for visually impaired people
+   - [[http://emacspeak.sourceforge.net]]
+   - anecdote: a friend went blind and emacspeak saved his career
+** intro, @bodil & @dotemacs
+   - welcome!
+   - format:
+     - one or two short talks
+     - about things that are useful for all emacs users
+     - then afterwards, gather around particular fields of interest
+** talk: writing major modes (by @dotemacs)
+*** intro
+    - last time, @bodil gave a talk
+    - definition:
+      - "encapsulating a set of editing behaviours"
+    - book: GNU Emacs Extensions, O'Reilly
+    - Yukihiro Matsumoto (matz)
+      - "I started Ruby development with influence from emacs
+        implementation"
+      - "but as an emacs addict I needed a language mode"
+      - "auto-indent was a must"
+      - "back in 1993, there was no auto-indenting language mode for a
+        language with such syntax"
+      - "If I couldn't make ruby-mode work, the syntax of ruby would
+        have become more C-like"
+    - Bob Glickstein & Scott Andrew Borton
+*** modes
+    - two types: major & minor
+    - ~(define-minor-mode ...)~
+      - keymap (specific for the minor mode)
+      - variable ~<name>-mode~
+      - command called ~<name>-mode~
+        - toggles the mode
+      - add it to a hook
+      - ~(add-hook 'some-mode 'your-mode)~
+    - major mode:
+      - memorable name :)
+      - hooks (~<name>-mode-hook~)
+      - syntax table
+        - defines how things should appear (highlighting)
+      - entry function (~<name>-mode~)
+      - syntax highlighting; two options:
+        - optimized regexes
+          - Q: what does "optimized" mean here?
+            - eg matching keywords would mash together into a
+              mega-regexp
+        - use regexp-opt
+          - takes a list of strings, and outputs a regexp which
+            matches all of those things
+          - aside: ~rx~ module compiles sexps to regexes
+      - indentation
+      - syntax table "behaviour" & movement
+        - how you jump between functions, classes, & other constructs
+          the language has
+      - remove all buffer-local variables
+      - set the variables
+        - ~major-mode~ to ~<name>-mode~
+        - ~mode-name~ to string "name"
+      - keymaps; two options:
+        - sparse-keymap
+          - suitable for up to half a dozen
+        - define your own, otherwise
+      - bind mode to files
+        - ~(add-to-list 'auto-mode-alist '("\\.bar" . foo-mode))~
+      - run user defined hooks for the mode
+        - defined with ~<name>-mode-hook~
+      - provide mode
+        - ~(provide '<name>)~
+    - cookies
+      - ~;;;###AUTOLOAD~
+    - "this sounds like a lot of work, why reinvent the wheel"?
+      - cookie cutters
+        - ~sample-mode~ (available on emacswiki)
+        - ~derived-mode~ (part of emacs)
+    - checkdoc
+      - good tool to run once you have defined a mode
+      - kind of a lint tool
+    - ecukes
+      - framework that allows you to write tests in:
+    - espuds
+      - step definitions
+*** questions:
+    - keybinding conventions?
+      - Who gets to claim the C-c space?
+      - it's really complicated
+        - there's seven or eight layers
+        - minor modes override major
+      - C-x normally reserved by emacs
+      - C-c C-<something> major mode generally
+      - C-c <something> own use (shouldn't be modes)
+      - super and hyper of course
+        - windows key & os x command
+    - why do I get so many compilation warnings when installing modes
+      through package-install?
+** tangent: eshell
+   - written by someone working on windows and didn't have a decent
+     shell
+   - redirecting straight into a buffer is nifty
+   - all interactive commands are bound as shell commands
+   - Plan9 features built in
+** tangent: testing
+   - why use ecukes and espuds?
+     - why can't I just do my testing in a repl?
+       - you'll have to restart your emacs a lot because your tests
+         will be messing global mutable state
+       - automating a test suite would make things more convenient
+         than manually using C-x C-e
+   - is there a good mode for editing these tests?
+     - you could use cucumber-mode
+     - is there a way to jump to the step-definitions?
+   - is there something between cucumber and C-x C-e for testing?
+     - ~ert~
+     - see [[https://github.com/dotemacs/ipcalc.el][dotemacs/ipcalc.el]] for an example
+   - is there a way to test keybindings without using ecukes?
+     - ecukes has the most momentum (seemingly)
+   - dash.el does tests nicely
+     - the README has some examples which *are* the unit tests
+     - see [[https://github.com/magnars/dash.el][magnars/dash.el]]
+** tangent2: magnars emacsrocks talk
+   - [[http://emacsrocks.com]]
+** ideas for bird of feather groups
+   - highlighting (first)
+   - multiple emacs woes (OS-supplied vs emacs 24)
+   - eshell (dotemacs)
+   - bulletproof emacs for the lightweight users (mickey)
+   - sql in emacs (mickey)
+   - org-mode (everyone later)
+     - org-reveal?
+   - haskell (later)
+   - flymake/flycheck
+     - jfdi (apart from java)
+     - need to be aware of the lang-specific linter you need
+** making the most of paredit/smartparens (bodil)
+   from earlier discussion
+   - "I made paredit work for python!"
+   - comparison
+     - paredit works out of the box
+     - smartparens configurable to work in any mode
+   - paredit for haskell!
+*** bodil's config
+    - bodil-smartparens (find it on github.com/bodil )
+      - make smartparens behave as much like paredit as possible
+      - turn on smartparens-strict-mode in your lisp mode hook
+    - paredit's M-<up> and M-r (splice-sexp-killing-backward and raise)
+      - both useful for pulling expressions out of let bindings
+    - bodil: I'd actually recommend paredit for lisps, but smartparens
+      is useful for other langs
+      - I'm actually using it for haskell
+    - html tagedit -- like paredit for html
+      - syntax-aware killing
+      - slurp and barf
+      - magnar again :)
+    - autoindent in curly-brace languages
+      - ie when pressing RET in ~function(){|}~
+      - want to create new line indented, with curly brace on line
+        following that
+    - structural-haskell mode
+      - sort of like paredit for haskell syntax
+** eshell
+   - interactive commands available as regular shell commands (eg
+     find-file)
+   - lots of commands replaced with emacs-friendly modes (eg man)
+   - can work with tramp (eg ~cd /sudo::/etc; find-file passwd~)
+   - configuration goes in =emacs.d/eshell=
+     - in particular aliases in =emacs.d/eshell/aliases=
+   - buffer redirection
+     - use C-c M-b to select and insert a reference to a buffer
+     - for example:
+       - ~echo foo >> #<buffer *scratch*>~
+   - plan 9 features
+** tangent: webkit.el
+   - takes an external webkit window and puts it on top of the
+     appropriate emacs window
+** tangent: fish
+   - why fish?
+   - sick of bash
+   - completion is really cool
