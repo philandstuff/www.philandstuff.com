@@ -1,0 +1,1003 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>test.check</title>
+<meta name="author" content="(Philip Potter)"/>
+<link rel="stylesheet" href="../../reveal/css/reveal.min.css"/>
+<link rel="stylesheet" href="../../reveal/css/theme/simple.css" id="theme"/>
+
+<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+<script>
+    if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = '../../reveal/css/print/pdf.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+    }
+</script>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section>
+<h1>test.check</h1>
+<h2>Philip Potter</h2>
+<h2><a href="mailto:@philandstuff">@philandstuff</a></h2>
+<h2></h2></section>
+
+<section>
+<section id="sec-1" >
+
+<h2>Prelude</h2>
+<p>
+<a href="https://gists.github.com/philandstuff">https://gists.github.com/philandstuff</a>
+</p>
+</section>
+
+</section>
+<section>
+<section id="sec-2" >
+
+<h2>Generative testing with clojure.test.check</h2>
+</section>
+<section id="sec-2-1" >
+
+<h3>"Don't write tests, generate them!"</h3>
+</section>
+<section id="sec-2-2" >
+
+<h3>example: sorting</h3>
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(<span style="color: #a020f0;">deftest</span> <span style="color: #0000ff;">my-sort-is-correct</span>
+  (are [x y] (= x y)
+       (my-sort [1])         [1]
+       (my-sort [1 2])       [1 2]
+       (my-sort [2 1])       [1 2]
+       (my-sort [<span style="color: #008b8b;">:foo</span> <span style="color: #008b8b;">:bar</span>]) [<span style="color: #008b8b;">:bar</span> <span style="color: #008b8b;">:foo</span>]
+       (my-sort [1 4 5 3 2]) [1 2 3 4 5]))
+</pre>
+</div>
+
+<p class="fragment">
+is this enough?
+</p>
+
+<div class="org-src-container">
+
+<pre  class="fragment">(<span style="color: #a020f0;">defn</span> <span style="color: #0000ff;">my-sort</span> [coll] (seq (into (sorted-set) coll)))
+</pre>
+</div>
+
+</section>
+<section id="sec-2-3" >
+
+<h3>what do we mean by sorting?</h3>
+<p class="fragment">
+The output is in ascending order
+</p>
+
+<p class="fragment">
+The output is a permutation of the input
+</p>
+
+<p class="fragment">
+These can be expressed as <i>properties</i>, independent of the particular
+test data
+</p>
+
+</section>
+<section id="sec-2-4" >
+
+<h3>defining properties</h3>
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(<span style="color: #a020f0;">defspec</span> <span style="color: #0000ff;">my-sort-output-increasing-prop</span> 100
+  (for-all [input (<span style="color: #228b22;">gen</span>/vector <span style="color: #228b22;">gen</span>/int)]
+    (<span style="color: #a020f0;">let</span> [output (my-sort input)]
+      (<span style="color: #a020f0;">or</span> (empty? output)
+          (apply &lt;= output)))))
+</pre>
+</div>
+
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(<span style="color: #a020f0;">defspec</span> <span style="color: #0000ff;">my-sort-output-permutation-of-input</span> 100
+  (for-all [input (<span style="color: #228b22;">gen</span>/vector <span style="color: #228b22;">gen</span>/int)]
+    (<span style="color: #a020f0;">let</span> [output (my-sort input)]
+      (= (frequencies input) (frequencies output)))))
+</pre>
+</div>
+
+</section>
+<section id="sec-2-5" >
+
+<h3>running sorted property:</h3>
+<pre class="example">
+Testing test-check-playground.core-test
+{:test-var my-sort-output-increasing-prop, :result true, :num-tests 100,
+ :seed 1402865690454}
+
+Ran 1 tests containing 1 assertions.
+0 failures, 0 errors.
+</pre>
+
+</section>
+<section id="sec-2-6" >
+
+<h3>running permutation property:</h3>
+<pre class="example">
+Testing test-check-playground.core-test
+
+{:test-var my-sort-output-permutation-of-input, :result false,
+ :seed 1403453860357, :failing-size 9, :num-tests 10,
+ :fail [[3 -2 -4 -2 6]],
+ :shrunk {:total-nodes-visited 12, :depth 3, :result false,
+          :smallest [[-2 -2]]}}
+
+FAIL in (my-sort-output-permutation-of-input) (clojure_test.clj:18)
+</pre>
+
+</section>
+<section id="sec-2-7" >
+
+<h3>a failure!</h3>
+<p>
+<code>(my-sort [3 -2 -4 -2 6])</code> failed the permutation property
+</p>
+
+</section>
+<section id="sec-2-8" >
+
+<h3>shrinking our failing case</h3>
+<p class="fragment highlight-red">
+<code>[3 -2 -4 -2 6]</code>
+</p>
+
+<p class="fragment highlight-red">
+<code>[3 -2 -4 -2]</code>
+</p>
+
+<p>
+<span class="fragment highlight-green">
+<code>[3 -2 -4]</code>
+</span><span class="fragment highlight-red">
+<code>[3 -2 -2]</code>
+</span>
+</p>
+
+<p>
+<span class="fragment highlight-green">
+<code>[3 -2]</code>
+</span><span class="fragment highlight-red">
+<code>[-2 -2]</code>
+</span>
+</p>
+
+<p>
+<span class="fragment highlight-green">
+<code>[-2]</code>
+</span>
+</p>
+
+<p class="fragment">
+<code>[-2 -2]</code> is a <i>minimal</i> failing test case
+</p>
+
+<p class="fragment">
+Shrinking is depth-first search without backtracking
+</p>
+
+</section>
+<section id="sec-2-9" >
+
+<h3>So why did it fail?</h3>
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(<span style="color: #a020f0;">defn</span> <span style="color: #0000ff;">my-sort</span> [coll] (seq (into (sorted-set) coll)))
+
+(my-sort [-2 -2])
+
+<span style="color: #b22222;">;</span><span style="color: #b22222;">=&gt; (-2)</span>
+</pre>
+</div>
+
+<p>
+Compare:
+</p>
+
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(my-sort [-9 -20 -49 -20 39 -22 -40 -46 -5 30 41 44 -23 27 37 -37 -45 26 -5 -40 41 32 26 -1 41 50 -1 -29 -24 47 -33 -30 8 37])
+
+<span style="color: #b22222;">;</span><span style="color: #b22222;">=&gt; (-49 -46 -45 -40 -37 -33 -30 -29 -24 -23 -22 -20 -9 -5 -1 8 26 27 30 32 37 39 41 44 47 50)</span>
+</pre>
+</div>
+</section>
+
+</section>
+<section>
+<section id="sec-3" >
+
+<h2>example: encode/decode</h2>
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(<span style="color: #a020f0;">defn</span> <span style="color: #0000ff;">encode-state</span> [st]
+  (<span style="color: #a020f0;">-&gt;</span> st
+      <span style="color: #228b22;">json</span>/write-str
+      <span style="color: #483d8b;">.getBytes</span>
+      <span style="color: #228b22;">b64</span>/encode
+      <span style="color: #228b22;">String.</span>))
+
+(<span style="color: #a020f0;">defn</span> <span style="color: #0000ff;">decode-state</span> [st]
+  (<span style="color: #a020f0;">-&gt;</span> st
+      <span style="color: #483d8b;">.getBytes</span>
+      <span style="color: #228b22;">b64</span>/decode
+      <span style="color: #228b22;">String.</span>
+      (<span style="color: #228b22;">json</span>/read-str <span style="color: #008b8b;">:key-fn</span> keyword)))
+</pre>
+</div>
+
+</section>
+<section id="sec-3-1" >
+
+<h3>attempt #1</h3>
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(for-all [state <span style="color: #228b22;">gen</span>/any]
+  (= state (decode-state (encode-state state))))
+</pre>
+</div>
+
+<div class="org-src-container">
+
+<pre  class="fragment"><span style="color: #b22222;">;</span><span style="color: #b22222;">=&gt; java.lang.Exception:</span>
+<span style="color: #b22222;">;   </span><span style="color: #b22222;">Don't know how to write JSON of class java.lang.Character</span>
+</pre>
+</div>
+
+</section>
+<section id="sec-3-2" >
+
+<h3>attempt #2</h3>
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(for-all [state (<span style="color: #228b22;">gen</span>/map <span style="color: #228b22;">gen</span>/keyword <span style="color: #228b22;">gen</span>/string)]
+  (= state (decode-state (encode-state state))))
+</pre>
+</div>
+
+<div class="org-src-container">
+
+<pre  class="fragment"><span style="color: #b22222;">; </span><span style="color: #b22222;">Ran 100 tests. 0 failures, 0 errors.</span>
+</pre>
+</div>
+
+</section>
+<section id="sec-3-3" >
+
+<h3>attempt #3</h3>
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(<span style="color: #a020f0;">def</span> <span style="color: #a0522d;">gen-json-data</span>
+  (<span style="color: #228b22;">gen</span>/map <span style="color: #228b22;">gen</span>/keyword
+           (<span style="color: #228b22;">gen</span>/one-of [<span style="color: #228b22;">gen</span>/string <span style="color: #228b22;">gen</span>/int <span style="color: #228b22;">gen</span>/boolean])))
+
+(for-all [state gen-json-data]
+  (= state (decode-state (encode-state state))))
+</pre>
+</div>
+
+<div class="org-src-container">
+
+<pre  class="fragment"><span style="color: #b22222;">; </span><span style="color: #b22222;">Ran 100 tests. 0 failures, 0 errors.</span>
+</pre>
+</div>
+</section>
+
+</section>
+<section>
+<section id="sec-4" >
+
+<h2>Using Schema to generate data</h2>
+<p>
+example from <a href="https://gist.github.com/davegolland/3bc4277fe109e7b11770">https://gist.github.com/davegolland/3bc4277fe109e7b11770</a>
+</p>
+
+<div class="org-src-container">
+
+<pre  class="src src-clojure"><span style="color: #b22222;">;; </span><span style="color: #b22222;">=== SCHEMA ===</span>
+{ <span style="color: #008b8b;">:x</span> <span style="color: #228b22;">Int</span>,
+  (optional-key <span style="color: #8b2252;">"hi"</span>) <span style="color: #228b22;">java.lang.Boolean</span>,
+  <span style="color: #228b22;">Keyword</span> <span style="color: #228b22;">java.lang.Boolean</span>}
+<span style="color: #b22222;">;; </span><span style="color: #b22222;">== Samples ==</span>
+({<span style="color: #008b8b;">:x</span> 0}
+ {<span style="color: #008b8b;">:x</span> 1, <span style="color: #008b8b;">:FP</span> <span style="color: #008b8b;">false</span>}
+ {<span style="color: #008b8b;">:x</span> -2, <span style="color: #008b8b;">:8j</span> <span style="color: #008b8b;">true</span>, <span style="color: #008b8b;">:5J</span> <span style="color: #008b8b;">false</span>, <span style="color: #8b2252;">"hi"</span> <span style="color: #008b8b;">true</span>}
+ {<span style="color: #008b8b;">:x</span> -2}
+ {<span style="color: #008b8b;">:x</span> -3, <span style="color: #008b8b;">:npv</span> <span style="color: #008b8b;">false</span>, <span style="color: #008b8b;">:937</span> <span style="color: #008b8b;">true</span>, <span style="color: #008b8b;">:GtNL</span> <span style="color: #008b8b;">false</span>}
+ {<span style="color: #008b8b;">:x</span> 1, <span style="color: #008b8b;">:RD1P</span> <span style="color: #008b8b;">false</span>, <span style="color: #008b8b;">:1yjJ7</span> <span style="color: #008b8b;">false</span>, <span style="color: #008b8b;">:MvJJB</span> <span style="color: #008b8b;">false</span>, <span style="color: #8b2252;">"hi"</span> <span style="color: #008b8b;">true</span>}
+ {<span style="color: #008b8b;">:x</span> -5, <span style="color: #008b8b;">:G0z6Q5</span> <span style="color: #008b8b;">false</span>, <span style="color: #008b8b;">:Y9XT</span> <span style="color: #008b8b;">true</span>, <span style="color: #008b8b;">:YJ</span> <span style="color: #008b8b;">false</span>, <span style="color: #8b2252;">"hi"</span> <span style="color: #008b8b;">true</span>}
+ {<span style="color: #008b8b;">:x</span> 4, <span style="color: #8b2252;">"hi"</span> <span style="color: #008b8b;">false</span>}
+ {<span style="color: #008b8b;">:x</span> -5, <span style="color: #008b8b;">:3tTmb3H</span> <span style="color: #008b8b;">false</span>, <span style="color: #008b8b;">:Ms59j</span> <span style="color: #008b8b;">false</span>, <span style="color: #008b8b;">:7g5</span> <span style="color: #008b8b;">true</span>,
+  <span style="color: #008b8b;">:pGu69</span> <span style="color: #008b8b;">true</span>, <span style="color: #008b8b;">:1J</span> <span style="color: #008b8b;">false</span>, <span style="color: #008b8b;">:GF27V16</span> <span style="color: #008b8b;">false</span>,
+  <span style="color: #8b2252;">"hi"</span> <span style="color: #008b8b;">false</span>}
+ {<span style="color: #008b8b;">:x</span> 1, <span style="color: #008b8b;">:IK</span> <span style="color: #008b8b;">true</span>, <span style="color: #008b8b;">:V87X4F3mY</span> <span style="color: #008b8b;">false</span>, <span style="color: #008b8b;">:uX</span> <span style="color: #008b8b;">false</span>, <span style="color: #008b8b;">:mqOcoU</span> <span style="color: #008b8b;">false</span>,
+  <span style="color: #008b8b;">:559khUj5</span> <span style="color: #008b8b;">false</span>, <span style="color: #008b8b;">:UXE2</span> <span style="color: #008b8b;">false</span>, <span style="color: #008b8b;">:Wu9b95x2</span> <span style="color: #008b8b;">false</span>})
+</pre>
+</div>
+</section>
+
+</section>
+<section>
+<section id="sec-5" >
+
+<h2>ztellman/collection-check</h2>
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(assert-set-like 1e5 my-empty-set <span style="color: #228b22;">gen</span>/int)
+</pre>
+</div>
+
+<pre class="example">
+java.lang.Exception: Assert failed: (= a b)
+ a = #{0 9 -10}
+ b = #{0 9 -10}
+ actions = (-&gt; coll transient (conj! -10) persistent!
+               transient (conj! 9) persistent!
+               transient (disj! -10) persistent!
+               (conj -10))
+</pre>
+
+</section>
+<section id="sec-5-1" >
+
+<h3>ztellman/collection-check</h3>
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(assert-set-like 1e5 my-empty-set <span style="color: #228b22;">gen</span>/int)
+</pre>
+</div>
+
+<div class="org-src-container">
+
+<pre  class="src src-clojure"><span style="color: #b22222;">;; </span><span style="color: #b22222;">abridged for slides</span>
+(<span style="color: #a020f0;">defn</span> <span style="color: #0000ff;">assert-set-like</span> [n empty-coll element-generator]
+  (quick-check n
+    (for-all [actions (gen-set-actions element-generator)]
+      (<span style="color: #a020f0;">let</span> [[a b] (build-collections empty-coll #{} actions)]
+        (assert-equivalent-sets a b)))))
+</pre>
+</div>
+
+</section>
+<section id="sec-5-2" >
+
+<h3>ztellman/collection-check</h3>
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(assert-set-like 1e5 my-empty-set <span style="color: #228b22;">gen</span>/int)
+</pre>
+</div>
+
+<div class="org-src-container">
+
+<pre  class="src src-clojure">([<span style="color: #008b8b;">:conj</span> 5]
+ [<span style="color: #008b8b;">:transient</span>]
+ [<span style="color: #008b8b;">:disj!</span> 5]
+ [<span style="color: #008b8b;">:persistent!</span>])
+</pre>
+</div>
+
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(<span style="color: #a020f0;">-&gt;</span> #{}
+    (conj 5)
+    transient
+    (disj! 5)
+    persistent!)
+</pre>
+</div>
+
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(<span style="color: #a020f0;">-&gt;</span> my-empty-set
+    (conj 5)
+    transient
+    (disj! 5)
+    persistent!)
+</pre>
+</div>
+</section>
+
+</section>
+<section>
+<section id="sec-6" >
+
+<h2>History</h2>
+</section>
+<section id="sec-6-1" >
+
+<h3>(incomplete) history of generative testing</h3>
+<p>
+1999: John Hughes &amp; Koen Claessen create QuickCheck
+</p>
+
+<p>
+1999-2000: Andy Gill invents shrinking
+</p>
+
+<p>
+2006: QuviQ founded, creates Erlang QuickCheck
+</p>
+
+<p>
+2009: PULSE presented at ICFP
+</p>
+
+<p>
+2013: PULSE used to find race condition in Riak
+(<a href="https://github.com/basho/riak_core/issues/298">https://github.com/basho/riak_core/issues/298</a>)
+</p>
+</section>
+
+</section>
+<section>
+<section id="sec-7" >
+
+<h2>Finding race conditions</h2>
+</section>
+<section id="sec-7-1" >
+
+<h3>example: thread-safe queue</h3>
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(<span style="color: #a020f0;">defn</span> <span style="color: #0000ff;">create-queue</span> [] (atom PersistentQueue/<span style="color: #008b8b;">EMPTY</span>))
+
+(<span style="color: #a020f0;">defn</span> <span style="color: #0000ff;">add</span> [q item]
+  (swap! q conj item)
+  <span style="color: #008b8b;">nil</span>)
+
+(<span style="color: #a020f0;">defn</span> <span style="color: #0000ff;">remove</span> [q]
+  (<span style="color: #a020f0;">let</span> [[item rest] ((juxt first pop) @q)]
+    (reset! q rest)
+    item))
+</pre>
+</div>
+
+</section>
+<section id="sec-7-2" >
+
+<h3>test data and recorded history</h3>
+<div class="org-src-container">
+
+<pre  class="src src-clojure">([<span style="color: #008b8b;">:add</span> 'ham]
+ [<span style="color: #008b8b;">:add</span> 'egg]
+ [<span style="color: #008b8b;">:remove</span>]
+ [<span style="color: #008b8b;">:add</span> 'chips]
+ [<span style="color: #008b8b;">:remove</span>])
+</pre>
+</div>
+
+<div class="org-src-container">
+
+<pre  class="fragment">([<span style="color: #008b8b;">:add</span> 'ham]
+ [<span style="color: #008b8b;">:add</span> 'egg]
+ [<span style="color: #008b8b;">:remove</span> 'ham]
+ [<span style="color: #008b8b;">:add</span> 'chips]
+ [<span style="color: #008b8b;">:remove</span> 'egg])
+</pre>
+</div>
+
+</section>
+<section id="sec-7-3" >
+
+<h3>aphyr/knossos to the rescue!</h3>
+</section>
+<section>
+
+<img src="aphyr-carly1.jpg" alt="aphyr-carly1.jpg" width="48%" />
+
+<img src="aphyr-carly2.jpg" alt="aphyr-carly2.jpg" width="48%" />
+
+</section>
+<section>
+
+<img src="aphyr-trogdor.jpg" alt="aphyr-trogdor.jpg" />
+
+</section>
+<section>
+
+<img src="bruce.jpeg" alt="bruce.jpeg" />
+
+</section>
+<section>
+
+<img src="aphyr-pmap.jpg" alt="aphyr-pmap.jpg" />
+
+</section>
+<section>
+
+<img src="aphyr-queen.jpg" alt="aphyr-queen.jpg" />
+
+</section>
+<section id="sec-7-4" >
+
+<h3>knossos model</h3>
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(<span style="color: #a020f0;">defrecord</span> <span style="color: #228b22;">QueueModel</span> [items]
+  <span style="color: #228b22;">Model</span>
+  (step [r {<span style="color: #008b8b;">:keys</span> [f value]}]
+    (<span style="color: #a020f0;">condp</span> = f
+      <span style="color: #008b8b;">:add</span>    (<span style="color: #228b22;">QueueModel.</span> (conj items value))
+      <span style="color: #008b8b;">:remove</span> (<span style="color: #a020f0;">let</span> [acquired-item value]
+                (<span style="color: #a020f0;">if-not</span> (= acquired-item (first items))
+                  (inconsistent
+                   (str <span style="color: #8b2252;">"Tried to take "</span> acquired-item
+                        <span style="color: #8b2252;">" from queue offering "</span> (first items)))
+                  (<span style="color: #228b22;">QueueModel.</span> (pop items)))))))
+</pre>
+</div>
+</section>
+
+</section>
+<section>
+<section id="sec-8" >
+
+<h2>sequential test</h2>
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(<span style="color: #a020f0;">defspec</span> <span style="color: #0000ff;">queue0-should-fit-model-sequentially</span>
+  (for-all [ops (<span style="color: #228b22;">gen</span>/not-empty (<span style="color: #228b22;">gen</span>/vector gen-queue-action))]
+    (<span style="color: #008b8b;">:valid?</span> (<span style="color: #228b22;">knossos.core</span>/analysis
+               empty-queue-model
+               (sequential-history (<span style="color: #228b22;">q0</span>/create-queue) actions ops)))))
+</pre>
+</div>
+
+<div class="org-src-container">
+
+<pre  class="fragment"><span style="color: #b22222;">; </span><span style="color: #b22222;">Ran 100 tests. 0 failures, 0 errors.</span>
+</pre>
+</div>
+
+</section>
+<section id="sec-8-1" >
+
+<h3>testing in parallel</h3>
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(([<span style="color: #008b8b;">:add</span> 'a1] [<span style="color: #008b8b;">:add</span> 'a2]    [<span style="color: #008b8b;">:remove</span>])
+ ([<span style="color: #008b8b;">:add</span> 'b1] [<span style="color: #008b8b;">:remove</span>]     [<span style="color: #008b8b;">:add</span> 'b2]))
+</pre>
+</div>
+
+<div class="org-src-container">
+
+<pre  class="fragment">(([<span style="color: #008b8b;">:add</span> 'a1] [<span style="color: #008b8b;">:add</span> 'a2]    [<span style="color: #008b8b;">:remove</span> 'b1])
+ ([<span style="color: #008b8b;">:add</span> 'b1] [<span style="color: #008b8b;">:remove</span> 'a1] [<span style="color: #008b8b;">:add</span> 'b2]))
+</pre>
+</div>
+
+<div class="org-src-container">
+
+<pre  class="fragment">(([<span style="color: #008b8b;">:add</span> 'a1] [<span style="color: #008b8b;">:add</span> 'a2]    [<span style="color: #008b8b;">:remove</span> 'a1])
+ ([<span style="color: #008b8b;">:add</span> 'b1] [<span style="color: #008b8b;">:remove</span> 'a2] [<span style="color: #008b8b;">:add</span> 'b2]))
+</pre>
+</div>
+
+</section>
+<section id="sec-8-2" >
+
+<h3>coping with nondeterminism</h3>
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(<span style="color: #a020f0;">defn</span> <span style="color: #0000ff;">always</span> [n prop]
+  (<span style="color: #228b22;">gen</span>/fmap #(<span style="color: #a020f0;">or</span> (first (remove <span style="color: #008b8b;">:result</span> (drop-last <span style="color: #a0522d;">%</span>))) (last <span style="color: #a0522d;">%</span>))
+            (apply <span style="color: #228b22;">gen</span>/tuple (repeat n prop))))
+</pre>
+</div>
+
+<p>
+<code>(always prop)</code> repeatedly tests the given property <code>n</code> times
+</p>
+
+</section>
+<section id="sec-8-3" >
+
+<h3>parallel test</h3>
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(<span style="color: #a020f0;">defspec</span> <span style="color: #0000ff;">queue0-should-have-linearizable-parallel-behaviour</span>
+  (always 40
+    (for-all [t1 (<span style="color: #228b22;">gen</span>/not-empty (<span style="color: #228b22;">gen</span>/vector gen-queue-action))
+              t2 (<span style="color: #228b22;">gen</span>/not-empty (<span style="color: #228b22;">gen</span>/vector gen-queue-action))]
+      (<span style="color: #008b8b;">:valid?</span> (<span style="color: #228b22;">knossos.core</span>/analysis
+                 empty-queue-model
+                 (recorded-parallel-history
+                   (<span style="color: #228b22;">q0</span>/create-queue)
+                   actions
+                   {<span style="color: #008b8b;">:t1</span> t1 <span style="color: #008b8b;">:t2</span> t2}))))))
+</pre>
+</div>
+
+<div class="org-src-container">
+
+<pre  class="fragment">{<span style="color: #008b8b;">:test-var</span> queue0-should-have-linearizable-parallel-behaviour,
+ <span style="color: #008b8b;">:result</span> <span style="color: #008b8b;">false</span>,
+ <span style="color: #008b8b;">:seed</span> 1403643157336,
+ <span style="color: #008b8b;">:failing-size</span> 0,
+ <span style="color: #008b8b;">:num-tests</span> 1,
+ <span style="color: #008b8b;">:fail</span> [[[<span style="color: #008b8b;">:remove</span>] [<span style="color: #008b8b;">:remove</span>]]
+        [[<span style="color: #008b8b;">:add</span> 2] [<span style="color: #008b8b;">:add</span> -1]]], 
+ <span style="color: #008b8b;">:shrunk</span> {<span style="color: #008b8b;">:total-nodes-visited</span> 108, <span style="color: #008b8b;">:depth</span> 66, <span style="color: #008b8b;">:result</span> <span style="color: #008b8b;">false</span>,
+          <span style="color: #008b8b;">:smallest</span> [[[<span style="color: #008b8b;">:add</span> 0] [<span style="color: #008b8b;">:remove</span>]]
+                     [[<span style="color: #008b8b;">:remove</span>]]]}}
+</pre>
+</div>
+</section>
+
+</section>
+<section>
+<section id="sec-9" >
+
+<h2>attempt two</h2>
+<div class="org-src-container">
+
+<pre  class="src src-clojure"><span style="color: #b22222;">;; </span><span style="color: #b22222;">old and busted:</span>
+(<span style="color: #a020f0;">defn</span> <span style="color: #0000ff;">remove</span> [q]
+  (<span style="color: #a020f0;">let</span> [[item rest] ((juxt first pop) @q)]
+    (reset! q rest)
+    item))
+
+<span style="color: #b22222;">;; </span><span style="color: #b22222;">new hotness:</span>
+(<span style="color: #a020f0;">defn</span> <span style="color: #0000ff;">remove</span> [q]
+  (<span style="color: #a020f0;">let</span> [item (first @q)]
+    (swap! q pop)
+    item))
+</pre>
+</div>
+
+</section>
+<section id="sec-9-1" >
+
+<h3>results</h3>
+<div class="org-src-container">
+
+<pre  class="src src-clojure">{<span style="color: #008b8b;">:test-var</span> queue1-should-have-linearizable-parallel-behaviour,
+ <span style="color: #008b8b;">:result</span> <span style="color: #008b8b;">false</span>,
+ <span style="color: #008b8b;">:seed</span> 1403643165214,
+ <span style="color: #008b8b;">:failing-size</span> 0,
+ <span style="color: #008b8b;">:num-tests</span> 1,
+ <span style="color: #008b8b;">:fail</span> [[[<span style="color: #008b8b;">:remove</span>]]
+        [[<span style="color: #008b8b;">:add</span> 0] [<span style="color: #008b8b;">:remove</span>]]],
+ <span style="color: #008b8b;">:shrunk</span> {<span style="color: #008b8b;">:total-nodes-visited</span> 108, <span style="color: #008b8b;">:depth</span> 57, <span style="color: #008b8b;">:result</span> <span style="color: #008b8b;">false</span>,
+          <span style="color: #008b8b;">:smallest</span> [[[<span style="color: #008b8b;">:remove</span>]]
+                     [[<span style="color: #008b8b;">:add</span> 0] [<span style="color: #008b8b;">:remove</span>]]]}}
+</pre>
+</div>
+</section>
+
+</section>
+<section>
+<section id="sec-10" >
+
+<h2>attempt three</h2>
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(<span style="color: #a020f0;">defn</span> <span style="color: #0000ff;">remove</span> [q]
+  (<span style="color: #a020f0;">loop</span> []
+    (<span style="color: #a020f0;">let</span> [oldval @q]
+      (<span style="color: #a020f0;">if</span> (compare-and-set! q oldval (pop oldval))
+        (first oldval)
+        (<span style="color: #a020f0;">recur</span>)))))
+
+<span style="color: #b22222;">;; </span><span style="color: #b22222;">can also use trade! from flatland/useful</span>
+<span style="color: #b22222;">;; </span><span style="color: #b22222;">(but don't look at the implementation!)</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+
+<pre  class="fragment"><span style="color: #b22222;">; </span><span style="color: #b22222;">Ran 100 tests. 0 failures, 0 errors.</span>
+</pre>
+</div>
+
+</section>
+<section id="sec-10-1" >
+
+<h3>attempt four</h3>
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(<span style="color: #a020f0;">ns</span> <span style="color: #228b22;">philandstuff.test-check-knossos.java-queue</span>
+  (<span style="color: #008b8b;">:import</span> [<span style="color: #228b22;">java.util.concurrent</span> <span style="color: #228b22;">ConcurrentLinkedQueue</span>]
+           [<span style="color: #228b22;">java.util</span> <span style="color: #228b22;">Queue</span>])
+  (<span style="color: #008b8b;">:refer-clojure</span> <span style="color: #008b8b;">:exclude</span> [remove]))
+
+(<span style="color: #a020f0;">defn</span> <span style="color: #0000ff;">create-queue</span> [] (<span style="color: #228b22;">ConcurrentLinkedQueue.</span>))
+
+(<span style="color: #a020f0;">defn</span> <span style="color: #0000ff;">add</span> [<span style="color: #483d8b;">^</span><span style="color: #228b22;">Queue</span> q item]
+  (<span style="color: #483d8b;">.add</span> q item))
+
+(<span style="color: #a020f0;">defn</span> <span style="color: #0000ff;">remove</span> [<span style="color: #483d8b;">^</span><span style="color: #228b22;">Queue</span> q]
+  (<span style="color: #483d8b;">.poll</span> q))
+</pre>
+</div>
+
+<div class="org-src-container">
+
+<pre  class="fragment"><span style="color: #b22222;">; </span><span style="color: #b22222;">Ran 100 tests. 0 failures, 0 errors.</span>
+</pre>
+</div>
+</section>
+
+</section>
+<section>
+<section id="sec-11" >
+
+<h2>future: user scheduler</h2>
+<p>
+Finding Race Conditions in Erlang with QuickCheck and PULSE,
+   Claessen et al, ICFP 2009
+</p>
+
+</section>
+<section id="sec-11-1" >
+
+<h3></h3>
+<p>
+Hoping to trigger races is a hack
+</p>
+
+<p>
+PULSE generates random but deterministic schedules for erlang programs
+</p>
+
+<p>
+Can re-run failing schedule later to see if you have fixed the race
+</p>
+
+</section>
+<section id="sec-11-2" >
+
+<h3>Race condition found in Riak:</h3>
+<p>
+<a href="http://basho.com/quickchecking-poolboy-for-fun-and-profit/">http://basho.com/quickchecking-poolboy-for-fun-and-profit/</a>
+</p>
+
+<p>
+<a href="https://github.com/basho/riak_core/issues/298">https://github.com/basho/riak_core/issues/298</a>
+</p>
+
+</section>
+<section>
+
+<img src="riak-data-race.jpeg" alt="riak-data-race.jpeg" />
+
+</section>
+<section id="sec-11-3" >
+
+<h3>the problem: shared-memory concurrency</h3>
+<p>
+PULSE is at a massive advantage: only have to instrument sending &amp;
+receiving messages
+</p>
+
+<p>
+In clojure, you'd have to instrument: atoms, refs, agents, promises,
+<code>:volatile-mutable</code> sets, almost all java interop&#x2026;
+</p>
+</section>
+
+</section>
+<section>
+<section id="sec-12" >
+
+<h2>links</h2>
+<p>
+philandstuff/test-check-knossos
+</p>
+
+<p>
+aphyr/knossos
+</p>
+
+<p>
+clojure/test.check
+</p>
+
+<p>
+Finding Race Conditions in Erlang with QuickCheck and PULSE, Claessen
+     et al, ICFP 2009
+</p>
+
+<p>
+John Hughes (QuickCheck) and Reid Draper (clojure.test.check) at clojure/west
+</p>
+
+<p>
+<a href="http://basho.com/quickchecking-poolboy-for-fun-and-profit/">http://basho.com/quickchecking-poolboy-for-fun-and-profit/</a>
+</p>
+
+<p>
+<a href="https://github.com/basho/riak_core/issues/298">https://github.com/basho/riak_core/issues/298</a>
+</p>
+</section>
+
+</section>
+<section>
+<section id="sec-13" >
+
+<h2>unsorted stuff</h2>
+<p>
+(this section wasn't presented, it's just scraps of material that
+didn't make it into the talk)
+</p>
+
+</section>
+<section id="sec-13-1" >
+
+<h3>shrinking in more detail</h3>
+</section>
+<section id="sec-13-1-1" >
+
+<h4>shrinking is type-specific</h4>
+<p>
+integers shrink to 0
+</p>
+
+<p>
+vectors shrink by removing elements
+</p>
+
+<p class="fragment">
+and also recursively shrink their contents
+</p>
+
+</section>
+<section id="sec-13-1-2" >
+
+<h4>shrinking is a tree, not a list</h4>
+<p>
+if <code>[1 2 3]</code> fails, could try any of these next:
+</p>
+
+<p>
+<code>[1 2] [1 3] [2 3]</code>
+</p>
+
+<p>
+<code>[1 2 2] [1 1 3] [0 2 3]</code>
+</p>
+
+<p>
+proceed by depth-first search, no backtracking
+</p>
+
+</section>
+<section id="sec-13-2" >
+
+<h3>the menagerie of generators</h3>
+</section>
+<section id="sec-13-2-1" >
+
+<h4>primitives</h4>
+<p>
+<code>boolean int nat pos-int ratio keyword</code>
+</p>
+
+<p>
+<code>(choose 0 63) (elements [:foo :bar :baz]) (return :any-val)</code>
+</p>
+
+</section>
+<section id="sec-13-2-2" >
+
+<h4>compound data</h4>
+<p>
+<code>(tuple int boolean)</code>
+</p>
+
+<p>
+<code>(vector nat)</code>
+</p>
+
+<p>
+<code>(list (map keyword any-printable))</code>
+</p>
+
+<p>
+<code>any any-printable</code>
+</p>
+
+<p>
+<code>not-empty</code>
+</p>
+
+</section>
+<section id="sec-13-2-3" >
+
+<h4>combining generators</h4>
+<p>
+<code>one-of frequency such-that bind fmap</code>
+</p>
+
+</section>
+<section id="sec-13-2-4" >
+
+<h4>tweak shrinking behaviour</h4>
+<p>
+<code>no-shrink shrink-2</code>
+</p>
+
+</section>
+<section id="sec-13-3" >
+
+<h3>notes from riak community hangout</h3>
+<p>
+<a href="https://www.youtube.com/watch?v=D06M8NMJYCw">https://www.youtube.com/watch?v=D06M8NMJYCw</a>
+downsides:
+</p>
+<ul class="org-ul">
+<li>slower to write tests
+</li>
+</ul>
+
+</section>
+<section id="sec-13-4" >
+
+<h3>why doesn't [-2 -2] shrink to [0 0]?</h3>
+<ul class="org-ul">
+<li>and the shrink-2 combinator
+</li>
+</ul>
+</section>
+</section>
+</div>
+</div>
+<script src="../../reveal/lib/js/head.min.js"></script>
+<script src="../../reveal/js/reveal.min.js"></script>
+<script>
+
+        		// Full list of configuration options available here:
+        		// https://github.com/hakimel/reveal.js#configuration
+        		Reveal.initialize({
+        			controls: false,
+        			progress: true,
+        			history: true,
+        			center: true,
+                                slideNumber: true,
+        			rollingLinks: false,
+        			keyboard: true,
+        			overview: true,
+        			 // slide width
+        			 // slide height
+        			margin: 0.00, // slide margin
+        			 // slide minimum scaling factor
+        			 // slide maximum scaling factor
+
+
+        			theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+        			transition: Reveal.getQueryHash().transition || 'linear', // default/cube/page/concave/zoom/linear/fade/none
+        			transitionSpeed: 'default',
+
+        			// Optional libraries used to extend on reveal.js
+        			dependencies: [
+        				{ src: '../../reveal/lib/js/classList.js', condition: function() { return !document.body.classList; } }
+        				,{ src: '../../reveal/plugin/markdown/showdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } }
+        				,{ src: '../../reveal/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } }
+        				,{ src: '../../reveal/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+        				,{ src: '../../reveal/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } }
+        				,{ src: '../../reveal/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+        				// { src: '../../reveal/plugin/search/search.js', async: true, condition: function() { return !!document.body.classList; } }
+        				// { src: '../../reveal/plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
+         				
+        			]
+        		});
+</script>
+</body>
+</html>

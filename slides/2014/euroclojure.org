@@ -1,0 +1,628 @@
+#+TITLE: test.check
+#+AUTHOR: Philip Potter
+#+EMAIL: @philandstuff
+#+OPTIONS: num:nil reveal_history:t reveal_mathjax:nil reveal_control:nil
+#+REVEAL_HLEVEL:1
+#+REVEAL_MARGIN:0
+#+REVEAL_ROOT:../../reveal
+#+REVEAL_THEME:simple
+#+REVEAL_TRANS:linear
+
+* Prelude
+
+  https://gists.github.com/philandstuff
+
+* Generative testing with clojure.test.check
+** "Don't write tests, generate them!"
+** example: sorting
+
+#+BEGIN_SRC clojure
+(deftest my-sort-is-correct
+  (are [x y] (= x y)
+       (my-sort [1])         [1]
+       (my-sort [1 2])       [1 2]
+       (my-sort [2 1])       [1 2]
+       (my-sort [:foo :bar]) [:bar :foo]
+       (my-sort [1 4 5 3 2]) [1 2 3 4 5]))
+#+END_SRC
+
+#+ATTR_REVEAL: :frag t
+   is this enough?
+
+#+ATTR_REVEAL: :frag t
+#+BEGIN_SRC clojure
+  (defn my-sort [coll] (seq (into (sorted-set) coll)))
+#+END_SRC
+
+** what do we mean by sorting?
+
+#+ATTR_REVEAL: :frag t
+The output is in ascending order
+
+#+ATTR_REVEAL: :frag t
+The output is a permutation of the input
+
+#+ATTR_REVEAL: :frag t
+These can be expressed as /properties/, independent of the particular
+test data
+
+** defining properties
+
+#+BEGIN_SRC clojure
+  (defspec my-sort-output-increasing-prop 100
+    (for-all [input (gen/vector gen/int)]
+      (let [output (my-sort input)]
+        (or (empty? output)
+            (apply <= output)))))
+#+END_SRC
+
+#+BEGIN_SRC clojure
+  (defspec my-sort-output-permutation-of-input 100
+    (for-all [input (gen/vector gen/int)]
+      (let [output (my-sort input)]
+        (= (frequencies input) (frequencies output)))))
+#+END_SRC
+
+** running sorted property:
+
+: Testing test-check-playground.core-test
+: {:test-var my-sort-output-increasing-prop, :result true, :num-tests 100,
+:  :seed 1402865690454}
+: 
+: Ran 1 tests containing 1 assertions.
+: 0 failures, 0 errors.
+
+** running permutation property:
+
+: Testing test-check-playground.core-test
+:
+: {:test-var my-sort-output-permutation-of-input, :result false,
+:  :seed 1403453860357, :failing-size 9, :num-tests 10,
+:  :fail [[3 -2 -4 -2 6]],
+:  :shrunk {:total-nodes-visited 12, :depth 3, :result false,
+:           :smallest [[-2 -2]]}}
+: 
+: FAIL in (my-sort-output-permutation-of-input) (clojure_test.clj:18)
+
+** a failure!
+
+~(my-sort [3 -2 -4 -2 6])~ failed the permutation property
+
+** shrinking our failing case
+
+#+ATTR_REVEAL: :frag highlight-red
+~[3 -2 -4 -2 6]~
+
+#+ATTR_REVEAL: :frag highlight-red
+~[3 -2 -4 -2]~
+
+@@html:<span class="fragment highlight-green">@@
+~[3 -2 -4]~
+@@html:</span><span class="fragment highlight-red">@@
+~[3 -2 -2]~
+@@html:</span>@@
+
+@@html:<span class="fragment highlight-green">@@
+~[3 -2]~
+@@html:</span><span class="fragment highlight-red">@@
+~[-2 -2]~
+@@html:</span>@@
+
+@@html:<span class="fragment highlight-green">@@
+~[-2]~
+@@html:</span>@@
+
+#+ATTR_REVEAL: :frag t
+~[-2 -2]~ is a /minimal/ failing test case
+
+#+ATTR_REVEAL: :frag t
+Shrinking is depth-first search without backtracking
+
+** So why did it fail?
+
+#+BEGIN_SRC clojure
+  (defn my-sort [coll] (seq (into (sorted-set) coll)))
+
+  (my-sort [-2 -2])
+
+  ;=> (-2)
+#+END_SRC
+
+Compare:
+
+#+BEGIN_SRC clojure
+  (my-sort [-9 -20 -49 -20 39 -22 -40 -46 -5 30 41 44 -23 27 37 -37 -45 26 -5 -40 41 32 26 -1 41 50 -1 -29 -24 47 -33 -30 8 37])
+
+  ;=> (-49 -46 -45 -40 -37 -33 -30 -29 -24 -23 -22 -20 -9 -5 -1 8 26 27 30 32 37 39 41 44 47 50)
+#+END_SRC
+
+* example: encode/decode
+
+#+BEGIN_SRC clojure
+  (defn encode-state [st]
+    (-> st
+        json/write-str
+        .getBytes
+        b64/encode
+        String.))
+
+  (defn decode-state [st]
+    (-> st
+        .getBytes
+        b64/decode
+        String.
+        (json/read-str :key-fn keyword)))
+#+END_SRC
+
+** attempt #1
+
+#+BEGIN_SRC clojure
+  (for-all [state gen/any]
+    (= state (decode-state (encode-state state))))
+#+END_SRC
+
+#+ATTR_REVEAL: :frag t
+#+BEGIN_SRC clojure
+  ;=> java.lang.Exception:
+  ;   Don't know how to write JSON of class java.lang.Character
+#+END_SRC
+
+** attempt #2
+
+#+BEGIN_SRC clojure
+  (for-all [state (gen/map gen/keyword gen/string)]
+    (= state (decode-state (encode-state state))))
+#+END_SRC
+
+#+ATTR_REVEAL: :frag t
+#+BEGIN_SRC clojure
+  ; Ran 100 tests. 0 failures, 0 errors.
+#+END_SRC
+
+** attempt #3
+
+#+BEGIN_SRC clojure
+  (def gen-json-data
+    (gen/map gen/keyword
+             (gen/one-of [gen/string gen/int gen/boolean])))
+
+  (for-all [state gen-json-data]
+    (= state (decode-state (encode-state state))))
+#+END_SRC
+
+#+ATTR_REVEAL: :frag t
+#+BEGIN_SRC clojure
+  ; Ran 100 tests. 0 failures, 0 errors.
+#+END_SRC
+
+* Using Schema to generate data
+example from https://gist.github.com/davegolland/3bc4277fe109e7b11770
+
+#+begin_src clojure
+  ;; === SCHEMA ===
+  { :x Int,
+    (optional-key "hi") java.lang.Boolean,
+    Keyword java.lang.Boolean}
+  ;; == Samples ==
+  ({:x 0}
+   {:x 1, :FP false}
+   {:x -2, :8j true, :5J false, "hi" true}
+   {:x -2}
+   {:x -3, :npv false, :937 true, :GtNL false}
+   {:x 1, :RD1P false, :1yjJ7 false, :MvJJB false, "hi" true}
+   {:x -5, :G0z6Q5 false, :Y9XT true, :YJ false, "hi" true}
+   {:x 4, "hi" false}
+   {:x -5, :3tTmb3H false, :Ms59j false, :7g5 true,
+    :pGu69 true, :1J false, :GF27V16 false,
+    "hi" false}
+   {:x 1, :IK true, :V87X4F3mY false, :uX false, :mqOcoU false,
+    :559khUj5 false, :UXE2 false, :Wu9b95x2 false})
+
+#+end_src
+
+* ztellman/collection-check
+
+#+BEGIN_SRC clojure
+  (assert-set-like 1e5 my-empty-set gen/int)
+#+END_SRC
+
+: java.lang.Exception: Assert failed: (= a b)
+:  a = #{0 9 -10}
+:  b = #{0 9 -10}
+:  actions = (-> coll transient (conj! -10) persistent!
+:                transient (conj! 9) persistent!
+:                transient (disj! -10) persistent!
+:                (conj -10))
+
+** ztellman/collection-check
+
+#+BEGIN_SRC clojure
+  (assert-set-like 1e5 my-empty-set gen/int)
+#+END_SRC
+
+#+BEGIN_SRC clojure
+  ;; abridged for slides
+  (defn assert-set-like [n empty-coll element-generator]
+    (quick-check n
+      (for-all [actions (gen-set-actions element-generator)]
+        (let [[a b] (build-collections empty-coll #{} actions)]
+          (assert-equivalent-sets a b)))))
+#+END_SRC
+
+** ztellman/collection-check
+
+#+BEGIN_SRC clojure
+  (assert-set-like 1e5 my-empty-set gen/int)
+#+END_SRC
+
+#+BEGIN_SRC clojure
+  ([:conj 5]
+   [:transient]
+   [:disj! 5]
+   [:persistent!])
+#+END_SRC
+
+#+BEGIN_SRC clojure
+  (-> #{}
+      (conj 5)
+      transient
+      (disj! 5)
+      persistent!)
+#+END_SRC
+
+#+BEGIN_SRC clojure
+  (-> my-empty-set
+      (conj 5)
+      transient
+      (disj! 5)
+      persistent!)
+#+END_SRC
+
+* History
+
+** (incomplete) history of generative testing
+
+   1999: John Hughes & Koen Claessen create QuickCheck
+
+   1999-2000: Andy Gill invents shrinking
+
+   2006: QuviQ founded, creates Erlang QuickCheck
+
+   2009: PULSE presented at ICFP
+
+   2013: PULSE used to find race condition in Riak
+   (https://github.com/basho/riak_core/issues/298)
+
+* Finding race conditions
+
+** example: thread-safe queue
+
+#+BEGIN_SRC clojure
+  (defn create-queue [] (atom PersistentQueue/EMPTY))
+
+  (defn add [q item]
+    (swap! q conj item)
+    nil)
+
+  (defn remove [q]
+    (let [[item rest] ((juxt first pop) @q)]
+      (reset! q rest)
+      item))
+#+END_SRC
+
+** test data and recorded history
+
+#+begin_src clojure
+  ([:add 'ham]
+   [:add 'egg]
+   [:remove]
+   [:add 'chips]
+   [:remove])
+#+end_src
+
+#+ATTR_REVEAL: :frag t
+#+begin_src clojure
+  ([:add 'ham]
+   [:add 'egg]
+   [:remove 'ham]
+   [:add 'chips]
+   [:remove 'egg])
+#+end_src
+
+** aphyr/knossos to the rescue!
+
+#+REVEAL: split
+
+#+ATTR_HTML: :width 48%
+[[file:aphyr-carly1.jpg]]
+
+#+ATTR_HTML: :width 48%
+[[file:aphyr-carly2.jpg]]
+
+#+REVEAL: split
+
+[[file:aphyr-trogdor.jpg]]
+
+#+REVEAL: split
+
+[[file:bruce.jpeg]]
+
+#+REVEAL: split
+
+[[file:aphyr-pmap.jpg]]
+
+#+REVEAL: split
+
+[[file:aphyr-queen.jpg]]
+
+** knossos model
+
+#+begin_src clojure
+  (defrecord QueueModel [items]
+    Model
+    (step [r {:keys [f value]}]
+      (condp = f
+        :add    (QueueModel. (conj items value))
+        :remove (let [acquired-item value]
+                  (if-not (= acquired-item (first items))
+                    (inconsistent
+                     (str "Tried to take " acquired-item
+                          " from queue offering " (first items)))
+                    (QueueModel. (pop items)))))))
+#+end_src
+
+* sequential test
+
+#+begin_src clojure
+  (defspec queue0-should-fit-model-sequentially
+    (for-all [ops (gen/not-empty (gen/vector gen-queue-action))]
+      (:valid? (knossos.core/analysis
+                 empty-queue-model
+                 (sequential-history (q0/create-queue) actions ops)))))
+#+end_src
+
+#+ATTR_REVEAL: :frag t
+#+BEGIN_SRC clojure
+  ; Ran 100 tests. 0 failures, 0 errors.
+#+END_SRC
+
+** testing in parallel
+
+#+begin_src clojure
+  (([:add 'a1] [:add 'a2]    [:remove])
+   ([:add 'b1] [:remove]     [:add 'b2]))
+#+end_src
+
+#+ATTR_REVEAL: :frag t
+#+begin_src clojure
+  (([:add 'a1] [:add 'a2]    [:remove 'b1])
+   ([:add 'b1] [:remove 'a1] [:add 'b2]))
+#+end_src
+
+#+ATTR_REVEAL: :frag t
+#+begin_src clojure
+  (([:add 'a1] [:add 'a2]    [:remove 'a1])
+   ([:add 'b1] [:remove 'a2] [:add 'b2]))
+#+end_src
+
+** coping with nondeterminism
+
+#+BEGIN_SRC clojure
+  (defn always [n prop]
+    (gen/fmap #(or (first (remove :result (drop-last %))) (last %))
+              (apply gen/tuple (repeat n prop))))
+#+END_SRC
+
+~(always prop)~ repeatedly tests the given property ~n~ times
+
+** parallel test
+
+#+begin_src clojure
+  (defspec queue0-should-have-linearizable-parallel-behaviour
+    (always 40
+      (for-all [t1 (gen/not-empty (gen/vector gen-queue-action))
+                t2 (gen/not-empty (gen/vector gen-queue-action))]
+        (:valid? (knossos.core/analysis
+                   empty-queue-model
+                   (recorded-parallel-history
+                     (q0/create-queue)
+                     actions
+                     {:t1 t1 :t2 t2}))))))
+#+end_src
+
+#+ATTR_REVEAL: :frag t
+#+BEGIN_SRC clojure
+  {:test-var queue0-should-have-linearizable-parallel-behaviour,
+   :result false,
+   :seed 1403643157336,
+   :failing-size 0,
+   :num-tests 1,
+   :fail [[[:remove] [:remove]]
+          [[:add 2] [:add -1]]], 
+   :shrunk {:total-nodes-visited 108, :depth 66, :result false,
+            :smallest [[[:add 0] [:remove]]
+                       [[:remove]]]}}
+#+END_SRC
+
+* attempt two
+#+begin_src clojure
+  ;; old and busted:
+  (defn remove [q]
+    (let [[item rest] ((juxt first pop) @q)]
+      (reset! q rest)
+      item))
+
+  ;; new hotness:
+  (defn remove [q]
+    (let [item (first @q)]
+      (swap! q pop)
+      item))
+
+#+end_src
+
+** results
+
+#+begin_src clojure
+  {:test-var queue1-should-have-linearizable-parallel-behaviour,
+   :result false,
+   :seed 1403643165214,
+   :failing-size 0,
+   :num-tests 1,
+   :fail [[[:remove]]
+          [[:add 0] [:remove]]],
+   :shrunk {:total-nodes-visited 108, :depth 57, :result false,
+            :smallest [[[:remove]]
+                       [[:add 0] [:remove]]]}}
+#+end_src
+
+* attempt three
+
+#+begin_src clojure
+  (defn remove [q]
+    (loop []
+      (let [oldval @q]
+        (if (compare-and-set! q oldval (pop oldval))
+          (first oldval)
+          (recur)))))
+
+  ;; can also use trade! from flatland/useful
+  ;; (but don't look at the implementation!)
+#+end_src
+
+#+ATTR_REVEAL: :frag t
+#+BEGIN_SRC clojure
+  ; Ran 100 tests. 0 failures, 0 errors.
+#+END_SRC
+
+** attempt four
+
+#+begin_src clojure
+  (ns philandstuff.test-check-knossos.java-queue
+    (:import [java.util.concurrent ConcurrentLinkedQueue]
+             [java.util Queue])
+    (:refer-clojure :exclude [remove]))
+
+  (defn create-queue [] (ConcurrentLinkedQueue.))
+
+  (defn add [^Queue q item]
+    (.add q item))
+
+  (defn remove [^Queue q]
+    (.poll q))
+
+#+end_src
+
+#+ATTR_REVEAL: :frag t
+#+BEGIN_SRC clojure
+  ; Ran 100 tests. 0 failures, 0 errors.
+#+END_SRC
+
+* future: user scheduler
+
+  Finding Race Conditions in Erlang with QuickCheck and PULSE,
+     Claessen et al, ICFP 2009
+
+** 
+
+Hoping to trigger races is a hack
+
+PULSE generates random but deterministic schedules for erlang programs
+
+Can re-run failing schedule later to see if you have fixed the race
+
+** Race condition found in Riak:
+
+   http://basho.com/quickchecking-poolboy-for-fun-and-profit/
+
+   https://github.com/basho/riak_core/issues/298
+
+#+REVEAL: split
+
+[[file:riak-data-race.jpeg]]
+
+** the problem: shared-memory concurrency
+
+PULSE is at a massive advantage: only have to instrument sending &
+receiving messages
+
+In clojure, you'd have to instrument: atoms, refs, agents, promises,
+~:volatile-mutable~ sets, almost all java interop...
+
+* links
+
+philandstuff/test-check-knossos
+
+aphyr/knossos
+
+clojure/test.check
+
+Finding Race Conditions in Erlang with QuickCheck and PULSE, Claessen
+     et al, ICFP 2009
+
+John Hughes (QuickCheck) and Reid Draper (clojure.test.check) at clojure/west
+
+   http://basho.com/quickchecking-poolboy-for-fun-and-profit/
+
+   https://github.com/basho/riak_core/issues/298
+
+* unsorted stuff
+
+(this section wasn't presented, it's just scraps of material that
+didn't make it into the talk)
+
+** shrinking in more detail
+*** shrinking is type-specific
+
+integers shrink to 0
+
+vectors shrink by removing elements
+
+#+ATTR_REVEAL: :frag t
+and also recursively shrink their contents
+
+*** shrinking is a tree, not a list
+
+if ~[1 2 3]~ fails, could try any of these next:
+
+~[1 2] [1 3] [2 3]~
+
+~[1 2 2] [1 1 3] [0 2 3]~
+
+proceed by depth-first search, no backtracking
+
+** the menagerie of generators
+
+*** primitives
+
+~boolean int nat pos-int ratio keyword~
+
+~(choose 0 63) (elements [:foo :bar :baz]) (return :any-val)~
+
+*** compound data
+
+~(tuple int boolean)~
+
+~(vector nat)~
+
+~(list (map keyword any-printable))~
+
+~any any-printable~
+
+~not-empty~
+
+*** combining generators
+
+~one-of frequency such-that bind fmap~
+
+*** tweak shrinking behaviour
+
+~no-shrink shrink-2~
+
+** notes from riak community hangout
+   https://www.youtube.com/watch?v=D06M8NMJYCw
+   downsides:
+   - slower to write tests
+
+** why doesn't [-2 -2] shrink to [0 0]?
+
+   - and the shrink-2 combinator
