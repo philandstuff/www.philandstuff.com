@@ -550,11 +550,11 @@ In clojure, you'd have to instrument: atoms, refs, agents, promises,
 
 * links
 
-philandstuff/test-check-knossos
+https://github.com/philandstuff/test-check-knossos
 
-aphyr/knossos
+https://github.com/aphyr/knossos
 
-clojure/test.check
+https://github.com/clojure/test.check
 
 Finding Race Conditions in Erlang with QuickCheck and PULSE, Claessen
      et al, ICFP 2009
