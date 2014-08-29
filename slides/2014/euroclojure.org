@@ -10,7 +10,7 @@
 
 * Prelude
 
-  https://gists.github.com/philandstuff
+  https://gist.github.com/philandstuff
 
 * Generative testing with clojure.test.check
 ** "Don't write tests, generate them!"
