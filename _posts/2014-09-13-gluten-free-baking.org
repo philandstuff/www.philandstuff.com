@@ -1,0 +1,65 @@
+---
+layout: post
+title: Some gluten-free baking recipes
+tags:
+  - recipe
+  - gluten-free
+---
+
+# -*- coding: utf-8 -*-
+
+Just baked this afternoon: two gluten free baking recipes.  Both
+turned out amazingly, so I had to document them for posterity!
+
+* Gluten-free nankhatai
+
+These are almond biscuits spiced with a heavy dose of cardamon.
+
+This is based on [[http://healthyvegcooking.blogspot.co.uk/2013/08/gluten-free-nankhatai.html?showComment%3D1410627086161#c1183791447353116387][this recipe]].  It's awkward because the ingredients
+are measured in cups, whereas I much prefer to measure by weight,
+particularly for baking.
+
+Ingredients:
+
+  - 50 g [[http://en.wikipedia.org/wiki/Gram_flour][gram flour]]
+  - 100 g ground almonds
+  - 10 g cardamom pods
+  - pinch of salt
+  - 75 g icing sugar
+  - 110 g butter
+  - almonds to garnish
+
+For this recipe, I bought flaked almonds (ie thinly sliced almonds)
+and chopped them up in a food processor.  This resulted in a
+delightfully irregular texture in the final product.
+
+Grind the cardamom with a mortar & pestle, sift with the gram flour
+and add the ground almonds and salt.  Cream the butter and sugar
+together, then mix in the dry ingredients and knead.  Put in the
+fridge for 15 minutes.
+
+Take the dough out, make into 16 small balls and put onto a greased
+baking tray.  These balls will spread out during cooking so give them
+plenty of elbow room!  Put a flake of almond on each and press gently.
+Put the baking tray back into the fridge for a further 15 minutes.
+
+Bake at 150℃ for around 20 minutes, taking care to ensure they don't
+turn brown.  Place on a cooling rack for 10 minutes.  They will still
+be very soft when you take them out of the oven, but they will firm up
+as they cool.
+
+[[../../../images/nankhatai.jpg]]
+
+As you can see, we were stuck with a baking tray that was far too
+small and our nankhatai soon invaded each others' personal space.  It
+didn't stop them being delicious though!
+
+* Gluten-free banana bread
+
+For this, we followed [[http://www.bbc.co.uk/food/recipes/bananabread_74771][this recipe]] but with two substitutions:
+
+  - instead of cherries and sultanas, we used figs
+  - instead of rice flour, we used gram flour
+
+It worked an absolute treat -- would definitely do again.  It was good
+to have two recipes to use up the gram flour.
