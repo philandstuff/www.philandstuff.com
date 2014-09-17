@@ -1,0 +1,32 @@
+#+TITLE: Introduction to Clojure
+#+AUTHOR: Philip Potter and Tom Hall
+#+EMAIL: @philandstuff and @thattommyhall
+#+OPTIONS: num:nil reveal_history:t reveal_mathjax:nil reveal_control:nil
+#+REVEAL_HLEVEL:1
+#+REVEAL_MARGIN:0
+#+REVEAL_ROOT:../../reveal
+#+REVEAL_THEME:simple
+#+REVEAL_TRANS:linear
+
+* Slide heading
+
+slide body
+
+** subhead slide with code
+
+#+begin_src clojure
+  (for [[_ vals] {:a [1 2 3], :b [4 5 6], :c [7 8 9]}
+        num      vals]
+    num)
+#+end_src
+
+* new section slide
+
+woo!
+
+** slide with bullets
+
+   - foo
+   - bar
+   - baz
+

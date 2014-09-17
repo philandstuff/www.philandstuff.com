@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Introduction to Clojure</title>
+<meta name="author" content="(Philip Potter and Tom Hall)"/>
+
+<link rel="stylesheet" href="../../reveal/css/reveal.min.css"/>
+<link rel="stylesheet" href="../../reveal/css/theme/simple.css" id="theme"/>
+
+<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+<script>
+    if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = '../../reveal/css/print/pdf.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+    }
+</script>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section>
+<h1>Introduction to Clojure</h1>
+<h2>Philip Potter and Tom Hall</h2>
+<h2><a href="mailto:@philandstuff and @thattommyhall">@philandstuff and @thattommyhall</a></h2>
+<h2></h2></section>
+
+<section>
+<section id="sec-1" >
+
+<h2>Slide heading</h2>
+<p>
+slide body
+</p>
+
+</section>
+<section id="sec-1-1" >
+
+<h3>subhead slide with code</h3>
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(<span style="color: #a020f0;">for</span> [[_ vals] {<span style="color: #008b8b;">:a</span> [1 2 3], <span style="color: #008b8b;">:b</span> [4 5 6], <span style="color: #008b8b;">:c</span> [7 8 9]}
+      num      vals]
+  num)
+</pre>
+</div>
+</section>
+
+</section>
+<section>
+<section id="sec-2" >
+
+<h2>new section slide</h2>
+<p>
+woo!
+</p>
+
+</section>
+<section id="sec-2-1" >
+
+<h3>slide with bullets</h3>
+<ul class="org-ul">
+<li>foo
+</li>
+<li>bar
+</li>
+<li>baz
+</li>
+</ul>
+</section>
+</section>
+</div>
+</div>
+
+<script src="../../reveal/lib/js/head.min.js"></script>
+<script src="../../reveal/js/reveal.min.js"></script>
+
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: false,
+progress: true,
+history: true,
+center: true,
+slideNumber: true,
+rollingLinks: false,
+keyboard: true,
+overview: true,
+margin: 0.00,
+
+theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+transition: Reveal.getQueryHash().transition || 'linear', // default/cube/page/concave/zoom/linear/fade/none
+transitionSpeed: 'default',
+
+// Optional libraries used to extend on reveal.js
+dependencies: [
+ { src: '../../reveal/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+ { src: '../../reveal/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: '../../reveal/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: '../../reveal/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+ { src: '../../reveal/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+ { src: '../../reveal/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+]
+});
+</script>
+</body>
+</html>
