@@ -8,6 +8,30 @@
 #+REVEAL_THEME:simple
 #+REVEAL_TRANS:linear
 
+* notes
+
+  - 20 minute whirlwind clojure tour (phil lead)
+    - with lighttable instarepl
+    - (open lighttable, ctrl-space, type "instarepl")
+    - cover everything needed by early stages of clojurescript koans
+  - 20 minutes playing with whatever
+    - eg clojurescriptkoans
+  - 20 minutes intro to harder stuff (phil lead)
+    - interop
+    - reference types
+    - projects
+    - dependencies
+    - stuff in order to do the next section:
+  - 1 hour building snake (tom lead)
+    - jvm/swing with seesaw
+    - start from bare project
+    - gist of functions "for free"
+  - outro: what next?
+    - plug for all london clojurian events
+    - lambda.next & juxt
+    - 4clojure
+    - gist of documentation sites - grimoire, toolbox, atlas
+
 * Slide heading
 
 slide body
