@@ -32,25 +32,204 @@
     - 4clojure
     - gist of documentation sites - grimoire, toolbox, atlas
 
-* Slide heading
+** clojurescript koans topics
 
-slide body
+   - booleans
+   - prefix maths
+   - keywords, symbols, strings
+   - quoting
+   - nil
+   - cons (lists, seqs)
+   - conj
+   - peek/pop
+   - vectors as seqs
+   - vec, vector, nth, subvec
+   - sets
+   - maps, lookup
 
-** subhead slide with code
+   - eval? do we want that?
+
+* Introduction to Clojure
+
+** Concepts
+
+   - Functional programming and immutability
+   - Lisp
+   - Hosted on JVM (or JavaScript)
+   - Concurrency
+
+** Concepts 2
+
+   - "Simple made easy"
+   - "Libraries not frameworks"
+
+* Lisp part 1
+
+** Basic syntax
+
+Basic expression is an operator applied to zero or more arguments:
 
 #+begin_src clojure
-  (for [[_ vals] {:a [1 2 3], :b [4 5 6], :c [7 8 9]}
-        num      vals]
-    num)
+  (operator arg1 arg2 ...)
 #+end_src
 
-* new section slide
+Sometimes known as an /s-expression/ or /sexp/.
 
-woo!
+** Function calls
 
-** slide with bullets
+Ruby:
 
-   - foo
-   - bar
-   - baz
+#+begin_src ruby
+  puts("foo")
+#+end_src
 
+Clojure:
+
+#+begin_src clojure
+  (println "foo")
+#+end_src
+
+** Methods
+
+Ruby:
+
+#+begin_src ruby
+  "".empty?
+  "foo".empty?
+#+end_src
+
+Clojure:
+
+#+begin_src clojure
+  (empty? "")
+  (empty? "foo")
+#+end_src
+
+** Methods with arguments
+
+Ruby:
+
+#+begin_src ruby
+  [1,2,3].concat( [4,5,6] )
+#+end_src
+
+Clojure:
+
+#+begin_src clojure
+  (concat [1 2 3] [4 5 6])
+#+end_src
+
+** Numerical operators
+
+Ruby:
+
+#+begin_src ruby
+  1 + 2
+  1 + 2 + 3 + 4
+#+end_src
+
+Clojure:
+
+#+begin_src clojure
+  (+ 1 2)
+  (+ 1 2 3 4)
+#+end_src
+
+** Defining functions
+
+#+begin_src ruby
+  def add1(x)
+    x + 1
+  end
+#+end_src
+
+#+begin_src clojure
+  (defn add1 [x]
+    (+ x 1))
+#+end_src
+
+
+* Functional programming
+
+** Data
+
+http://clojure.org/data_structures
+
+*** Simple data types
+
+~nil~
+
+~1 1/2 1234N 0.3M~
+
+~"strings"~
+
+~\c \h \a \r \s \!~
+
+~:foo   'foo~
+
+*** Vectors
+
+    ~[:a :b :c]~
+
+#+begin_src clojure
+  (def v [:a :b :c])
+
+  (first v) ;=> :a
+
+  (last v) ;=> :c
+
+  (nth v 1) ;=> :b
+#+end_src
+
+
+*** Vectors
+
+#+begin_src clojure
+  (def v [:a :b :c])
+
+  (conj v :d) ;=> [:a :b :c :d]
+
+  (assoc v 1 42) ;=> [:a 42 :c]
+
+  (pop v) ;=> [:a :b]
+
+  v ;=> [:a :b :c] -- unchanged!
+#+end_src
+
+*** Maps
+
+~{:foo 1, :bar 2}~
+
+#+begin_src clojure
+  (def m {:foo 1, :bar 2})
+
+  (:foo m) ;=> 1
+
+  (:baz m) ;=> nil
+
+  (get m :baz) ;=> nil
+
+  (get m :baz :not-found) ;=> :not-found
+#+end_src
+
+** Defining things
+
+#+begin_src clojure
+  (def x :a-value)
+
+  (defn a-function [x y]
+    (if (< x y)
+      y
+      x))
+
+  (let [triple (fn [x] (+ x x x))]
+    (triple 5))
+  ;;=> 15
+
+  (triple 10)
+  ;; unable to resolve symbol: triple
+#+end_src
+
+* Clojurescript koans
+
+http://clojurescriptkoans.com

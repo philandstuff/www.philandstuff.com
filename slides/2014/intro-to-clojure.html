@@ -87,51 +87,347 @@
 </ul>
 </li>
 </ul>
+
+</section>
+<section id="sec-1-1" >
+
+<h3>clojurescript koans topics</h3>
+<ul class="org-ul">
+<li>booleans
+</li>
+<li>prefix maths
+</li>
+<li>keywords, symbols, strings
+</li>
+<li>quoting
+</li>
+<li>nil
+</li>
+<li>cons (lists, seqs)
+</li>
+<li>conj
+</li>
+<li>peek/pop
+</li>
+<li>vectors as seqs
+</li>
+<li>vec, vector, nth, subvec
+</li>
+<li>sets
+</li>
+<li>maps, lookup
+</li>
+
+<li>eval? do we want that?
+</li>
+</ul>
 </section>
 
 </section>
 <section>
 <section id="sec-2" >
 
-<h2>Slide heading</h2>
-<p>
-slide body
-</p>
-
+<h2>Introduction to Clojure</h2>
 </section>
 <section id="sec-2-1" >
 
-<h3>subhead slide with code</h3>
-<div class="org-src-container">
+<h3>Concepts</h3>
+<ul class="org-ul">
+<li>Functional programming and immutability
+</li>
+<li>Lisp
+</li>
+<li>Hosted on JVM (or JavaScript)
+</li>
+<li>Concurrency
+</li>
+</ul>
 
-<pre  class="src src-clojure">(<span style="color: #a020f0;">for</span> [[_ vals] {<span style="color: #008b8b;">:a</span> [1 2 3], <span style="color: #008b8b;">:b</span> [4 5 6], <span style="color: #008b8b;">:c</span> [7 8 9]}
-      num      vals]
-  num)
-</pre>
-</div>
+</section>
+<section id="sec-2-2" >
+
+<h3>Concepts 2</h3>
+<ul class="org-ul">
+<li>"Simple made easy"
+</li>
+<li>"Libraries not frameworks"
+</li>
+</ul>
 </section>
 
 </section>
 <section>
 <section id="sec-3" >
 
-<h2>new section slide</h2>
-<p>
-woo!
-</p>
-
+<h2>Lisp part 1</h2>
 </section>
 <section id="sec-3-1" >
 
-<h3>slide with bullets</h3>
-<ul class="org-ul">
-<li>foo
-</li>
-<li>bar
-</li>
-<li>baz
-</li>
-</ul>
+<h3>Basic syntax</h3>
+<p>
+Basic expression is an operator applied to zero or more arguments:
+</p>
+
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(operator arg1 arg2 ...)
+</pre>
+</div>
+
+<p>
+Sometimes known as an <i>s-expression</i> or <i>sexp</i>.
+</p>
+
+</section>
+<section id="sec-3-2" >
+
+<h3>Function calls</h3>
+<p>
+Ruby:
+</p>
+
+<div class="org-src-container">
+
+<pre  class="src src-ruby">puts(<span style="color: #8b2252;">"foo"</span>)
+</pre>
+</div>
+
+<p>
+Clojure:
+</p>
+
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(println <span style="color: #8b2252;">"foo"</span>)
+</pre>
+</div>
+
+</section>
+<section id="sec-3-3" >
+
+<h3>Methods</h3>
+<p>
+Ruby:
+</p>
+
+<div class="org-src-container">
+
+<pre  class="src src-ruby"><span style="color: #8b2252;">""</span>.empty?
+<span style="color: #8b2252;">"foo"</span>.empty?
+</pre>
+</div>
+
+<p>
+Clojure:
+</p>
+
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(empty? <span style="color: #8b2252;">""</span>)
+(empty? <span style="color: #8b2252;">"foo"</span>)
+</pre>
+</div>
+
+</section>
+<section id="sec-3-4" >
+
+<h3>Methods with arguments</h3>
+<p>
+Ruby:
+</p>
+
+<div class="org-src-container">
+
+<pre  class="src src-ruby">[1,2,3].concat( [4,5,6] )
+</pre>
+</div>
+
+<p>
+Clojure:
+</p>
+
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(concat [1 2 3] [4 5 6])
+</pre>
+</div>
+
+</section>
+<section id="sec-3-5" >
+
+<h3>Numerical operators</h3>
+<p>
+Ruby:
+</p>
+
+<div class="org-src-container">
+
+<pre  class="src src-ruby">1 + 2
+1 + 2 + 3 + 4
+</pre>
+</div>
+
+<p>
+Clojure:
+</p>
+
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(+ 1 2)
+(+ 1 2 3 4)
+</pre>
+</div>
+
+</section>
+<section id="sec-3-6" >
+
+<h3>Defining functions</h3>
+<div class="org-src-container">
+
+<pre  class="src src-ruby"><span style="color: #a020f0;">def</span> <span style="color: #0000ff;">add1</span>(x)
+  x + 1
+<span style="color: #a020f0;">end</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(<span style="color: #a020f0;">defn</span> <span style="color: #0000ff;">add1</span> [x]
+  (+ x 1))
+</pre>
+</div>
+</section>
+
+
+</section>
+<section>
+<section id="sec-4" >
+
+<h2>Functional programming</h2>
+</section>
+<section id="sec-4-1" >
+
+<h3>Data</h3>
+<p>
+<a href="http://clojure.org/data_structures">http://clojure.org/data_structures</a>
+</p>
+
+</section>
+<section id="sec-4-1-1" >
+
+<h4>Simple data types</h4>
+<p>
+<code>nil</code>
+</p>
+
+<p>
+<code>1 1/2 1234N 0.3M</code>
+</p>
+
+<p>
+<code>"strings"</code>
+</p>
+
+<p>
+<code>\c \h \a \r \s \!</code>
+</p>
+
+<p>
+<code>:foo   'foo</code>
+</p>
+
+</section>
+<section id="sec-4-1-2" >
+
+<h4>Vectors</h4>
+<p>
+<code>[:a :b :c]</code>
+</p>
+
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(<span style="color: #a020f0;">def</span> <span style="color: #a0522d;">v</span> [<span style="color: #008b8b;">:a</span> <span style="color: #008b8b;">:b</span> <span style="color: #008b8b;">:c</span>])
+
+(first v) <span style="color: #b22222;">;</span><span style="color: #b22222;">=&gt; :a</span>
+
+(last v) <span style="color: #b22222;">;</span><span style="color: #b22222;">=&gt; :c</span>
+
+(nth v 1) <span style="color: #b22222;">;</span><span style="color: #b22222;">=&gt; :b</span>
+</pre>
+</div>
+
+
+</section>
+<section id="sec-4-1-3" >
+
+<h4>Vectors</h4>
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(<span style="color: #a020f0;">def</span> <span style="color: #a0522d;">v</span> [<span style="color: #008b8b;">:a</span> <span style="color: #008b8b;">:b</span> <span style="color: #008b8b;">:c</span>])
+
+(conj v <span style="color: #008b8b;">:d</span>) <span style="color: #b22222;">;</span><span style="color: #b22222;">=&gt; [:a :b :c :d]</span>
+
+(assoc v 1 42) <span style="color: #b22222;">;</span><span style="color: #b22222;">=&gt; [:a 42 :c]</span>
+
+(pop v) <span style="color: #b22222;">;</span><span style="color: #b22222;">=&gt; [:a :b]</span>
+
+v <span style="color: #b22222;">;</span><span style="color: #b22222;">=&gt; [:a :b :c] -- unchanged!</span>
+</pre>
+</div>
+
+</section>
+<section id="sec-4-1-4" >
+
+<h4>Maps</h4>
+<p>
+<code>{:foo 1, :bar 2}</code>
+</p>
+
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(<span style="color: #a020f0;">def</span> <span style="color: #a0522d;">m</span> {<span style="color: #008b8b;">:foo</span> 1, <span style="color: #008b8b;">:bar</span> 2})
+
+(<span style="color: #008b8b;">:foo</span> m) <span style="color: #b22222;">;</span><span style="color: #b22222;">=&gt; 1</span>
+
+(<span style="color: #008b8b;">:baz</span> m) <span style="color: #b22222;">;</span><span style="color: #b22222;">=&gt; nil</span>
+
+(get m <span style="color: #008b8b;">:baz</span>) <span style="color: #b22222;">;</span><span style="color: #b22222;">=&gt; nil</span>
+
+(get m <span style="color: #008b8b;">:baz</span> <span style="color: #008b8b;">:not-found</span>) <span style="color: #b22222;">;</span><span style="color: #b22222;">=&gt; :not-found</span>
+</pre>
+</div>
+
+</section>
+<section id="sec-4-2" >
+
+<h3>Defining things</h3>
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(<span style="color: #a020f0;">def</span> <span style="color: #a0522d;">x</span> <span style="color: #008b8b;">:a-value</span>)
+
+(<span style="color: #a020f0;">defn</span> <span style="color: #0000ff;">a-function</span> [x y]
+  (<span style="color: #a020f0;">if</span> (&lt; x y)
+    y
+    x))
+
+(<span style="color: #a020f0;">let</span> [triple (<span style="color: #a020f0;">fn</span> [x] (+ x x x))]
+  (triple 5))
+<span style="color: #b22222;">;;</span><span style="color: #b22222;">=&gt; 15</span>
+
+(triple 10)
+<span style="color: #b22222;">;; </span><span style="color: #b22222;">unable to resolve symbol: triple</span>
+</pre>
+</div>
+</section>
+
+</section>
+<section>
+<section id="sec-5" >
+
+<h2>Clojurescript koans</h2>
+<p>
+<a href="http://clojurescriptkoans.com">http://clojurescriptkoans.com</a>
+</p>
 </section>
 </section>
 </div>
