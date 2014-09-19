@@ -165,7 +165,7 @@ http://clojure.org/data_structures
 
 ~\c \h \a \r \s \!~
 
-~:foo   'foo~
+~:keyword   'symbol~
 
 *** Vectors
 
