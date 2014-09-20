@@ -8,7 +8,7 @@
 #+REVEAL_THEME:simple
 #+REVEAL_TRANS:linear
 
-* notes
+#+BEGIN_NOTES
 
   - 20 minute whirlwind clojure tour (phil lead)
     - with lighttable instarepl
@@ -32,22 +32,22 @@
     - 4clojure
     - gist of documentation sites - grimoire, toolbox, atlas
 
-** clojurescript koans topics
+    - booleans
+      - prefix maths
+      - keywords, symbols, strings
+      - quoting
+      - nil
+      - cons (lists, seqs)
+      - conj
+      - peek/pop
+      - vectors as seqs
+      - vec, vector, nth, subvec
+      - sets
+      - maps, lookup
 
-   - booleans
-   - prefix maths
-   - keywords, symbols, strings
-   - quoting
-   - nil
-   - cons (lists, seqs)
-   - conj
-   - peek/pop
-   - vectors as seqs
-   - vec, vector, nth, subvec
-   - sets
-   - maps, lookup
+      - eval? do we want that?
 
-   - eval? do we want that?
+#+END_NOTES
 
 * Introduction to Clojure
 
