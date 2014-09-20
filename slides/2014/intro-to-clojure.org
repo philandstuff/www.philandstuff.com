@@ -63,6 +63,27 @@
    - "Simple made easy"
    - "Libraries not frameworks"
 
+* Follow along at home with LightTable
+
+http://www.lighttable.com/
+
+** Start a Clojure Instarepl
+
+Type =Ctrl-<SPACE>=, then type ="instarepl"=, and press =<ENTER>=
+
+** 
+  :PROPERTIES:
+     :reveal_background: /images/start-instarepl.png
+     :reveal_background_trans: linear
+  :END:
+
+** 
+  :PROPERTIES:
+     :reveal_background: /images/instarepl.png
+     :reveal_background_trans: linear
+  :END:
+
+
 * Lisp part 1
 
 ** Basic syntax
@@ -138,14 +159,14 @@ Clojure:
 ** Defining functions
 
 #+begin_src ruby
-  def add1(x)
-    x + 1
+  def add1(n)
+    n + 1
   end
 #+end_src
 
 #+begin_src clojure
-  (defn add1 [x]
-    (+ x 1))
+  (defn add1 [n]
+    (+ n 1))
 #+end_src
 
 
@@ -222,6 +243,12 @@ http://clojure.org/data_structures
       y
       x))
 
+  (def a-function
+    (fn [x y]
+      (if (< x y)
+        y
+        x)))
+
   (let [triple (fn [x] (+ x x x))]
     (triple 5))
   ;;=> 15
@@ -233,3 +260,116 @@ http://clojure.org/data_structures
 * Clojurescript koans
 
 http://clojurescriptkoans.com
+
+* FP & transforming data
+
+** filter
+
+** map
+
+* reference types & concurrency
+
+** problems with traditional concurrency
+
+   - deadlocks
+   - lost updates
+
+** 
+  :PROPERTIES:
+     :reveal_background: /images/epochal-time-model.png
+     :reveal_background_trans: linear
+  :END:
+
+** Epochal time model
+
+From Rich Hickey's talk "Are we there yet?" (reference at end, don't
+worry)
+
+* Java Interoperability
+
+** Syntax
+
+#+begin_src clojure
+  ;; new URI("http://icanhazip.com")
+  (def uri (java.net.URI. "http://icanhazip.com"))
+
+  ;; call a method
+  (.getScheme uri)
+  ;;=> "http"
+
+  ;; Java null maps to Clojure nil
+  (.getFragment uri)
+  ;;=> nil
+#+end_src
+
+** Dealing with mutable objects
+
+#+begin_src clojure
+  (def l (ArrayList.))
+  (.add l 1)
+  (.add l 3)
+  (.add l "foobar")
+  ;;=> l is now [1 3 "foobar"]
+#+end_src
+
+#+ATTR_REVEAL: :frag t
+#+begin_src clojure
+  (def l
+    (doto (ArrayList.)
+      (.add 1)
+      (.add 3)
+      (.add "foobar")))
+#+end_src
+
+** Clojure collections + Java functions
+
+#+begin_src clojure
+;; List's addAll() method takes a java.util.Collection:
+
+(.addAll l [:more :data :from :clojure])
+
+;; now l is [1 3 "foobar" :more :data :from :clojure]
+#+end_src
+
+** Java collections + Clojure functions
+
+#+begin_src clojure
+  (def l (doto (ArrayList.) (.addAll [1 3 "foobar"])))
+
+  (map str l)
+  ;;=> ("1" "3" "foobar")
+
+  (filter number? l)
+  ;;=> (1 3)
+#+end_src
+
+* Projects and dependencies
+
+#+BEGIN_QUOTE
+This is all very neat, but how do I actually get something done?
+#+END_QUOTE
+
+** Leiningen
+
+Do you already have this installed? If not, go to http://leiningen.org/
+
+#+begin_src fundamental
+  $ cd <working directory>
+  $ lein new snake
+  Generating a project called snake based on the 'default' template.
+  To see other templates (app, lein plugin, etc), try `lein help new`.
+  $ cd snake
+#+end_src
+
+** project.clj
+
+Edit your project.clj in LightTable:
+
+
+
+* References
+
+Rich Hickey, "Are we there yet? "http://www.infoq.com/presentations/Are-We-There-Yet-Rich-Hickey
+
+
+

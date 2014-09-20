@@ -150,9 +150,38 @@
 <section>
 <section id="sec-2" >
 
-<h2>Lisp part 1</h2>
+<h2>Follow along at home with LightTable</h2>
+<p>
+<a href="http://www.lighttable.com/">http://www.lighttable.com/</a>
+</p>
+
 </section>
 <section id="sec-2-1" >
+
+<h3>Start a Clojure Instarepl</h3>
+<p>
+Type <code>Ctrl-&lt;SPACE&gt;</code>, then type <code>"instarepl"</code>, and press <code>&lt;ENTER&gt;</code>
+</p>
+
+</section>
+<section id="sec-2-2"  data-background="/images/start-instarepl.png" data-background-transition="linear">
+
+<h3></h3>
+
+</section>
+<section id="sec-2-3"  data-background="/images/instarepl.png" data-background-transition="linear">
+
+<h3></h3>
+</section>
+
+
+</section>
+<section>
+<section id="sec-3" >
+
+<h2>Lisp part 1</h2>
+</section>
+<section id="sec-3-1" >
 
 <h3>Basic syntax</h3>
 <p>
@@ -170,7 +199,7 @@ Sometimes known as an <i>s-expression</i> or <i>sexp</i>.
 </p>
 
 </section>
-<section id="sec-2-2" >
+<section id="sec-3-2" >
 
 <h3>Function calls</h3>
 <p>
@@ -194,7 +223,7 @@ Clojure:
 </div>
 
 </section>
-<section id="sec-2-3" >
+<section id="sec-3-3" >
 
 <h3>Methods</h3>
 <p>
@@ -220,7 +249,7 @@ Clojure:
 </div>
 
 </section>
-<section id="sec-2-4" >
+<section id="sec-3-4" >
 
 <h3>Methods with arguments</h3>
 <p>
@@ -244,7 +273,7 @@ Clojure:
 </div>
 
 </section>
-<section id="sec-2-5" >
+<section id="sec-3-5" >
 
 <h3>Numerical operators</h3>
 <p>
@@ -270,21 +299,21 @@ Clojure:
 </div>
 
 </section>
-<section id="sec-2-6" >
+<section id="sec-3-6" >
 
 <h3>Defining functions</h3>
 <div class="org-src-container">
 
-<pre  class="src src-ruby"><span style="color: #a020f0;">def</span> <span style="color: #0000ff;">add1</span>(x)
-  x + 1
+<pre  class="src src-ruby"><span style="color: #a020f0;">def</span> <span style="color: #0000ff;">add1</span>(n)
+  n + 1
 <span style="color: #a020f0;">end</span>
 </pre>
 </div>
 
 <div class="org-src-container">
 
-<pre  class="src src-clojure">(<span style="color: #a020f0;">defn</span> <span style="color: #0000ff;">add1</span> [x]
-  (+ x 1))
+<pre  class="src src-clojure">(<span style="color: #a020f0;">defn</span> <span style="color: #0000ff;">add1</span> [n]
+  (+ n 1))
 </pre>
 </div>
 </section>
@@ -292,11 +321,11 @@ Clojure:
 
 </section>
 <section>
-<section id="sec-3" >
+<section id="sec-4" >
 
 <h2>Functional programming</h2>
 </section>
-<section id="sec-3-1" >
+<section id="sec-4-1" >
 
 <h3>Data</h3>
 <p>
@@ -304,7 +333,7 @@ Clojure:
 </p>
 
 </section>
-<section id="sec-3-1-1" >
+<section id="sec-4-1-1" >
 
 <h4>Simple data types</h4>
 <p>
@@ -328,7 +357,7 @@ Clojure:
 </p>
 
 </section>
-<section id="sec-3-1-2" >
+<section id="sec-4-1-2" >
 
 <h4>Vectors</h4>
 <p>
@@ -349,7 +378,7 @@ Clojure:
 
 
 </section>
-<section id="sec-3-1-3" >
+<section id="sec-4-1-3" >
 
 <h4>Vectors</h4>
 <div class="org-src-container">
@@ -367,7 +396,7 @@ v <span style="color: #b22222;">;</span><span style="color: #b22222;">=&gt; [:a 
 </div>
 
 </section>
-<section id="sec-3-1-4" >
+<section id="sec-4-1-4" >
 
 <h4>Maps</h4>
 <p>
@@ -389,7 +418,7 @@ v <span style="color: #b22222;">;</span><span style="color: #b22222;">=&gt; [:a 
 </div>
 
 </section>
-<section id="sec-3-2" >
+<section id="sec-4-2" >
 
 <h3>Defining things</h3>
 <div class="org-src-container">
@@ -400,6 +429,12 @@ v <span style="color: #b22222;">;</span><span style="color: #b22222;">=&gt; [:a 
   (<span style="color: #a020f0;">if</span> (&lt; x y)
     y
     x))
+
+(<span style="color: #a020f0;">def</span> <span style="color: #a0522d;">a-function</span>
+  (<span style="color: #a020f0;">fn</span> [x y]
+    (<span style="color: #a020f0;">if</span> (&lt; x y)
+      y
+      x)))
 
 (<span style="color: #a020f0;">let</span> [triple (<span style="color: #a020f0;">fn</span> [x] (+ x x x))]
   (triple 5))
@@ -413,11 +448,187 @@ v <span style="color: #b22222;">;</span><span style="color: #b22222;">=&gt; [:a 
 
 </section>
 <section>
-<section id="sec-4" >
+<section id="sec-5" >
 
 <h2>Clojurescript koans</h2>
 <p>
 <a href="http://clojurescriptkoans.com">http://clojurescriptkoans.com</a>
+</p>
+</section>
+
+</section>
+<section>
+<section id="sec-6" >
+
+<h2>FP &amp; transforming data</h2>
+</section>
+<section id="sec-6-1" >
+
+<h3>filter</h3>
+
+</section>
+<section id="sec-6-2" >
+
+<h3>map</h3>
+</section>
+
+</section>
+<section>
+<section id="sec-7" >
+
+<h2>reference types &amp; concurrency</h2>
+</section>
+<section id="sec-7-1" >
+
+<h3>problems with traditional concurrency</h3>
+<ul class="org-ul">
+<li>deadlocks
+</li>
+<li>lost updates
+</li>
+</ul>
+
+</section>
+<section id="sec-7-2"  data-background="/images/epochal-time-model.png" data-background-transition="linear">
+
+<h3></h3>
+
+</section>
+<section id="sec-7-3" >
+
+<h3>Epochal time model</h3>
+<p>
+From Rich Hickey's talk "Are we there yet?" (reference at end, don't
+worry)
+</p>
+</section>
+
+</section>
+<section>
+<section id="sec-8" >
+
+<h2>Java Interoperability</h2>
+</section>
+<section id="sec-8-1" >
+
+<h3>Syntax</h3>
+<div class="org-src-container">
+
+<pre  class="src src-clojure"><span style="color: #b22222;">;; </span><span style="color: #b22222;">new URI("http://icanhazip.com")</span>
+(<span style="color: #a020f0;">def</span> <span style="color: #a0522d;">uri</span> (<span style="color: #228b22;">java.net.URI.</span> <span style="color: #8b2252;">"http://icanhazip.com"</span>))
+
+<span style="color: #b22222;">;; </span><span style="color: #b22222;">call a method</span>
+(<span style="color: #483d8b;">.getScheme</span> uri)
+<span style="color: #b22222;">;;</span><span style="color: #b22222;">=&gt; "http"</span>
+
+<span style="color: #b22222;">;; </span><span style="color: #b22222;">Java null maps to Clojure nil</span>
+(<span style="color: #483d8b;">.getFragment</span> uri)
+<span style="color: #b22222;">;;</span><span style="color: #b22222;">=&gt; nil</span>
+</pre>
+</div>
+
+</section>
+<section id="sec-8-2" >
+
+<h3>Dealing with mutable objects</h3>
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(<span style="color: #a020f0;">def</span> <span style="color: #a0522d;">l</span> (<span style="color: #228b22;">ArrayList.</span>))
+(<span style="color: #483d8b;">.add</span> l 1)
+(<span style="color: #483d8b;">.add</span> l 3)
+(<span style="color: #483d8b;">.add</span> l <span style="color: #8b2252;">"foobar"</span>)
+<span style="color: #b22222;">;;</span><span style="color: #b22222;">=&gt; l is now [1 3 "foobar"]</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+
+<pre  class="fragment">(<span style="color: #a020f0;">def</span> <span style="color: #a0522d;">l</span>
+  (<span style="color: #a020f0;">doto</span> (<span style="color: #228b22;">ArrayList.</span>)
+    (<span style="color: #483d8b;">.add</span> 1)
+    (<span style="color: #483d8b;">.add</span> 3)
+    (<span style="color: #483d8b;">.add</span> <span style="color: #8b2252;">"foobar"</span>)))
+</pre>
+</div>
+
+</section>
+<section id="sec-8-3" >
+
+<h3>Clojure collections + Java functions</h3>
+<div class="org-src-container">
+
+<pre  class="src src-clojure"><span style="color: #b22222;">;; </span><span style="color: #b22222;">List's addAll() method takes a java.util.Collection:</span>
+
+(<span style="color: #483d8b;">.addAll</span> l [<span style="color: #008b8b;">:more</span> <span style="color: #008b8b;">:data</span> <span style="color: #008b8b;">:from</span> <span style="color: #008b8b;">:clojure</span>])
+
+<span style="color: #b22222;">;; </span><span style="color: #b22222;">now l is [1 3 "foobar" :more :data :from :clojure]</span>
+</pre>
+</div>
+
+</section>
+<section id="sec-8-4" >
+
+<h3>Java collections + Clojure functions</h3>
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(<span style="color: #a020f0;">def</span> <span style="color: #a0522d;">l</span> (<span style="color: #a020f0;">doto</span> (<span style="color: #228b22;">ArrayList.</span>) (<span style="color: #483d8b;">.addAll</span> [1 3 <span style="color: #8b2252;">"foobar"</span>])))
+
+(map str l)
+<span style="color: #b22222;">;;</span><span style="color: #b22222;">=&gt; ("1" "3" "foobar")</span>
+
+(filter number? l)
+<span style="color: #b22222;">;;</span><span style="color: #b22222;">=&gt; (1 3)</span>
+</pre>
+</div>
+</section>
+
+</section>
+<section>
+<section id="sec-9" >
+
+<h2>Projects and dependencies</h2>
+<blockquote>
+<p>
+This is all very neat, but how do I actually get something done?
+</p>
+</blockquote>
+
+</section>
+<section id="sec-9-1" >
+
+<h3>Leiningen</h3>
+<p>
+Do you already have this installed? If not, go to <a href="http://leiningen.org/">http://leiningen.org/</a>
+</p>
+
+<div class="org-src-container">
+
+<pre  class="src src-fundamental">$ cd &lt;working directory&gt;
+$ lein new snake
+Generating a project called snake based on the 'default' template.
+To see other templates (app, lein plugin, etc), try `lein help new`.
+$ cd snake
+</pre>
+</div>
+
+</section>
+<section id="sec-9-2" >
+
+<h3>project.clj</h3>
+<p>
+Edit your project.clj in LightTable:
+</p>
+</section>
+
+
+
+</section>
+<section>
+<section id="sec-10" >
+
+<h2>References</h2>
+<p>
+Rich Hickey, "Are we there yet? "<a href="http://www.infoq.com/presentations/Are-We-There-Yet-Rich-Hickey">http://www.infoq.com/presentations/Are-We-There-Yet-Rich-Hickey</a>
 </p>
 </section>
 </section>
