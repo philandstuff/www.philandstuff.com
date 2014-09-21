@@ -363,9 +363,11 @@ Do you already have this installed? If not, go to http://leiningen.org/
 
 ** project.clj
 
-Edit your project.clj in LightTable:
+Edit =snake/project.clj= in LightTable:
 
-
+#+BEGIN_HTML
+<img src="/images/project-clj.png">
+#+END_HTML
 
 * References
 
