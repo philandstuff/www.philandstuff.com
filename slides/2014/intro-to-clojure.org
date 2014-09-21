@@ -47,29 +47,42 @@
 
       - eval? do we want that?
 
+  - Concepts
+
+    - Functional programming and immutability
+    - Lisp
+    - Hosted on JVM (or JavaScript)
+    - Concurrency
+
+  - Concepts 2
+
+    - "Simple made easy"
+    - "Libraries not frameworks"
 #+END_NOTES
 
-* Introduction to Clojure
+* Meta
 
-** Concepts
+http://www.philandstuff.com/slides/2014/intro-to-clojure.html
 
-   - Functional programming and immutability
-   - Lisp
-   - Hosted on JVM (or JavaScript)
-   - Concurrency
+** Structure
 
-** Concepts 2
+About ⅓ presentation, ⅔ practical, 2 hours
 
-   - "Simple made easy"
-   - "Libraries not frameworks"
+First hour: language fundamentals
 
-* Follow along at home with LightTable
+Second hour: project
+
+** LightTable
 
 http://www.lighttable.com/
 
 ** Start a Clojure Instarepl
 
-Type =Ctrl-<SPACE>=, then type ="instarepl"=, and press =<ENTER>=
+Type =Ctrl-<SPACE>=
+
+then type ="instarepl"=
+
+press =<ENTER>=
 
 ** 
   :PROPERTIES:
@@ -98,16 +111,16 @@ Sometimes known as an /s-expression/ or /sexp/.
 
 ** Function calls
 
-Ruby:
+Python:
 
-#+begin_src ruby
-  puts("foo")
+#+begin_src python
+  sorted([9,1,6,4])
 #+end_src
 
 Clojure:
 
 #+begin_src clojure
-  (println "foo")
+  (sort [9 1 6 4])
 #+end_src
 
 ** Methods
@@ -233,24 +246,65 @@ http://clojure.org/data_structures
   (get m :baz :not-found) ;=> :not-found
 #+end_src
 
-** Defining things
+** Functions
 
 #+begin_src clojure
-  (def x :a-value)
-
-  (defn a-function [x y]
+  (fn [x y]
     (if (< x y)
       y
       x))
+#+end_src
 
-  (def a-function
+#+ATTR_REVEAL: :frag t
+#+begin_src clojure
+  ((fn [x y]
+      (if (< x y)
+        y
+        x))
+   12 56) ;=> 56
+#+end_src
+
+** Naming things
+
+#+begin_src clojure
+  (def player-character
+    {:head   "cursed dunce cap"
+     :chest  {:shirt "Hawaiian shirt"
+              :armor nil
+              :cloak "oilskin cloak"}
+     :feet   "speed boots"
+     :weapon "rusty tin opener"})
+
+  (:weapon player-character) ;=> "rusty tin opener"
+#+end_src
+
+** Defining functions
+#+begin_src clojure
+  (def my-max
     (fn [x y]
       (if (< x y)
         y
         x)))
 
-  (let [triple (fn [x] (+ x x x))]
-    (triple 5))
+  (my-max 12 56) ;=> 56
+#+end_src
+
+** defn shorthand
+
+#+begin_src clojure
+  (defn my-max [x y]
+    (if (< x y)
+      y
+      x))
+
+  (my-max 12 56) ;=> 56
+#+end_src
+
+** Local names
+#+begin_src clojure
+  (let [triple (fn [x] (+ x x x))
+        x      5]
+    (triple x))
   ;;=> 15
 
   (triple 10)
@@ -260,6 +314,10 @@ http://clojure.org/data_structures
 * Clojurescript koans
 
 http://clojurescriptkoans.com
+
+You may find the Clojure Grimoire useful:
+
+http://grimoire.arrdem.com/
 
 * FP & transforming data
 
@@ -372,6 +430,8 @@ Edit =snake/project.clj= in LightTable:
 * References
 
 Rich Hickey, "Are we there yet? "http://www.infoq.com/presentations/Are-We-There-Yet-Rich-Hickey
+
+ClojureScript Koans: http://clojurescriptkoans.com/
 
 
 

@@ -112,17 +112,9 @@
 </li>
 </ul>
 </li>
-</ul>
-</aside>
 
-<section>
-<section id="sec-1" >
+<li>Concepts
 
-<h2>Introduction to Clojure</h2>
-</section>
-<section id="sec-1-1" >
-
-<h3>Concepts</h3>
 <ul class="org-ul">
 <li>Functional programming and immutability
 </li>
@@ -133,43 +125,75 @@
 <li>Concurrency
 </li>
 </ul>
+</li>
 
-</section>
-<section id="sec-1-2" >
+<li>Concepts 2
 
-<h3>Concepts 2</h3>
 <ul class="org-ul">
 <li>"Simple made easy"
 </li>
 <li>"Libraries not frameworks"
 </li>
 </ul>
-</section>
+</li>
+</ul>
+</aside>
 
-</section>
 <section>
-<section id="sec-2" >
+<section id="sec-1" >
 
-<h2>Follow along at home with LightTable</h2>
+<h2>Meta</h2>
+<p>
+<a href="http://www.philandstuff.com/slides/2014/intro-to-clojure.html">http://www.philandstuff.com/slides/2014/intro-to-clojure.html</a>
+</p>
+
+</section>
+<section id="sec-1-1" >
+
+<h3>Structure</h3>
+<p>
+About ⅓ presentation, ⅔ practical, 2 hours
+</p>
+
+<p>
+First hour: language fundamentals
+</p>
+
+<p>
+Second hour: project
+</p>
+
+</section>
+<section id="sec-1-2" >
+
+<h3>LightTable</h3>
 <p>
 <a href="http://www.lighttable.com/">http://www.lighttable.com/</a>
 </p>
 
 </section>
-<section id="sec-2-1" >
+<section id="sec-1-3" >
 
 <h3>Start a Clojure Instarepl</h3>
 <p>
-Type <code>Ctrl-&lt;SPACE&gt;</code>, then type <code>"instarepl"</code>, and press <code>&lt;ENTER&gt;</code>
+Type <code>Ctrl-&lt;SPACE&gt;</code>
+</p>
+
+<p>
+then type <code>"instarepl"</code>
+</p>
+
+<p>
+press <code>&lt;ENTER&gt;</code>
 </p>
 
 </section>
-<section id="sec-2-2"  data-background="/images/start-instarepl.png" data-background-transition="linear">
+<section id="sec-1-4"  data-background="/images/start-instarepl.png" data-background-transition="linear">
 
 <h3></h3>
 
 </section>
-<section id="sec-2-3"  data-background="/images/instarepl.png" data-background-transition="linear">
+<section id="sec-1-5"  data-background="/images/instarepl.png" data-background-transition="linear">
 
 <h3></h3>
 </section>
@@ -177,11 +201,11 @@ Type <code>Ctrl-&lt;SPACE&gt;</code>, then type <code>"instarepl"</code>, and pr
 
 </section>
 <section>
-<section id="sec-3" >
+<section id="sec-2" >
 
 <h2>Lisp part 1</h2>
 </section>
-<section id="sec-3-1" >
+<section id="sec-2-1" >
 
 <h3>Basic syntax</h3>
 <p>
@@ -199,16 +223,16 @@ Sometimes known as an <i>s-expression</i> or <i>sexp</i>.
 </p>
 
 </section>
-<section id="sec-3-2" >
+<section id="sec-2-2" >
 
 <h3>Function calls</h3>
 <p>
-Ruby:
+Python:
 </p>
 
 <div class="org-src-container">
 
-<pre  class="src src-ruby">puts(<span style="color: #8b2252;">"foo"</span>)
+<pre  class="src src-python"><span style="color: #483d8b;">sorted</span>([9,1,6,4])
 </pre>
 </div>
 
@@ -218,12 +242,12 @@ Clojure:
 
 <div class="org-src-container">
 
-<pre  class="src src-clojure">(println <span style="color: #8b2252;">"foo"</span>)
+<pre  class="src src-clojure">(sort [9 1 6 4])
 </pre>
 </div>
 
 </section>
-<section id="sec-3-3" >
+<section id="sec-2-3" >
 
 <h3>Methods</h3>
 <p>
@@ -249,7 +273,7 @@ Clojure:
 </div>
 
 </section>
-<section id="sec-3-4" >
+<section id="sec-2-4" >
 
 <h3>Methods with arguments</h3>
 <p>
@@ -273,7 +297,7 @@ Clojure:
 </div>
 
 </section>
-<section id="sec-3-5" >
+<section id="sec-2-5" >
 
 <h3>Numerical operators</h3>
 <p>
@@ -299,7 +323,7 @@ Clojure:
 </div>
 
 </section>
-<section id="sec-3-6" >
+<section id="sec-2-6" >
 
 <h3>Defining functions</h3>
 <div class="org-src-container">
@@ -321,11 +345,11 @@ Clojure:
 
 </section>
 <section>
-<section id="sec-4" >
+<section id="sec-3" >
 
 <h2>Functional programming</h2>
 </section>
-<section id="sec-4-1" >
+<section id="sec-3-1" >
 
 <h3>Data</h3>
 <p>
@@ -333,7 +357,7 @@ Clojure:
 </p>
 
 </section>
-<section id="sec-4-1-1" >
+<section id="sec-3-1-1" >
 
 <h4>Simple data types</h4>
 <p>
@@ -357,7 +381,7 @@ Clojure:
 </p>
 
 </section>
-<section id="sec-4-1-2" >
+<section id="sec-3-1-2" >
 
 <h4>Vectors</h4>
 <p>
@@ -378,7 +402,7 @@ Clojure:
 
 
 </section>
-<section id="sec-4-1-3" >
+<section id="sec-3-1-3" >
 
 <h4>Vectors</h4>
 <div class="org-src-container">
@@ -396,7 +420,7 @@ v <span style="color: #b22222;">;</span><span style="color: #b22222;">=&gt; [:a 
 </div>
 
 </section>
-<section id="sec-4-1-4" >
+<section id="sec-3-1-4" >
 
 <h4>Maps</h4>
 <p>
@@ -418,26 +442,86 @@ v <span style="color: #b22222;">;</span><span style="color: #b22222;">=&gt; [:a 
 </div>
 
 </section>
-<section id="sec-4-2" >
+<section id="sec-3-2" >
 
-<h3>Defining things</h3>
+<h3>Functions</h3>
 <div class="org-src-container">
 
-<pre  class="src src-clojure">(<span style="color: #a020f0;">def</span> <span style="color: #a0522d;">x</span> <span style="color: #008b8b;">:a-value</span>)
-
-(<span style="color: #a020f0;">defn</span> <span style="color: #0000ff;">a-function</span> [x y]
+<pre  class="src src-clojure">(<span style="color: #a020f0;">fn</span> [x y]
   (<span style="color: #a020f0;">if</span> (&lt; x y)
     y
     x))
+</pre>
+</div>
 
-(<span style="color: #a020f0;">def</span> <span style="color: #a0522d;">a-function</span>
+<div class="org-src-container">
+
+<pre  class="fragment">((<span style="color: #a020f0;">fn</span> [x y]
+    (<span style="color: #a020f0;">if</span> (&lt; x y)
+      y
+      x))
+ 12 56) <span style="color: #b22222;">;</span><span style="color: #b22222;">=&gt; 56</span>
+</pre>
+</div>
+
+</section>
+<section id="sec-3-3" >
+
+<h3>Naming things</h3>
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(<span style="color: #a020f0;">def</span> <span style="color: #a0522d;">player-character</span>
+  {<span style="color: #008b8b;">:head</span>   <span style="color: #8b2252;">"cursed dunce cap"</span>
+   <span style="color: #008b8b;">:chest</span>  {<span style="color: #008b8b;">:shirt</span> <span style="color: #8b2252;">"Hawaiian shirt"</span>
+            <span style="color: #008b8b;">:armor</span> <span style="color: #008b8b;">nil</span>
+            <span style="color: #008b8b;">:cloak</span> <span style="color: #8b2252;">"oilskin cloak"</span>}
+   <span style="color: #008b8b;">:feet</span>   <span style="color: #8b2252;">"speed boots"</span>
+   <span style="color: #008b8b;">:weapon</span> <span style="color: #8b2252;">"rusty tin opener"</span>})
+
+(<span style="color: #008b8b;">:weapon</span> player-character) <span style="color: #b22222;">;</span><span style="color: #b22222;">=&gt; "rusty tin opener"</span>
+</pre>
+</div>
+
+</section>
+<section id="sec-3-4" >
+
+<h3>Defining functions</h3>
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(<span style="color: #a020f0;">def</span> <span style="color: #a0522d;">my-max</span>
   (<span style="color: #a020f0;">fn</span> [x y]
     (<span style="color: #a020f0;">if</span> (&lt; x y)
       y
       x)))
 
-(<span style="color: #a020f0;">let</span> [triple (<span style="color: #a020f0;">fn</span> [x] (+ x x x))]
-  (triple 5))
+(my-max 12 56) <span style="color: #b22222;">;</span><span style="color: #b22222;">=&gt; 56</span>
+</pre>
+</div>
+
+</section>
+<section id="sec-3-5" >
+
+<h3>defn shorthand</h3>
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(<span style="color: #a020f0;">defn</span> <span style="color: #0000ff;">my-max</span> [x y]
+  (<span style="color: #a020f0;">if</span> (&lt; x y)
+    y
+    x))
+
+(my-max 12 56) <span style="color: #b22222;">;</span><span style="color: #b22222;">=&gt; 56</span>
+</pre>
+</div>
+
+</section>
+<section id="sec-3-6" >
+
+<h3>Local names</h3>
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(<span style="color: #a020f0;">let</span> [triple (<span style="color: #a020f0;">fn</span> [x] (+ x x x))
+      x      5]
+  (triple x))
 <span style="color: #b22222;">;;</span><span style="color: #b22222;">=&gt; 15</span>
 
 (triple 10)
@@ -448,37 +532,45 @@ v <span style="color: #b22222;">;</span><span style="color: #b22222;">=&gt; [:a 
 
 </section>
 <section>
-<section id="sec-5" >
+<section id="sec-4" >
 
 <h2>Clojurescript koans</h2>
 <p>
 <a href="http://clojurescriptkoans.com">http://clojurescriptkoans.com</a>
 </p>
+
+<p>
+You may find the Clojure Grimoire useful:
+</p>
+
+<p>
+<a href="http://grimoire.arrdem.com/">http://grimoire.arrdem.com/</a>
+</p>
 </section>
 
 </section>
 <section>
-<section id="sec-6" >
+<section id="sec-5" >
 
 <h2>FP &amp; transforming data</h2>
 </section>
-<section id="sec-6-1" >
+<section id="sec-5-1" >
 
 <h3>filter</h3>
 
 </section>
-<section id="sec-6-2" >
+<section id="sec-5-2" >
 
 <h3>map</h3>
 </section>
 
 </section>
 <section>
-<section id="sec-7" >
+<section id="sec-6" >
 
 <h2>reference types &amp; concurrency</h2>
 </section>
-<section id="sec-7-1" >
+<section id="sec-6-1" >
 
 <h3>problems with traditional concurrency</h3>
 <ul class="org-ul">
@@ -489,12 +581,12 @@ v <span style="color: #b22222;">;</span><span style="color: #b22222;">=&gt; [:a 
 </ul>
 
 </section>
-<section id="sec-7-2"  data-background="/images/epochal-time-model.png" data-background-transition="linear">
+<section id="sec-6-2"  data-background="/images/epochal-time-model.png" data-background-transition="linear">
 
 <h3></h3>
 
 </section>
-<section id="sec-7-3" >
+<section id="sec-6-3" >
 
 <h3>Epochal time model</h3>
 <p>
@@ -505,11 +597,11 @@ worry)
 
 </section>
 <section>
-<section id="sec-8" >
+<section id="sec-7" >
 
 <h2>Java Interoperability</h2>
 </section>
-<section id="sec-8-1" >
+<section id="sec-7-1" >
 
 <h3>Syntax</h3>
 <div class="org-src-container">
@@ -528,7 +620,7 @@ worry)
 </div>
 
 </section>
-<section id="sec-8-2" >
+<section id="sec-7-2" >
 
 <h3>Dealing with mutable objects</h3>
 <div class="org-src-container">
@@ -552,7 +644,7 @@ worry)
 </div>
 
 </section>
-<section id="sec-8-3" >
+<section id="sec-7-3" >
 
 <h3>Clojure collections + Java functions</h3>
 <div class="org-src-container">
@@ -566,7 +658,7 @@ worry)
 </div>
 
 </section>
-<section id="sec-8-4" >
+<section id="sec-7-4" >
 
 <h3>Java collections + Clojure functions</h3>
 <div class="org-src-container">
@@ -584,7 +676,7 @@ worry)
 
 </section>
 <section>
-<section id="sec-9" >
+<section id="sec-8" >
 
 <h2>Projects and dependencies</h2>
 <blockquote>
@@ -594,7 +686,7 @@ This is all very neat, but how do I actually get something done?
 </blockquote>
 
 </section>
-<section id="sec-9-1" >
+<section id="sec-8-1" >
 
 <h3>Leiningen</h3>
 <p>
@@ -612,7 +704,7 @@ $ cd snake
 </div>
 
 </section>
-<section id="sec-9-2" >
+<section id="sec-8-2" >
 
 <h3>project.clj</h3>
 <p>
@@ -624,11 +716,15 @@ Edit <code>snake/project.clj</code> in LightTable:
 
 </section>
 <section>
-<section id="sec-10" >
+<section id="sec-9" >
 
 <h2>References</h2>
 <p>
 Rich Hickey, "Are we there yet? "<a href="http://www.infoq.com/presentations/Are-We-There-Yet-Rich-Hickey">http://www.infoq.com/presentations/Are-We-There-Yet-Rich-Hickey</a>
+</p>
+
+<p>
+ClojureScript Koans: <a href="http://clojurescriptkoans.com/">http://clojurescriptkoans.com/</a>
 </p>
 </section>
 </section>
