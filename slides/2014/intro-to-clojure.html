@@ -211,7 +211,7 @@ press <code>&lt;ENTER&gt;</code>
 <section>
 <section id="sec-2" >
 
-<h2>Lisp part 1</h2>
+<h2>Lisp</h2>
 </section>
 <section id="sec-2-1" >
 
@@ -710,38 +710,6 @@ causally related <i>values</i>
 </section>
 <section id="sec-5-9" >
 
-<h3>Atoms</h3>
-<div class="org-src-container">
-
-<pre  class="src src-clojure">(<span style="color: #a020f0;">def</span> <span style="color: #a0522d;">outfit</span> (atom {<span style="color: #008b8b;">:shoes</span> <span style="color: #008b8b;">nil</span> <span style="color: #008b8b;">:socks</span> <span style="color: #008b8b;">nil</span>}))
-
-(<span style="color: #a020f0;">def</span> <span style="color: #a0522d;">don-shoes</span> [old-outfit shoes]
-  (<span style="color: #a020f0;">if</span> (nil? (<span style="color: #008b8b;">:socks</span> old-outfit))
-    (assoc old-outfit <span style="color: #008b8b;">:shoes</span> shoes)
-    old-outfit))
-
-(<span style="color: #a020f0;">def</span> <span style="color: #a0522d;">don-socks</span> [old-outfit socks]
-  (<span style="color: #a020f0;">if-not</span> (= <span style="color: #008b8b;">:open-toed-sandals</span> (<span style="color: #008b8b;">:shoes</span> old-outfit))
-    (assoc old-outfit <span style="color: #008b8b;">:socks</span> socks)
-    old-outfit))
-</pre>
-</div>
-
-<div class="org-src-container">
-
-<pre  class="src src-clojure">(swap! outfit don-shoes <span style="color: #008b8b;">:open-toed-sandals</span>)
-</pre>
-</div>
-
-<div class="org-src-container">
-
-<pre  class="src src-clojure">(swap! outfit don-socks <span style="color: #008b8b;">:pink-argyle-socks</span>)
-</pre>
-</div>
-
-</section>
-<section id="sec-5-10" >
-
 <h3>Software Transactional Memory</h3>
 <dl class="org-dl">
 <dt><b><code>(ref init-val)</code></b></dt><dd>creates a ref
@@ -755,7 +723,7 @@ causally related <i>values</i>
 </dl>
 
 </section>
-<section id="sec-5-11" >
+<section id="sec-5-10" >
 
 <h3>Software Transactional Memory</h3>
 <p>
@@ -774,7 +742,7 @@ Within a transaction:
 </dl>
 
 </section>
-<section id="sec-5-12" >
+<section id="sec-5-11" >
 
 <h3>Software Transactional Memory</h3>
 <p>
@@ -783,7 +751,7 @@ automatically retries.
 </p>
 
 </section>
-<section id="sec-5-13" >
+<section id="sec-5-12" >
 
 <h3>Software Transactional Memory</h3>
 <div class="org-src-container">
@@ -802,7 +770,7 @@ automatically retries.
 </div>
 
 </section>
-<section id="sec-5-14" >
+<section id="sec-5-13" >
 
 <h3>Or are atoms enough?</h3>
 <div class="org-src-container">

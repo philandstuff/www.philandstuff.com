@@ -100,7 +100,7 @@ press =<ENTER>=
 
    - Ctrl-D :: Toggle Clojure documentation for symbol at cursor
 
-* Lisp part 1
+* Lisp
 
 ** Basic syntax
 
@@ -409,30 +409,6 @@ pure functions
 #+end_src
 #+begin_src clojure
   (swap! a conj :nutella)
-#+end_src
-
-** Atoms
-
-#+begin_src clojure
-  (def outfit (atom {:shoes nil :socks nil}))
-
-  (def don-shoes [old-outfit shoes]
-    (if (nil? (:socks old-outfit))
-      (assoc old-outfit :shoes shoes)
-      old-outfit))
-
-  (def don-socks [old-outfit socks]
-    (if-not (= :open-toed-sandals (:shoes old-outfit))
-      (assoc old-outfit :socks socks)
-      old-outfit))
-#+end_src
-
-#+begin_src clojure
-  (swap! outfit don-shoes :open-toed-sandals)
-#+end_src
-
-#+begin_src clojure
-  (swap! outfit don-socks :pink-argyle-socks)
 #+end_src
 
 ** Software Transactional Memory
