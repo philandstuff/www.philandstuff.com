@@ -96,6 +96,9 @@ press =<ENTER>=
      :reveal_background_trans: linear
   :END:
 
+** Some useful shortcuts
+
+   - Ctrl-D :: Toggle Clojure documentation for symbol at cursor
 
 * Lisp part 1
 
@@ -169,6 +172,20 @@ Clojure:
   (+ 1 2 3 4)
 #+end_src
 
+** Control flow
+
+#+begin_src ruby
+  1.upto(10).each do |x|
+    puts 2*x
+  end
+#+end_src
+
+#+begin_src clojure
+  (for [i (range 1 10)]
+    (* 2 i))
+#+end_src
+
+
 ** Defining functions
 
 #+begin_src ruby
@@ -182,6 +199,29 @@ Clojure:
     (+ n 1))
 #+end_src
 
+** Your own syntax...
+
+#+begin_src clojure
+  (defroutes my-app
+    (GET "/" []
+      "Welcome!")
+    (GET "/profile/:user" [user]
+      (str "Hello, " user "!"))
+    (POST "/profile/:user" [user comment]
+      (add-to-comments user comment))
+    (route/not-found "<h1>Page not found</h1>"))
+#+end_src
+
+** Your own syntax...
+
+#+begin_src clojure
+  (go-loop [[response-ch request] (<! http-channel)]
+    (condp = (:method request)
+      :get  (>! response-ch "Hello world!")
+      :post (do
+              (>! missile-handler :launch)
+              (>! response-ch "Missile launch sequence initiated."))))
+#+end_src
 
 * Functional programming
 
@@ -235,15 +275,11 @@ http://clojure.org/data_structures
 ~{:foo 1, :bar 2}~
 
 #+begin_src clojure
-  (def m {:foo 1, :bar 2})
+  (def m {:few 2, :some 4})
 
-  (:foo m) ;=> 1
+  (get m :few) ;=> 2
 
-  (:baz m) ;=> nil
-
-  (get m :baz) ;=> nil
-
-  (get m :baz :not-found) ;=> :not-found
+  (get m :many) ;=> nil
 #+end_src
 
 ** Functions
@@ -262,20 +298,6 @@ http://clojure.org/data_structures
         y
         x))
    12 56) ;=> 56
-#+end_src
-
-** Naming things
-
-#+begin_src clojure
-  (def player-character
-    {:head   "cursed dunce cap"
-     :chest  {:shirt "Hawaiian shirt"
-              :armor nil
-              :cloak "oilskin cloak"}
-     :feet   "speed boots"
-     :weapon "rusty tin opener"})
-
-  (:weapon player-character) ;=> "rusty tin opener"
 #+end_src
 
 ** Defining functions
@@ -319,18 +341,49 @@ You may find the Clojure Grimoire useful:
 
 http://grimoire.arrdem.com/
 
-* FP & transforming data
-
-** filter
-
-** map
-
 * reference types & concurrency
 
-** problems with traditional concurrency
+** What's more fundamental?
 
-   - deadlocks
-   - lost updates
+Classes, objects, locks, threads, variables, inheritance,
+encapsulation, dispatch...
+
+#+ATTR_REVEAL: :frag t
+Identity, time, values, state, place, perception, visibility...
+
+** Safety
+
+Objects are not thread safe by default
+
+We have to work hard to achieve safety
+
+** Safety
+
+Lost updates:
+
+1. A reads: ~[:jam]~
+
+2. B reads: ~[:jam]~
+
+3. B writes ~[:jam :peanut-butter]~
+
+4. A writes ~[:jam :nutella]~
+
+** Safety
+
+Immutable values and pure functions are safe by default
+
+*But:* not all things we want to talk about are immutable values or
+pure functions
+
+** Definitions (From Rich Hickey, "Are We There Yet?")
+
+   - Value :: An /immutable/ magnitude, quantity, number, /or
+              immutable composite thereof/ (eg vectors, maps, strings)
+   - Identity :: A putative entity we associate with a series of
+                 causally related /values/
+   - Time :: Relative ordering of causal /values/
+   - State :: A /value/ of an /identity/ at a point in /time/
 
 ** 
   :PROPERTIES:
@@ -338,10 +391,103 @@ http://grimoire.arrdem.com/
      :reveal_background_trans: linear
   :END:
 
-** Epochal time model
+** Atoms
 
-From Rich Hickey's talk "Are we there yet?" (reference at end, don't
-worry)
+- ~(atom init-val)~ :: creates an atom
+
+- ~(deref a)~ or ~@a~ :: gets current value
+
+- ~(swap! a f x y z)~ :: replaces the current value with ~(f @a x y z)~ /atomically/
+
+** Atoms
+
+#+begin_src clojure
+  (def a (atom [:jam]))
+#+end_src
+#+begin_src clojure
+  (swap! a conj :peanut-butter)
+#+end_src
+#+begin_src clojure
+  (swap! a conj :nutella)
+#+end_src
+
+** Atoms
+
+#+begin_src clojure
+  (def outfit (atom {:shoes nil :socks nil}))
+
+  (def don-shoes [old-outfit shoes]
+    (if (nil? (:socks old-outfit))
+      (assoc old-outfit :shoes shoes)
+      old-outfit))
+
+  (def don-socks [old-outfit socks]
+    (if-not (= :open-toed-sandals (:shoes old-outfit))
+      (assoc old-outfit :socks socks)
+      old-outfit))
+#+end_src
+
+#+begin_src clojure
+  (swap! outfit don-shoes :open-toed-sandals)
+#+end_src
+
+#+begin_src clojure
+  (swap! outfit don-socks :pink-argyle-socks)
+#+end_src
+
+** Software Transactional Memory
+
+- ~(ref init-val)~ :: creates a ref
+
+- ~(deref r)~ or ~@r~ :: gets current value
+
+- ~(dosync ...)~ :: performs a transaction over one or more refs
+
+** Software Transactional Memory
+
+Within a transaction:
+
+- ~(ensure r)~ :: coordinated read of a ref
+
+- ~(alter r f x y z)~ :: replace current value of ~r~ with ~(f @r x y z)~
+
+- ~(ref-set r x)~ :: set value of ~r~ to ~x~
+
+** Software Transactional Memory
+
+If a transaction fails due to a concurrent modification, it
+automatically retries.
+
+** Software Transactional Memory
+
+#+begin_src clojure
+  (def player  (ref #{}))
+  (def monster (ref #{:sword :gold :shield}))
+
+  (defn steal-from [thief victim]
+    (dosync
+      (let [chosen-item (first (shuffle (ensure victim)))]
+        (alter victim disj chosen-item)
+        (alter thief  conj chosen-item))))
+
+  (steal-from player monster)
+#+end_src
+
+** Or are atoms enough?
+
+#+begin_src clojure
+  (def world
+    (atom {:player  #{}
+           :monster #{}}))
+
+  (defn steal-from [world thief victim]
+    (let [chosen-item (first (shuffle victim))]
+      (-> world
+          (update-in [victim] disj chosen-item)
+          (update-in [thief]  conj chosen-item))))
+
+  (swap! world steal-from :player :monster)
+#+end_src
 
 * Java Interoperability
 
@@ -400,6 +546,12 @@ worry)
   (filter number? l)
   ;;=> (1 3)
 #+end_src
+
+* transforming data
+
+** filter
+
+** map
 
 * Projects and dependencies
 

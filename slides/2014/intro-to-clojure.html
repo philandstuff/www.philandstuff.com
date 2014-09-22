@@ -196,8 +196,16 @@ press <code>&lt;ENTER&gt;</code>
 <section id="sec-1-5"  data-background="/images/instarepl.png" data-background-transition="linear">
 
 <h3></h3>
-</section>
 
+</section>
+<section id="sec-1-6" >
+
+<h3>Some useful shortcuts</h3>
+<dl class="org-dl">
+<dt><b>Ctrl-D</b></dt><dd>Toggle Clojure documentation for symbol at cursor
+</dd>
+</dl>
+</section>
 
 </section>
 <section>
@@ -325,6 +333,26 @@ Clojure:
 </section>
 <section id="sec-2-6" >
 
+<h3>Control flow</h3>
+<div class="org-src-container">
+
+<pre  class="src src-ruby">1.upto(10).each <span style="color: #a020f0;">do</span> |x|
+  puts 2*x
+<span style="color: #a020f0;">end</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(<span style="color: #a020f0;">for</span> [i (range 1 10)]
+  (* 2 i))
+</pre>
+</div>
+
+
+</section>
+<section id="sec-2-7" >
+
 <h3>Defining functions</h3>
 <div class="org-src-container">
 
@@ -340,8 +368,39 @@ Clojure:
   (+ n 1))
 </pre>
 </div>
-</section>
 
+</section>
+<section id="sec-2-8" >
+
+<h3>Your own syntax&#x2026;</h3>
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(<span style="color: #a020f0;">defroutes</span> <span style="color: #0000ff;">my-app</span>
+  (<span style="color: #008b8b;">GET</span> <span style="color: #8b2252;">"/"</span> []
+    <span style="color: #8b2252;">"Welcome!"</span>)
+  (<span style="color: #008b8b;">GET</span> <span style="color: #8b2252;">"/profile/:user"</span> [user]
+    (str <span style="color: #8b2252;">"Hello, "</span> user <span style="color: #8b2252;">"!"</span>))
+  (<span style="color: #008b8b;">POST</span> <span style="color: #8b2252;">"/profile/:user"</span> [user comment]
+    (add-to-comments user comment))
+  (<span style="color: #228b22;">route</span>/not-found <span style="color: #8b2252;">"&lt;h1&gt;Page not found&lt;/h1&gt;"</span>))
+</pre>
+</div>
+
+</section>
+<section id="sec-2-9" >
+
+<h3>Your own syntax&#x2026;</h3>
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(go-loop [[response-ch request] (&lt;! http-channel)]
+  (<span style="color: #a020f0;">condp</span> = (<span style="color: #008b8b;">:method</span> request)
+    <span style="color: #008b8b;">:get</span>  (&gt;! response-ch <span style="color: #8b2252;">"Hello world!"</span>)
+    <span style="color: #008b8b;">:post</span> (<span style="color: #a020f0;">do</span>
+            (&gt;! missile-handler <span style="color: #008b8b;">:launch</span>)
+            (&gt;! response-ch <span style="color: #8b2252;">"Missile launch sequence initiated."</span>))))
+</pre>
+</div>
+</section>
 
 </section>
 <section>
@@ -429,15 +488,11 @@ v <span style="color: #b22222;">;</span><span style="color: #b22222;">=&gt; [:a 
 
 <div class="org-src-container">
 
-<pre  class="src src-clojure">(<span style="color: #a020f0;">def</span> <span style="color: #a0522d;">m</span> {<span style="color: #008b8b;">:foo</span> 1, <span style="color: #008b8b;">:bar</span> 2})
+<pre  class="src src-clojure">(<span style="color: #a020f0;">def</span> <span style="color: #a0522d;">m</span> {<span style="color: #008b8b;">:few</span> 2, <span style="color: #008b8b;">:some</span> 4})
 
-(<span style="color: #008b8b;">:foo</span> m) <span style="color: #b22222;">;</span><span style="color: #b22222;">=&gt; 1</span>
+(get m <span style="color: #008b8b;">:few</span>) <span style="color: #b22222;">;</span><span style="color: #b22222;">=&gt; 2</span>
 
-(<span style="color: #008b8b;">:baz</span> m) <span style="color: #b22222;">;</span><span style="color: #b22222;">=&gt; nil</span>
-
-(get m <span style="color: #008b8b;">:baz</span>) <span style="color: #b22222;">;</span><span style="color: #b22222;">=&gt; nil</span>
-
-(get m <span style="color: #008b8b;">:baz</span> <span style="color: #008b8b;">:not-found</span>) <span style="color: #b22222;">;</span><span style="color: #b22222;">=&gt; :not-found</span>
+(get m <span style="color: #008b8b;">:many</span>) <span style="color: #b22222;">;</span><span style="color: #b22222;">=&gt; nil</span>
 </pre>
 </div>
 
@@ -467,24 +522,6 @@ v <span style="color: #b22222;">;</span><span style="color: #b22222;">=&gt; [:a 
 </section>
 <section id="sec-3-3" >
 
-<h3>Naming things</h3>
-<div class="org-src-container">
-
-<pre  class="src src-clojure">(<span style="color: #a020f0;">def</span> <span style="color: #a0522d;">player-character</span>
-  {<span style="color: #008b8b;">:head</span>   <span style="color: #8b2252;">"cursed dunce cap"</span>
-   <span style="color: #008b8b;">:chest</span>  {<span style="color: #008b8b;">:shirt</span> <span style="color: #8b2252;">"Hawaiian shirt"</span>
-            <span style="color: #008b8b;">:armor</span> <span style="color: #008b8b;">nil</span>
-            <span style="color: #008b8b;">:cloak</span> <span style="color: #8b2252;">"oilskin cloak"</span>}
-   <span style="color: #008b8b;">:feet</span>   <span style="color: #8b2252;">"speed boots"</span>
-   <span style="color: #008b8b;">:weapon</span> <span style="color: #8b2252;">"rusty tin opener"</span>})
-
-(<span style="color: #008b8b;">:weapon</span> player-character) <span style="color: #b22222;">;</span><span style="color: #b22222;">=&gt; "rusty tin opener"</span>
-</pre>
-</div>
-
-</section>
-<section id="sec-3-4" >
-
 <h3>Defining functions</h3>
 <div class="org-src-container">
 
@@ -499,7 +536,7 @@ v <span style="color: #b22222;">;</span><span style="color: #b22222;">=&gt; [:a 
 </div>
 
 </section>
-<section id="sec-3-5" >
+<section id="sec-3-4" >
 
 <h3>defn shorthand</h3>
 <div class="org-src-container">
@@ -514,7 +551,7 @@ v <span style="color: #b22222;">;</span><span style="color: #b22222;">=&gt; [:a 
 </div>
 
 </section>
-<section id="sec-3-6" >
+<section id="sec-3-5" >
 
 <h3>Local names</h3>
 <div class="org-src-container">
@@ -552,56 +589,246 @@ You may find the Clojure Grimoire useful:
 <section>
 <section id="sec-5" >
 
-<h2>FP &amp; transforming data</h2>
+<h2>reference types &amp; concurrency</h2>
 </section>
 <section id="sec-5-1" >
 
-<h3>filter</h3>
+<h3>What's more fundamental?</h3>
+<p>
+Classes, objects, locks, threads, variables, inheritance,
+encapsulation, dispatch&#x2026;
+</p>
+
+<p class="fragment">
+Identity, time, values, state, place, perception, visibility&#x2026;
+</p>
 
 </section>
 <section id="sec-5-2" >
 
-<h3>map</h3>
+<h3>Safety</h3>
+<p>
+Objects are not thread safe by default
+</p>
+
+<p>
+We have to work hard to achieve safety
+</p>
+
+</section>
+<section id="sec-5-3" >
+
+<h3>Safety</h3>
+<p>
+Lost updates:
+</p>
+
+<ol class="org-ol">
+<li>A reads: <code>[:jam]</code>
+</li>
+
+<li>B reads: <code>[:jam]</code>
+</li>
+
+<li>B writes <code>[:jam :peanut-butter]</code>
+</li>
+
+<li>A writes <code>[:jam :nutella]</code>
+</li>
+</ol>
+
+</section>
+<section id="sec-5-4" >
+
+<h3>Safety</h3>
+<p>
+Immutable values and pure functions are safe by default
+</p>
+
+<p>
+<b>But:</b> not all things we want to talk about are immutable values or
+pure functions
+</p>
+
+</section>
+<section id="sec-5-5" >
+
+<h3>Definitions (From Rich Hickey, "Are We There Yet?")</h3>
+<dl class="org-dl">
+<dt><b>Value</b></dt><dd>An <i>immutable</i> magnitude, quantity, number, <i>or
+immutable composite thereof</i> (eg vectors, maps, strings)
+</dd>
+<dt><b>Identity</b></dt><dd>A putative entity we associate with a series of
+causally related <i>values</i>
+</dd>
+<dt><b>Time</b></dt><dd>Relative ordering of causal <i>values</i>
+</dd>
+<dt><b>State</b></dt><dd>A <i>value</i> of an <i>identity</i> at a point in <i>time</i>
+</dd>
+</dl>
+
+</section>
+<section id="sec-5-6"  data-background="/images/epochal-time-model.png" data-background-transition="linear">
+
+<h3></h3>
+
+</section>
+<section id="sec-5-7" >
+
+<h3>Atoms</h3>
+<dl class="org-dl">
+<dt><b><code>(atom init-val)</code></b></dt><dd>creates an atom
+</dd>
+
+<dt><b><code>(deref a)</code> or <code>@a</code></b></dt><dd>gets current value
+</dd>
+
+<dt><b><code>(swap! a f x y z)</code></b></dt><dd>replaces the current value with <code>(f @a x y z)</code> <i>atomically</i>
+</dd>
+</dl>
+
+</section>
+<section id="sec-5-8" >
+
+<h3>Atoms</h3>
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(<span style="color: #a020f0;">def</span> <span style="color: #a0522d;">a</span> (atom [<span style="color: #008b8b;">:jam</span>]))
+</pre>
+</div>
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(swap! a conj <span style="color: #008b8b;">:peanut-butter</span>)
+</pre>
+</div>
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(swap! a conj <span style="color: #008b8b;">:nutella</span>)
+</pre>
+</div>
+
+</section>
+<section id="sec-5-9" >
+
+<h3>Atoms</h3>
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(<span style="color: #a020f0;">def</span> <span style="color: #a0522d;">outfit</span> (atom {<span style="color: #008b8b;">:shoes</span> <span style="color: #008b8b;">nil</span> <span style="color: #008b8b;">:socks</span> <span style="color: #008b8b;">nil</span>}))
+
+(<span style="color: #a020f0;">def</span> <span style="color: #a0522d;">don-shoes</span> [old-outfit shoes]
+  (<span style="color: #a020f0;">if</span> (nil? (<span style="color: #008b8b;">:socks</span> old-outfit))
+    (assoc old-outfit <span style="color: #008b8b;">:shoes</span> shoes)
+    old-outfit))
+
+(<span style="color: #a020f0;">def</span> <span style="color: #a0522d;">don-socks</span> [old-outfit socks]
+  (<span style="color: #a020f0;">if-not</span> (= <span style="color: #008b8b;">:open-toed-sandals</span> (<span style="color: #008b8b;">:shoes</span> old-outfit))
+    (assoc old-outfit <span style="color: #008b8b;">:socks</span> socks)
+    old-outfit))
+</pre>
+</div>
+
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(swap! outfit don-shoes <span style="color: #008b8b;">:open-toed-sandals</span>)
+</pre>
+</div>
+
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(swap! outfit don-socks <span style="color: #008b8b;">:pink-argyle-socks</span>)
+</pre>
+</div>
+
+</section>
+<section id="sec-5-10" >
+
+<h3>Software Transactional Memory</h3>
+<dl class="org-dl">
+<dt><b><code>(ref init-val)</code></b></dt><dd>creates a ref
+</dd>
+
+<dt><b><code>(deref r)</code> or <code>@r</code></b></dt><dd>gets current value
+</dd>
+
+<dt><b><code>(dosync ...)</code></b></dt><dd>performs a transaction over one or more refs
+</dd>
+</dl>
+
+</section>
+<section id="sec-5-11" >
+
+<h3>Software Transactional Memory</h3>
+<p>
+Within a transaction:
+</p>
+
+<dl class="org-dl">
+<dt><b><code>(ensure r)</code></b></dt><dd>coordinated read of a ref
+</dd>
+
+<dt><b><code>(alter r f x y z)</code></b></dt><dd>replace current value of <code>r</code> with <code>(f @r x y z)</code>
+</dd>
+
+<dt><b><code>(ref-set r x)</code></b></dt><dd>set value of <code>r</code> to <code>x</code>
+</dd>
+</dl>
+
+</section>
+<section id="sec-5-12" >
+
+<h3>Software Transactional Memory</h3>
+<p>
+If a transaction fails due to a concurrent modification, it
+automatically retries.
+</p>
+
+</section>
+<section id="sec-5-13" >
+
+<h3>Software Transactional Memory</h3>
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(<span style="color: #a020f0;">def</span> <span style="color: #a0522d;">player</span>  (ref #{}))
+(<span style="color: #a020f0;">def</span> <span style="color: #a0522d;">monster</span> (ref #{<span style="color: #008b8b;">:sword</span> <span style="color: #008b8b;">:gold</span> <span style="color: #008b8b;">:shield</span>}))
+
+(<span style="color: #a020f0;">defn</span> <span style="color: #0000ff;">steal-from</span> [thief victim]
+  (<span style="color: #a020f0;">dosync</span>
+    (<span style="color: #a020f0;">let</span> [chosen-item (first (shuffle (ensure victim)))]
+      (alter victim disj chosen-item)
+      (alter thief  conj chosen-item))))
+
+(steal-from player monster)
+</pre>
+</div>
+
+</section>
+<section id="sec-5-14" >
+
+<h3>Or are atoms enough?</h3>
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(<span style="color: #a020f0;">def</span> <span style="color: #a0522d;">world</span>
+  (atom {<span style="color: #008b8b;">:player</span>  #{}
+         <span style="color: #008b8b;">:monster</span> #{}}))
+
+(<span style="color: #a020f0;">defn</span> <span style="color: #0000ff;">steal-from</span> [world thief victim]
+  (<span style="color: #a020f0;">let</span> [chosen-item (first (shuffle victim))]
+    (<span style="color: #a020f0;">-&gt;</span> world
+        (update-in [victim] disj chosen-item)
+        (update-in [thief]  conj chosen-item))))
+
+(swap! world steal-from <span style="color: #008b8b;">:player</span> <span style="color: #008b8b;">:monster</span>)
+</pre>
+</div>
 </section>
 
 </section>
 <section>
 <section id="sec-6" >
 
-<h2>reference types &amp; concurrency</h2>
-</section>
-<section id="sec-6-1" >
-
-<h3>problems with traditional concurrency</h3>
-<ul class="org-ul">
-<li>deadlocks
-</li>
-<li>lost updates
-</li>
-</ul>
-
-</section>
-<section id="sec-6-2"  data-background="/images/epochal-time-model.png" data-background-transition="linear">
-
-<h3></h3>
-
-</section>
-<section id="sec-6-3" >
-
-<h3>Epochal time model</h3>
-<p>
-From Rich Hickey's talk "Are we there yet?" (reference at end, don't
-worry)
-</p>
-</section>
-
-</section>
-<section>
-<section id="sec-7" >
-
 <h2>Java Interoperability</h2>
 </section>
-<section id="sec-7-1" >
+<section id="sec-6-1" >
 
 <h3>Syntax</h3>
 <div class="org-src-container">
@@ -620,7 +847,7 @@ worry)
 </div>
 
 </section>
-<section id="sec-7-2" >
+<section id="sec-6-2" >
 
 <h3>Dealing with mutable objects</h3>
 <div class="org-src-container">
@@ -644,7 +871,7 @@ worry)
 </div>
 
 </section>
-<section id="sec-7-3" >
+<section id="sec-6-3" >
 
 <h3>Clojure collections + Java functions</h3>
 <div class="org-src-container">
@@ -658,7 +885,7 @@ worry)
 </div>
 
 </section>
-<section id="sec-7-4" >
+<section id="sec-6-4" >
 
 <h3>Java collections + Clojure functions</h3>
 <div class="org-src-container">
@@ -672,6 +899,22 @@ worry)
 <span style="color: #b22222;">;;</span><span style="color: #b22222;">=&gt; (1 3)</span>
 </pre>
 </div>
+</section>
+
+</section>
+<section>
+<section id="sec-7" >
+
+<h2>transforming data</h2>
+</section>
+<section id="sec-7-1" >
+
+<h3>filter</h3>
+
+</section>
+<section id="sec-7-2" >
+
+<h3>map</h3>
 </section>
 
 </section>
