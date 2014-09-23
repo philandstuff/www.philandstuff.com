@@ -497,6 +497,24 @@ v <span style="color: #b22222;">;</span><span style="color: #b22222;">=&gt; [:a 
 </div>
 
 </section>
+<section id="sec-3-1-5" >
+
+<h4>Sets</h4>
+<p>
+<code>#{:a :b :c :d}</code>
+</p>
+
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(<span style="color: #a020f0;">def</span> <span style="color: #a0522d;">colours</span> #{<span style="color: #008b8b;">:red</span> <span style="color: #008b8b;">:yellow</span> <span style="color: #008b8b;">:blue</span>})
+
+(conj colours <span style="color: #008b8b;">:green</span>) <span style="color: #b22222;">;</span><span style="color: #b22222;">=&gt; #{:red :blue :green :yellow}</span>
+
+(disj colours <span style="color: #008b8b;">:red</span>) <span style="color: #b22222;">;</span><span style="color: #b22222;">=&gt; #{:blue yellow}</span>
+</pre>
+</div>
+
+</section>
 <section id="sec-3-2" >
 
 <h3>Functions</h3>
@@ -708,7 +726,12 @@ causally related <i>values</i>
 </div>
 
 </section>
-<section id="sec-5-9" >
+<section id="sec-5-9"  data-background="/images/epochal-time-model.png" data-background-transition="linear">
+
+<h3></h3>
+
+</section>
+<section id="sec-5-10" >
 
 <h3>Software Transactional Memory</h3>
 <dl class="org-dl">
@@ -723,7 +746,7 @@ causally related <i>values</i>
 </dl>
 
 </section>
-<section id="sec-5-10" >
+<section id="sec-5-11" >
 
 <h3>Software Transactional Memory</h3>
 <p>
@@ -742,7 +765,7 @@ Within a transaction:
 </dl>
 
 </section>
-<section id="sec-5-11" >
+<section id="sec-5-12" >
 
 <h3>Software Transactional Memory</h3>
 <p>
@@ -751,7 +774,7 @@ automatically retries.
 </p>
 
 </section>
-<section id="sec-5-12" >
+<section id="sec-5-13" >
 
 <h3>Software Transactional Memory</h3>
 <div class="org-src-container">
@@ -770,7 +793,7 @@ automatically retries.
 </div>
 
 </section>
-<section id="sec-5-13" >
+<section id="sec-5-14" >
 
 <h3>Or are atoms enough?</h3>
 <div class="org-src-container">
@@ -788,6 +811,22 @@ automatically retries.
 (swap! world steal-from <span style="color: #008b8b;">:player</span> <span style="color: #008b8b;">:monster</span>)
 </pre>
 </div>
+
+</section>
+<section id="sec-5-15" >
+
+<h3>Other concurrency types</h3>
+<p>
+Agents: uncoordinated, asynchronous
+</p>
+
+<p>
+core.async: CSP-style (ie golang-style), channels and queues
+</p>
+
+<p>
+Vars: thread-local storage
+</p>
 </section>
 
 </section>
@@ -801,8 +840,14 @@ automatically retries.
 <h3>Syntax</h3>
 <div class="org-src-container">
 
-<pre  class="src src-clojure"><span style="color: #b22222;">;; </span><span style="color: #b22222;">new URI("http://icanhazip.com")</span>
-(<span style="color: #a020f0;">def</span> <span style="color: #a0522d;">uri</span> (<span style="color: #228b22;">java.net.URI.</span> <span style="color: #8b2252;">"http://icanhazip.com"</span>))
+<pre  class="src src-clojure"><span style="color: #b22222;">;; </span><span style="color: #b22222;">import a class (at the repl)</span>
+(<span style="color: #a020f0;">import</span> '<span style="color: #228b22;">java.net.URI</span>)
+
+<span style="color: #b22222;">;; </span><span style="color: #b22222;">new URI("http://icanhazip.com")</span>
+(<span style="color: #a020f0;">def</span> <span style="color: #a0522d;">uri</span> (<span style="color: #228b22;">URI.</span> <span style="color: #8b2252;">"http://icanhazip.com"</span>))
+
+<span style="color: #b22222;">;; </span><span style="color: #b22222;">call a static method</span>
+(<span style="color: #a020f0;">def</span> <span style="color: #a0522d;">uri2</span> (URI/create <span style="color: #8b2252;">"http://icanhazip.com"</span>))
 
 <span style="color: #b22222;">;; </span><span style="color: #b22222;">call a method</span>
 (<span style="color: #483d8b;">.getScheme</span> uri)
@@ -873,22 +918,6 @@ automatically retries.
 <section>
 <section id="sec-7" >
 
-<h2>transforming data</h2>
-</section>
-<section id="sec-7-1" >
-
-<h3>filter</h3>
-
-</section>
-<section id="sec-7-2" >
-
-<h3>map</h3>
-</section>
-
-</section>
-<section>
-<section id="sec-8" >
-
 <h2>Projects and dependencies</h2>
 <blockquote>
 <p>
@@ -897,7 +926,7 @@ This is all very neat, but how do I actually get something done?
 </blockquote>
 
 </section>
-<section id="sec-8-1" >
+<section id="sec-7-1" >
 
 <h3>Leiningen</h3>
 <p>
@@ -915,7 +944,7 @@ $ cd snake
 </div>
 
 </section>
-<section id="sec-8-2" >
+<section id="sec-7-2" >
 
 <h3>project.clj</h3>
 <p>
@@ -927,7 +956,7 @@ Edit <code>snake/project.clj</code> in LightTable:
 
 </section>
 <section>
-<section id="sec-9" >
+<section id="sec-8" >
 
 <h2>References</h2>
 <p>
