@@ -1,0 +1,158 @@
+---
+layout: post
+title: Open for extension?
+tags:
+  - languages
+
+---
+
+Suppose you're writing Java, but because you don't like pain all that
+much you're using Google's [[https://code.google.com/p/guava-libraries/][Guava]] library to make managing collections
+easier.  You have a class which needs to return a concatenation of two
+lists, so you use Guava's ~Iterables.concat()~ static method:
+
+#+begin_src java
+  public class CertificateStore {
+      private List<Certificate> myCertificates;
+      private List<Certificate> partnerCertificates;
+
+      public Iterable<Certificate> getCertificates() {
+          return Iterables.concat(myCertificates, partnerCertificates);
+      }
+  }
+#+end_src
+
+Now a consumer wants to add these certificates to an existing
+collection.  So they try to use the ~Collection.addAll()~ method:
+
+#+begin_src java
+  List<Certificate> certs = new ArrayList<>();
+  certs.add(otherCertificate);
+  certs.addAll(store.getCertificates()); // ERROR!
+#+end_src
+
+The problem is that [[http://docs.oracle.com/javase/7/docs/api/java/util/Collection.html#addAll%2528java.util.Collection%2529][Collection.addAll()]] takes a Collection argument,
+not an Iterable.  The frustrating thing is that ~addAll()~ isn't doing
+anything which /requires/ a Collection instead of an Iterable: it's
+just iterating through the elements of the collection, adding each one
+in turn.
+
+This is almost certainly because Collection was introduced in Java
+1.2, but [[http://stackoverflow.com/questions/3832054/java-why-does-collection-addall-can-not-accept-iterables][Iterable was only introduced in 1.5]].
+
+The functionality we want is implementable using only public methods
+of Collection, so you could write your own static method to do it, as
+Guava have with [[http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/Iterables.html#addAll%2528java.util.Collection,%2520java.lang.Iterable%2529][Iterables.addAll(Collection,Iterable)]].  Then the
+consuming code would look like this:
+
+#+begin_src java
+  List<Certificate> certs = new ArrayList<>();
+  certs.add(otherCertificate);
+  Iterables.addAll(certs,store.getCertificates()); // okay now
+#+end_src
+
+This works, but uses a very different syntax.  Guava's extension to
+Collection just /looks/ different.  It's not a first-class usage of
+Collection.  It's not obvious at a glance that certs is the thing
+being modified here.
+
+What we ended up doing instead was this:
+
+#+begin_src java
+  public class CertificateStore {
+      private List<Certificate> myCertificates;
+      private List<Certificate> partnerCertificates;
+
+      public List<Certificate> getCertificates() {
+          return ImmutableList.<Certificate>builder()
+              .addAll(myCertificates)
+              .addAll(partnerCertificates)
+              .build();
+      }
+  }
+#+end_src
+
+By returning a List instead of an Iterable, we could use
+~Collection.addAll()~ directly, resulting in clean, consistent code
+for the consumer, at the cost of slightly more verbose (and slightly
+less efficient) code on the producer side.
+
+-----
+
+What this example demonstrates is that being open for extension isn't
+just about what's /possible/.  It's also about making extensions look
+just like the code they are extending.  Users will know the core
+language features and libraries; code that doesn't resemble those will
+add a roadblock to readability.
+
+The obvious fix to this problem is to allow people to extend classes
+with their own method, a practice known in the Ruby community as
+monkey-patching.  This is undesirable for a number of reasons: methods
+are not namespaced, so if two different consumers of a library create
+a method with the same name, they will conflict; further,
+monkey-patching often allows access to private internals of a class,
+which is not what is wanted here.
+
+Let's imagine what the example would look like using Clojure's
+[[http://clojure.org/protocols][protocols]].  Suppose I am using a Collection protocol, with an ~add~
+function but no ~addAll~ function at all:
+
+#+begin_src clojure
+  (defprotocol Collection
+    (add [c item])
+    ;;... other methods
+    )
+#+end_src
+
+Now I want to add all elements from a Java Iterable to my collection.
+If I wrote the code out in full, it might look like this:
+
+#+begin_src clojure
+  (def certs (create-list)) ;; implements Collection protocol
+  (add certs other-certificate)
+  (doseq [cert (seq (get-certificates store))]
+    (add certs cert))
+#+end_src
+
+If I want to define a function to encapsulate this iteration, it might
+look like this:
+
+#+begin_src clojure
+  (defn add-all [coll items]
+    (doseq [item (seq items)]
+      (add coll item)))
+#+end_src
+
+And now, my consuming code looks like this:
+
+#+begin_src clojure
+  (def certs (create-list))
+  (add certs other-certificate)
+  (add-all certs (get-certificates store))
+#+end_src
+
+There's no visual difference between the core protocol function ~add~,
+and my extension function ~add-all~.  It's as if the protocol has
+gained an extra feature.  But because my extension is an ordinary
+function, it is namespaced.  If we add explicit namespaces in, it
+might look like:
+
+#+begin_src clojure
+  (ns user (:require [collection.core :as c]
+                        [iterable.core :as i]))
+
+  (def certs (c/create-list))
+  (c/add certs other-certificate)
+  (i/add-all certs (get-certificates store))
+#+end_src
+
+Namespaces are [[http://legacy.python.org/dev/peps/pep-0020/][a honking great idea]]!  And in this case, my extension
+is namespaced, so even if someone else does the same (or a similar but
+incompatible) extension, there won't be a name collision.
+
+Clojure's protocols aren't unique in being open for extension in a
+transparent way.  Haskell's [[http://learnyouahaskell.com/types-and-typeclasses][typeclasses]] and the [[http://en.wikipedia.org/wiki/Common_Lisp_Object_System][Common Lisp Object
+System (CLOS)]] both also exhibit this feature.  Being open for
+extension isn't enough, if your extensions look like warts when placed
+next to core code.  Extensions should be as beautiful as the code they
+extend.
