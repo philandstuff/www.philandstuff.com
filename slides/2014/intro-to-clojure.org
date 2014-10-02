@@ -565,21 +565,22 @@ This is all very neat, but how do I actually get something done?
 
 Do you already have this installed? If not, go to http://leiningen.org/
 
-#+begin_src fundamental
-  $ cd <working directory>
-  $ lein new snake
-  Generating a project called snake based on the 'default' template.
-  To see other templates (app, lein plugin, etc), try `lein help new`.
-  $ cd snake
-#+end_src
+* Project
 
-** project.clj
+~git clone git@github.com:WWCLondon/snake.git~
 
-Edit =snake/project.clj= in LightTable:
+Pick a team name, and:
+
+~git checkout -b <team-name>~
+
+** 
+
+Open =snake/project.clj= in LightTable:
 
 #+BEGIN_HTML
 <img src="/images/project-clj.png">
 #+END_HTML
+
 
 * References
 
@@ -589,5 +590,18 @@ ClojureScript Koans: http://clojurescriptkoans.com/
 
 London Clojurians: http://londonclojurians.org/
 
+ClojureBridge: http://www.clojurebridge.org/
 
+** Events
 
+(all announced on london-clojurians mailing list)
+
+- London Clojure Dojo
+  - (next: Tuesday 30th September at ThoughtWorks)
+  - (then: Monday 13th October at uSwitch)
+- London Clojure User Group at Skillsmatter
+  - (next: Tuesday 2nd October)
+- [[https://skillsmatter.com/conferences/1956-clojure-exchange-2014][Clojure eXchange 2014]] (2-day clojure conference)
+  - Thu 4th, Fri 5th December
+- Clojure Bridge Edinburgh, 26th September
+  - (still spaces if you know anyone!)
