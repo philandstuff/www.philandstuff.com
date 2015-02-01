@@ -95,7 +95,7 @@ whenever you *weren't* interested in the --debug switch, whereas a
 commit message can be as big as it needs to be to make the explanation
 clear. Comments and commit messages can be complementary: there could
 be a one-line comment saying that --debug causes carbon-cache to stay
-in the foreground, and a more detailed explanantion in the commit
+in the foreground, and a more detailed explanation in the commit
 message. In some ways I see commit messages as a type of expanded
 commenting system which is available at your fingertips whenever you
 need it but automatically hides when you just want to read the code.
