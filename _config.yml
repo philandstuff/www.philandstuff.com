@@ -1,4 +1,4 @@
-exclude: ['Rakefile','TODO.org','Gemfile','Gemfile.lock']
+exclude: ['Rakefile','TODO.org','Gemfile','Gemfile.lock','vendor']
 paginate: 5
 author: Philip Potter
 markdown: redcarpet
