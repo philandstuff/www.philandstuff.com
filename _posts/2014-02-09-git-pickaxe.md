@@ -114,4 +114,4 @@ use path filters for pickaxe searches, because I can normally find
 what I want easily enough anyway.
 
 The `-S` switch takes a string match only. If you want to match a
-regex instead, you can use the `-G` switch instead.
+regex instead, you can add the `--pickaxe-regex` switch.
