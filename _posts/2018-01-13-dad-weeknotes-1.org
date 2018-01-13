@@ -1,0 +1,285 @@
+---
+layout: post
+title: Dad Weeknotes #1
+tags:
+  - dadding
+  - weeknotes
+---
+
+Last year I became a dad for the first time.  A [[https://medium.com/@Ellayanor/weeknotes-s01e01-c0a4ac005e3][number]] of [[https://productforthepeople.xyz/weeknotes-s01e24-b8f92a929c52][people]] I
+[[https://weeknot.es/s05-e14-say-something-bdd985a214e4][follow]] write [[https://ukparliament.github.io/weeknotes.data-search/2018/02/][weeknotes]] logging their work, and as my work is currently
+full-time dadding and people often ask me what it's like, I thought
+I'd write some of it down.  This is only half a week's worth, but as
+it's my first one it's rather long anyway.
+
+** Context
+
+This is, by some definitions, my first week as sole full-time parent
+of a baby.  My wife, Sonia, and I took advantage of [[https://www.gov.uk/shared-parental-leave-and-pay][Shared Parental
+Leave]], so we had the first three months together, then I returned to
+work for six months, and took another three months starting in
+December.  However Sonia didn't actually return to work until the
+start of January.  As a result, this week is the first week where I'm
+truly in sole charge.  Luke is now 10 months old, and when he turns a
+year I will return to work.  So I've got 2 months of doing this.
+
+That said, Sonia works from home.  During my 6 months back at work, I
+worked from home 2 days a week and took Luke with me on my morning and
+afternoon breaks, to give Sonia a rest, and she is more than happy to
+return the favour.
+
+** Christmas and New year
+
+Over the festive period, we hired a car for a month and drove all
+around the country visiting friends and family, with overnight stops
+in Shropshire, Cumbria, Glasgow, St Andrews, Berwick, and Lichfield
+(with extra day trips to Dunblane, Dundee, Edinburgh, and Hargrave in
+Northamptonshire). This was perhaps a slightly mad thing to do with a
+9-month-old, but it turns out that hosts (and, especially,
+grandparents) will do a lot to accommodate tired and bedraggled
+parents and energetic babies.
+
+** Health
+
+Luke is a healthy baby and is growing fast: he's around the 90th
+percentile for both length and weight.  (This means that of a typical
+sample of 100 babies, Luke would be longer and heavier than 90 of
+them, and lighter and shorter than 10 of them).
+
+Luke does, however, have a cow's milk protein allergy.  His is the
+delayed or non-IgE form, which is not life-threatening, but it means
+he can't have any dairy products in his diet, and this includes most
+standard infant formula.  Conveniently, [[BBC radio's Inside Health
+covered cow's milk protein allergy this week (section starts from
+07:20 in the programme)][BBC radio's Inside Health
+covered cow's milk protein allergy this week (section starts from
+07:20 in the programme)]].
+
+** The new routine
+
+A question I sometimes get asked is "what do you do all day?"  Here
+are some of the regular tasks:
+
+*** Washing
+
+On average, we do at least one load of washing a day, sometimes two.
+At this time of year, drying space is at a premium, so I spend a lot
+of time worrying about this, and trying to ensure that there's always
+something drying.
+
+*** Batch cooking
+
+Luke is on solids (he started at 6 months old) and eats 3 meals a day.
+That food needs to come from somewhere.  It's just not practical to
+cook every meal from scratch, so we try to cook big batches of meals
+(often doubling the listed quantities in the recipe) and split into
+boxes for the fridge and freezer.
+
+Along with this is planning and ordering the weekly shop, and making
+sure we have a good balance of nutrients for baby and ourselves for
+every meal.  With Luke's milk allergy, we generally try to make
+dairy-free meals that we can all have, rather than cook separate meals
+for Luke and for us.
+
+*** Washing up
+
+Feeding a baby results in an enormous amount of washing up.  We have a
+dishwasher, which is a lifesaver, but there's still a significant
+amount of stuff we wash by hand.
+
+*** Feeding
+
+Feeding Luke itself is hard work.  Mostly we have a dish which we
+spoon-feed to Luke, with a few finger foods on the side such as
+quartered grapes, fingers of bread with peanut butter or houmous,
+sticks of pear or cucumber, etc.  We have experimented with [[https://www.theguardian.com/lifeandstyle/wordofmouth/2011/oct/05/baby-led-weaning][baby-led
+weaning]] (broadly, letting the baby feed themselves with surprisingly
+big chunks of food from a surprisingly early age).  I find that
+spoonfeeding is labour-intensive, but gets more food actually inside
+Luke, and as he's a big boy he gets very hungry.  Letting him feed
+himself also means that the mealtime itself takes longer.
+
+Luke has been getting more and more keen on feeding himself
+independently though, so we may need to adjust our strategy.
+
+*** Forward planning
+
+Babies change so fast, it's hard to stay one step ahead of them.  Luke
+started crawling a month ago, and shortly afterwards starting pulling
+himself up on sturdy things to a standing position.  He also started
+pulling not-so-sturdy things on top of himself, so there's a whole new
+class of hazards we need to watch out for, and a new round of
+baby-proofing.  There are helpful books and online guides to warn us
+what is coming next, but it's not always easy to find time to read
+them.
+
+Some of the things we are going to be looking forward to:
+
+  - learning to stand and balance without holding on
+  - learning to walk holding one hand
+  - learning more syllables (Luke repeats single syllables at the
+    moment such as "ba ba ba")
+  - variegated babbling (ie, mixing syllables together, such as "ka da
+    by ba mi doy doy")
+  - assigning meaning to words
+  - learning to drink from an open cup
+
+*** Reading
+
+Luke, like most babies, loves to have stories read to him.  Some of
+his favourites are:
+
+  - [[https://www.booktrust.org.uk/book/w/what-a...-busy-baby/][What a busy baby!]]
+  - [[https://www.amazon.co.uk/Quentin-Blakes-Ten-Frogs-Blake/dp/1843651041][Quentin Blake's Ten Frogs]]
+  - [[https://www.amazon.co.uk/Big-Fish-Little-My-World/dp/1589252152][Big Fish Little Fish]]
+  - [[https://www.amazon.co.uk/Each-Peach-Pear-Allan-Ahlberg/dp/0141502525][Each Peach Pear Plum]]
+  - [[https://usborne.com/browse-books/catalogue/product/1/6865/noisy-orchestra/][Usborne's Noisy Orchestra]]
+
+He's not just seeing the pictures and hearing the language.  He's also
+learning to turn the pages himself, and learning to anticipate the
+next page.
+
+*** Physical play
+
+Since Luke has learned to crawl and to pull himself up to standing
+recently, he really wants to try it out all the time.  He's crawling
+all around the house and pulling on anything he can reach.  This means
+he generally needs monitoring to make sure he doesn't hurt himself or
+damage anything.
+
+This is one of the toughest times for me.  This is because it's
+relatively boring – Luke is mostly directing his own play – so I feel
+I ought to be thinking about the next thing.  I start planning the
+next meal, or folding some washing, or reading my calendar for the
+week ahead, and suddenly Luke has started reaching for the DVD player
+or the TV and I need to intervene.
+
+*** Parent and baby groups
+
+Being in a big city, there are loads of parent-and-baby groups
+available.  These are good for parents to meet one another, to have a
+reason to get out of the house (which is often an achievement in
+itself), and for babies to get used to seeing others their own age.
+
+For a while, I did a dad-and-baby yoga class in Herne Hill which I
+absolutely loved.
+
+** The week in brief
+
+With all the context in place, my week might make some kind of sense
+now.
+
+*** Tuesday
+
+We returned from our christmas & new year road trip.  We were
+exhausted.  We put a wash on straight away, and got Luke's bedtime
+equipment (including his plushy duckie comforter) unpacked straight
+away.
+
+*** Wednesday
+
+In the morning, we needed to return the car and take Luke to the
+dietician.  Sonia took the morning off for this to work: I could have
+taken Luke with me when returning the car, but then I'd need to get
+Luke and car seat back by public transport which would have been
+awkward.
+
+I did one wash on Wednesday.
+
+*** Thursday
+
+I had a grocery delivery arrive before 9am.
+
+Our [[https://www.nct.org.uk/][NCT]] group mums had a lunch together.  It was good to catch up with
+them, some of whom I haven't seen since my first three-month parental
+leave period.
+
+Building a support network is important as a parent, to share tips,
+help each other out, and just provide emotional support.  NCT has been
+a good way of making friends with people in the local area – prior to
+having a baby, it wasn't too hard to rely on old friends distributed
+all across London, but having a baby makes you a lot less mobile.
+
+It's worth talking about gender for a minute here.  There are two
+things working against me building my own support network.  The first
+is that men are generally worse at maintaining close friendships, and
+this gets worse for men in long-term opposite-sex relationships who
+can tend to outsource relationship maintenance to their partner.  This
+is something I have to be aware of and work on for myself.
+
+The second is that men are seen by society as having less childcare
+responsibility - even in situations where they are clearly taking a
+childcare role.  This means men can be overlooked or ignored in
+situations with parents of babies.  See Friday for an example of this
+below.
+
+(It may not surprise you to learn that my Christmas reading was [[https://canongate.co.uk/books/2395-how-not-to-be-a-boy/][How
+Not To Be a Boy by Robert Webb]].)
+
+I did two washes on Thursday.
+
+I spent the afternoon making a massive batch of morrocan sweet potato
+soup, using ingredients from the grocery delivery.  I chose the recipe
+as it has relatively little prep work - peel, chop, roast, blend.
+It's also not terribly time-critical: I can be interrupted at almost
+any point and it's okay.  However, soups are necessarily spoonfeeding
+food, so I'm going to think about recipes which Luke can feed himself
+in future.
+
+Thursday evening was orchestra rehearsal night.  My orchestra ends at
+10pm which is really late for me nowadays.
+
+*** Friday
+
+We are starting Luke at nursery soon.  On Friday we went to a
+pre-admission session at the nursery.  This was mostly going through
+application forms and policies.  Sonia and I went together, and we
+shared the session with another mother and baby, but I really noticed
+how the nursery staff talked directly to the mums and not to me.  One
+of the staff even forgot to introduce herself to me and ask me my
+name, after asking Sonia's and Luke's.  It's a small thing, and I
+didn't complain, but I definitely noticed it.
+
+I did one wash on Friday.
+
+We managed to forget the required documents to give to the nursery so
+I had to make a return trip in the afternoon.  On the way back I gave
+Luke a go on the swings, which he absolutely loves.  His giant smile
+is so infectious!
+
+I even managed to escape to go to GOV.UK Infrastructure's goodbye
+drinks in the evening.  I no longer take nights like this for granted,
+because someone needs to be in to keep an eye on the baby monitor.
+That said, it's important for both Sonia and I to maintain some sort
+of social life, and so we talk a lot about what we can do to help each
+other go out in the evenings.
+
+** What is full-time dadding like, then?
+
+Full-time dadding is hard work of a very particular sort.  The main
+difficulty is that you don't get to have a break on your own terms:
+there is often a constant stream of firefighting.  Baby is hungry;
+baby is crawling around and needs watching; baby is threatening to
+pull furniture onto himself; baby wants a story.  It can be difficult
+to even go to the toilet when you're on your own with a baby, much
+less have a shower.  One of the NCT mums talked about the multiple
+full cold cups of tea strewn around her house which she had made and
+then had no opportunity to drink.
+
+That said, there /are/ opportunities for breaks.  Luke still has a nap
+in the morning and afternoon for ½–1½ hours (indeed, I'm writing these
+notes in his morning nap).  But time management is important, and in
+fact some of the tips I picked up in [[http://shop.oreilly.com/product/9780596007836.do][Time Management for System
+Administrators]] are proving helpful, because fundamentally I'm
+responding to interrupts for much of my time.
+
+There have been a few moments when I have been absolutely despairing
+and at my wit's end.  In my working life, I almost always have the
+opportunity of taking 10 minutes to go and have a coffee or a walk to
+let off steam, but often that's just not the case with a screaming
+baby.  I've had to learn new skills and techniques to manage my own
+emotional state and the baby's.  Often a walk /is/ a good idea, as
+putting the baby in the pram or sling is a good way to calm them down
+when they're fractious or upset.
+
+I'm looking forward to writing more about my experiences!
