@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Dad Weeknotes #1
+title: Dad Weeknotes, volume 1
 tags:
   - dadding
   - weeknotes
