@@ -1,0 +1,130 @@
+---
+layout: post
+title: Dad Weeknotes, volume 6
+tags:
+  - dadding
+  - weeknotes
+---
+
+[[/2018/02/11/dad-weeknotes-5.html][Previously, on Phil's dad weeknotes..]]
+
+** Health
+
+Last week, I wrote:
+
+#+BEGIN_QUOTE
+Luke's been having some funny days where he has a much lower appetite
+than usual.  He just eats much smaller portions than we're used to.
+But otherwise he's absolutely fine: just as happy and interested in
+things as usual, if maybe a little subdued.  He's also been a bit
+snotty, so we're hoping it's just a cold or something.
+#+END_QUOTE
+
+It was not just a cold.  Luke had diarrhoea and vomiting on Monday
+morning.  We called the doctor and were seen the same day: he checked
+Luke over and said it was a viral infection, and it should improve
+with Calpol, rest, and fluids, though we should call again if it
+didn't improve.  Luke slept a lot that day – I think he had 4 naps in
+total when he would normally have 2, and the naps themselves were
+longer.
+
+On Tuesday, when I got Luke out of bed and changed him, I saw he had a
+dramatic rash on his tummy and back.  So we called the doctor again,
+and were seen that morning.  The doctor took one look and said it was
+a typical symptom of a viral infection and that, although it looked
+dramatic, it wasn't something to worry about.  Luke himself didn't
+seem terribly bothered by it: he was more active than on Monday and
+wasn't itching at his rash.
+
+On Tuesday night, Luke didn't sleep well.  He was up multiple times,
+crying in his cot (which we hear loudly through the monitor).  A note
+for non-parents on crying here: babies really do have different cries,
+and in this case it was the sort of cry which we didn't feel needed a
+response from us.  Normally he would get himself settled again and go
+back to sleep.  However, this night, it happened several times.
+
+In the morning, we felt he was well enough to take in to nursery.  It
+was almost exactly 48 hours since his vomiting spell, which is the
+minimum time to wait before returning him to such an environment.
+Sonia took him in and I had a bit of a break.  However, in the
+afternoon, the disrupted sleep caught up with me.  It was a real
+struggle to keep an eye on him, to give him the attention and
+interaction that he wanted and deserved.  He was still recovering from
+his illness and was a little clingy; I just wanted to sit motionless
+and for him to amuse himself.  There was a good moment in the
+afternoon where I put him down for a nap and went and dozed in bed
+myself.
+
+These sorts of moments are the ones I find the hardest: to be an
+adequate parent when you're not functioning well yourself.  But
+somehow we made it through the afternoon.
+
+** Nursery
+
+Luke had his first full days at nursery this week: 9 til 4 on Thursday
+and 9 til 4.45 on Friday.  I thought I would have loads of free time
+without him, but I spent most of Thursday catching up with laundry,
+cooking, and cleaning.  At least on Friday I managed to get a
+lunchtime climb in at [[https://www.vauxwallclimbing.co.uk/][Vauxwall]].
+
+Luke is settling in more and more.  One of the things we have been a
+little concerned about is how Luke's sleep schedule doesn't align with
+the nursery schedule: Luke generally naps mid-morning and
+mid-afternoon, but the nursery structure has a single post-lunch nap.
+But the staff have been very flexible about letting Luke keep his
+existing schedule.  And on Friday, he actually slept just the once,
+just after lunch.
+
+The nursery staff are really good about giving a debrief at the end of
+the day.  When I pick him up, they take me through his day: when he
+slept, how long he slept, how much milk he had, what size portion he
+ate at lunch, how many nappies he got through, and maybe some
+highlights of what he did that day.  This has been really valuable to
+understand how well he's doing and what he gets up to when we're not
+around.
+
+** Milk
+
+Luke has cow's milk protein allergy, so we currently avoid feeding him
+dairy at all.  Luke has continued to drink coconut milk with variable
+enthusiasm.  He drank 2 oz (about 60ml) on Thursday at nursery, but
+only tasted it on Friday.  He still eats his afternoon coconut
+yoghurt, so that's something.
+
+We are going to start a milk ladder: a structured process of
+reintroducing dairy to Luke's diet to see how he reacts.  We got the
+details from the dietician.  Step 1 is a biscuit made with a dough
+that has a teaspoon of milk powder in it, and step 6 is drinking cow's
+milk (or formula).  The first few steps (biscuit, muffin, pancake) are
+homemade recipes so that the amount of milk can be carefully
+controlled.  My mum is visiting this weekend and she has kindly
+offered to bake the biscuits for us.
+
+** Food
+
+Since recovering from his bug, Luke has had a phenomenal appetite.  We
+did a [[https://realfood.tesco.com/recipes/vegan-vegetable-curry.html][vegan vegetable curry]] which is perfect finger food for Luke, and
+he wolfed it down.  At one breakfast he had 1½ weetabix and wanted
+bread as well.  Today, we had a [[https://www.jamieoliver.com/recipes/pasta-recipes/kerryann-s-tuna-pasta-bake/][tuna pasta bake]] and he basically had
+an adult portion.  We wonder if he's going through a growth spurt of
+some sort.
+
+It's nice that Luke has reached a stage where he is able (and
+insists!) to feed himself, rather than us having to spoonfeed him.
+It's at least one thing that has gotten easier for us.
+
+** Those things your parents told you to do
+
+[[The NHS recommends babies to have vitamin supplements][The NHS recommends babies to have vitamin supplements]].  We have not
+been especially good at making this happen every day, and often gone
+days at a time without giving him his vitamins.  But this week, we
+have managed to get more into the habit.
+
+Similarly, [[https://www.nhs.uk/conditions/pregnancy-and-baby/looking-after-your-infants-teeth/][you can start brushing your baby's teeth as soon as they
+come through]], but we have not been good at doing this every day
+either.  When we do manage, Luke wants to do it himself, with all the
+enthusiasm and inaccuracy one would expect from an 11-month-old.  We
+were given a tip to have /two/ baby toothbrushes: one for Luke to play
+with, and one to actually clean his teeth.  Watch this space for
+whether this tactic actually works...
+
