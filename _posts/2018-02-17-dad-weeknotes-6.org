@@ -115,7 +115,7 @@ It's at least one thing that has gotten easier for us.
 
 ** Those things your parents told you to do
 
-[[The NHS recommends babies to have vitamin supplements][The NHS recommends babies to have vitamin supplements]].  We have not
+[[https://www.nhs.uk/conditions/pregnancy-and-baby/vitamins-for-children/][The NHS recommends babies to have vitamin supplements]].  We have not
 been especially good at making this happen every day, and often gone
 days at a time without giving him his vitamins.  But this week, we
 have managed to get more into the habit.
