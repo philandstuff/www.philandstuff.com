@@ -1,0 +1,175 @@
+---
+layout: post
+title: Keep database deploys separate
+---
+
+** Context
+
+A while ago, I [[https://twitter.com/philandstuff/status/960262115029372928][tweeted]] that you shouldn't deploy database migrations
+at the same time as your app code.  I thought I'd write something
+about why I feel this way, and the situations where I feel strongest
+about this.
+
+This post has the structure of an [[http://thinkrelevance.com/blog/2011/11/15/documenting-architecture-decisions][Architecture Decision Record]],
+because context matters.  I think ADRs are an excellent way to force
+you to think about the context in which you make a decision, and I'm
+hoping to use the format to think about the context in which my
+recommendation applies.
+
+The team that this recommendation applies most to has the following
+things going on:
+
+1. You are building a user-facing application, quite probably a web
+   app for consumption by a browser or mobile native application.
+2. You have enough users that, whenever you deploy, most likely
+   someone is using the app.  Therefore, you employ techniques to
+   deploy your app with zero downtime, such as deploying one app
+   server at a time rather than all at once.
+3. You deploy your app multiple times a week (possibly even multiple
+   times a day).
+4. You don't have maintenance windows (for deployments or otherwise).
+
+Many teams, having read the [[https://martinfowler.com/books/continuousDelivery.html][Continuous Delivery book]], will set up an
+[[http://www.informit.com/articles/article.aspx?p=1621865&seqNum=2][automated deployment pipeline]] to ensure there is a clear, repeatable
+path for incremental code changes to go through various testing stages
+and end up in production.  As part of this, they are probably using a
+database migration tool (such as [[https://www.liquibase.org/][liquibase]] or [[http://edgeguides.rubyonrails.org/active_record_migrations.html][active record
+migrations]]) so that the database schema and data structure can be
+incrementally updated as the application is worked on.  And in the
+final step of the deployment pipeline, the latest code and migrations
+are deployed to production in a single deployment stage.
+
+I anticipate problems with this setup.
+
+The main issue is that database migrations are inherently riskier
+types of change than code changes.  Problems with database migrations
+might only show up when you deploy to production, for a number of
+reasons.
+
+A migration's success is contingent on what data existed in the
+database previously.  Development databases are often routinely
+emptied out between tests.  You can trivially add a column with a
+constraint to an empty table, but a single record will cause the
+migration to fail.  More complex migrations involving rewriting data
+from one form to another (string to int, or int to date) might fail on
+corner cases that only show up in "real world" data.  More mundanely,
+a database migration might perform a lot of updates all at once,
+suddenly filling up a disk.
+
+Another problem with a production (or production-like) environment,
+that often doesn't appear in development environments, is that you
+will at some point end up with an active user hitting a new version of
+your app while the old version of the database schema is still active
+(or vice versa).  You are doing deployments in a way that avoids
+downtime, and whichever way you do it, you will have concurrent active
+requests hitting old and new code.  Development and testing
+environments often don't cover this case, because tests are run
+between deploys rather than during them, and so code is often not
+tested for schema backwards- or forwards-compatibility.  In an
+environment where developers don't see the hazards with creating
+commits which atomically change code and schema, they will do so,
+causing problems only when people try to use the system during a
+deploy.
+
+A final issue is that database changes are much harder to back out
+than code changes.  There's often no "reverse" migration script
+available.  Even if you have written code to reverse the migration,
+you might not trust it, especially if there was a problem with the
+forward migration script.  Even if the reverse migration was
+automatically generated, you might have irrevocably lost data already.
+(This is not an absolute rule: code changes can also lose data; but
+their risk profile is lower.  It's easier to lose data on a mass scale
+with an =UPDATE IN= statement than in a simple web request handler.)
+
+** Decision
+
+We will not deploy database changes in the same step as code changes.
+
+This means that a single deploy pipeline stage should not deploy both
+code and data without a manual trigger in between the two.  Each
+deploy should be smoke tested, to test that a code change without a
+data change doesn't break anything, and similarly a data change
+without a code change also doesn't change anything.
+
+This setup means that every step of the deployment process is
+verifying the backwards- and forwards-compatibility of your code
+against your database schema.
+
+There are a number of ways of achieving this.  One simple change you
+could do is change your deployment steps to deploy code *or*
+migrations, based on a parameter in the build.  I have seen this work
+successfully for GOV.UK's deployments – [[https://github.com/alphagov/govuk-puppet/blob/dcaa4b30c557113abd48fe74374458cb2f8e1f2d/modules/govuk_jenkins/templates/jobs/integration_app_deploy.yaml.erb#L30-L36][their deployment step template
+has a parameter for code or migrations]].
+
+Another way would be to have totally separate deployment pipelines for
+code and migrations.  To the code deployment pipeline, the database
+becomes an external dependency (like any third-party service).  Then
+database deployments can be explicitly scheduled on a slower cadence,
+such as weekly.  John Allspaw has described this approach at etsy and
+flickr (see below).
+
+A very low-tech way to do this would be simply to have a convention
+that releases can either contain database changes or code changes, but
+not both, and rely on code review or release management to catch
+contraventions.
+
+Note that there are several things that are important to keep, even as
+we separate out code and database deployments:
+
+  - database schemas should be built from a source-controlled
+    definition, not hand-crafted
+  - database schemas should be managed using a migration tool
+  - database schemas should be deployed using a deployment pipeline,
+    testing changes first in development and testing environments
+    before being run in production
+
+** Consequences
+
+Developers will have to adapt to this environment, and understand both
+that database changes are considered riskier, and that if they want to
+introduce database changes, they will have to consider how to
+orchestrate the rollout.  A typical scenario would involve three
+steps: first, release a new app which can support the new schema when
+it arrives; second, deploy the database migration; third, release a
+new app that removes the old code for compatibility with the old
+schema.
+
+This is what developers should be doing anyway, because otherwise
+their code will cause problems for users when deployed to production.
+However in practice they either don't do this phased rollout, or they
+sometimes forget.  Under the new system, if they don't write
+forwards-compatible code changes, their code deployments will fail
+smoke tests.  As a result, there should be fewer instances of failures
+in production due to mismatched code and schema versions.
+
+Database changes will become more expensive to push through the
+pipeline.  This is by design, but it does mean that there is a risk of
+perverse behaviour such as writing fixes in code because it's easier,
+when a fix in the database would be more correct.
+
+This change will not fix everything about database migration
+riskiness.  Trying to update every record in a large table to add a
+new column will still be slow and fraught.
+
+** A brief survey of other people's views
+
+I think it's worth reviewing other people's thoughts and experiences
+here too.  Many smart people seem to disagree with me, including the
+[[https://twitter.com/davefarley77/status/959770752709996545][Continuous Delivery authors]].
+
+InfoQ recently published [[https://www.infoq.com/articles/deployment-pipeline-database-changes][an article about including database
+migrations in the deployment pipeline]], although I actually agree with
+most of the points they make: database schemas should be defined in
+source-controlled code, using a migration tool, and deployed as part
+of a pipeline.  The schema should be defined by the application team,
+not a separate DBA team.  The benefits of automation are
+incontrovertible.  The only thing I disagree on is that code and
+database changes should not be deployed in the same automated step.
+
+On the flip side, John Allspaw has tweeted: [[https://twitter.com/allspaw/status/960169892480679938][Decoupling schema changes
+from deployment of the code making use of those changes had huge
+advantages at Etsy.]]  He has spoken about this in [[https://youtu.be/f49pCUT1XAU?t=49m24s][this interview by Jez
+Humble]].  People ask him "if you deploy 50 times a day, how do you
+change the database 50 times a day?" and his answer is "well, you
+don't".  At flickr, they had a window every other Tuesday to do
+database changes.
