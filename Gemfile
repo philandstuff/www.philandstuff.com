@@ -1,4 +1,4 @@
-source "http://rubygems.org"
+source "https://rubygems.org"
 
 gem "jekyll", '~> 2.0' # >= 1.0.1 for d64fd1e
 gem "jekyll-utf8"
