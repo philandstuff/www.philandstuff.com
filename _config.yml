@@ -3,3 +3,4 @@ paginate: 5
 author: Philip Potter
 markdown: redcarpet
 encoding: utf-8
+plugins: [jekyll-paginate]
