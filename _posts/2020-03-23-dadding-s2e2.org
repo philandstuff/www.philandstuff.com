@@ -1,0 +1,208 @@
+---
+layout: post
+title: "Dadding, season 2 episode 2: coronavirus wtf"
+tags:
+  - dadding
+  - weeknotes
+---
+
+9 months ago, I didn't anticipate that my dad notes would coincide
+with a pandemic.
+
+[[http://www.philandstuff.com/2020/03/18/dadding-season-2.html][Last time]], I wrote about the birth of my second child, Robin.  I
+didn't mention [[https://en.wikipedia.org/wiki/Coronavirus_disease_2019][COVID-19]] but I can't avoid the topic now.  The first
+direct impact the virus had on our lives was the hospital appointment
+for newborn checks I mentioned last time: the day we were due to go
+there, Southwark News reported that [[https://www.southwarknews.co.uk/news/southwark-council-braces-for-coronavirus-outbreak-as-number-of-uk-cases-rises-to-115/][two COVID-19 cases had been
+identified at the hospital]].  We were left to make a decision about
+whether it was safer to see the midwife (who had a cough) or go to the
+hospital.
+
+Note: I do not plan to be pedantically correct with my use of
+"COVID-19" or "coronavirus"; in particular, I will use these terms
+when "SARS-CoV-2" might be more correct.  Don't email me.
+
+** Newborn checklist
+
+Since then, we managed to get all the immediate newborn things done.
+There's quite a list of things you need to do with a newborn:
+
+ - newborn physical examination (described in last post)
+ - [[https://www.gov.uk/government/collections/newborn-blood-spot-screening-programme-supporting-publications][heel prick test]], done by our midwife at home on day 5
+ - register the birth
+ - meet the midwife again on day 10 for final checks and discharge
+ - meet the [[https://ihv.org.uk/families/what-is-a-hv/][health visitor]], again at home
+ - get a [[https://www.nhs.uk/conditions/pregnancy-and-baby/newborn-hearing-test/][newborn hearing screening test]]
+ - register with the GP
+
+It was a real blessing that we had a homebirth here, because you need
+to register the birth in the registration district where the baby was
+born, and home is in Southwark while hospital is in Lambeth.  We live
+2 minutes' walk from Southwark register office, but would need to get
+a bus or taxi to Lambeth.  It's hard enough to travel with a newborn
+and a recovering mother at any time, but the spread of coronavirus
+would have made us even more concerned.  Did I mention there's a time
+limit and you have to register the birth within 42 days?  As I say,
+I'm glad we were able to use the local register office and get it done.
+
+When booking the hearing screening, we mentioned our concern about
+social contact to the person taking the booking, and they said "it's
+okay, you can do it any time in the first 3 months".  This did not
+reassure us.  However once again we were fortunate because the
+screening centre was 2 minute's walk from our house.
+
+But we've got through our checklist.  We don't have to do anything
+more until the [[https://www.nhs.uk/conditions/pregnancy-and-baby/baby-reviews/][6-8 week check for baby]] and [[https://www.nhs.uk/conditions/pregnancy-and-baby/postnatal-check/][mum]] and [[https://www.nhs.uk/conditions/vaccinations/nhs-vaccinations-and-when-to-have-them/][first round of
+vaccinations]] at 8, 12 and 16 weeks; though these could well be
+disrupted by the pandemic.
+
+** The shopping
+
+As London people reading right now will know, but people reading from
+further afield or from in the future may not realise, the shops have
+gone a bit crazy with the pandemic.  This has affected us in a couple
+of ways: first, we ran low (though we never actually ran out) of
+essentials like soap, nappies, and wipes, and second, we get our
+weekly shop delivered rather than going to a supermarket ourselves,
+and it has gone from a 1- or 2-day wait for a delivery slot to a
+3-week wait.  There is guidance to shop in person where possible to
+free up delivery slots for vulnerable people (such as older people or
+people with conditions such as asthma or diabetes).  This would be
+nontrivial for us because we don't have a car and we're not close to a
+big supermarket, and our local shops have been running out of stuff.
+
+However, we have been fine.  We never actually ran out of anything
+essential, and we live in a good community where neighbours have been
+offering to get extra things from the shops when they go in their
+cars.  I've been able to pick up nappies here and there when I spot
+them on the shelves (I take one pack at a time on principle at the
+moment).  I am also in the habit of maintaining a stock of bread flour
+for our breadmaker so we will be okay for a while.
+
+** Social distancing and nursery closure
+
+Around week 2, it became clear (to us at least) that the coronavirus
+was spreading in the UK and in Southwark specifically.  We were
+already washing hands and, as parents of a newborn, were pretty
+socially isolated anyway; private sector employers that could were
+requiring workers to work from home, followed by the government
+issuing guidelines and public sector workers working from home.
+
+Sonia's parents had already returned home.  They were worried about
+coronavirus and got themselves back home to Scotland before the
+disease really took hold in London, so we were left looking after a
+newborn and a three-year-old on our own.
+
+On Wednesday, we learned that nurseries were going to close from the
+following week.  This was a scary thought for us - both because it
+added yet more weight to the scale of the public health crisis, and
+because we had to think about looking after both kids full time – a
+newborn is hard enough!  At least I'm on shared parental leave, unlike
+many of my friends and colleagues who suddenly find themselves having
+to work from home and look after children simultaneously.
+
+Friday was to be Luke's last day at nursery, but he had a snotty nose
+and Sonia and I both had sore throats.  Under normal circumstances, we
+would have sent him to nursery – toddlers have snotty noses about 50%
+of the time in winter anyway – but we were cautious and kept him home,
+which meant he (and we) were unable to say goodbye to his friends and
+to the nursery staff.
+
+My sore throat symptoms got worse and by dinner time I felt so
+nauseous I was unable to be in the kitchen because I felt the cooking
+smells would make me sick.  This left poor Sonia to simultaneously
+cook, breastfeed, and watch a three-year-old, while ill herself.  She
+was in tears by the end of the evening, and we were both wondering how
+we would cope.
+
+On Saturday, though, we felt a lot better, and the sun was shining.
+The government advice was to self-isolate if anyone in the house had a
+temperature or a new continuous cough - and that didn't apply to us,
+so we decided to go out.  We were aware of the advice to keep a social
+distance: even when going out, keep at least 2m from other people.
+
+I thought that I'd take Luke to the local park and try to teach him to
+ride his pedal bike that he got for his birthday.  This would be
+something we could do which didn't involve going in the play area and
+touching lots of surfaces that other children had touched.
+
+Once we were in the park, we saw a few of our neighbours who had
+children of their own.  It was so nice, especially after the low point
+of the previous evening, to have social contact with people again.  We
+also know how much good it does Luke to be outside.  It's very
+important for his development to get lots of exercise and to socialise
+with other children.  However, while adults are pretty capable of
+keeping a 2m distance in a big open green space, children are much
+less so capable.  We have told Luke about the coronavirus, and about
+germs more generally and how they transmit, but when he sees another
+child he knows with a toy, he still wants to play with it, and in the
+moment, it was hard to tell him not to.  Also, it was hard to keep him
+out of the play area when other children were there using it.  In the
+end, I'm slightly ashamed to admit we went in the play area, against
+my initial judgement, because there was another neighbour there I
+wanted to catch up with, and I was so enjoying the social contact.
+Although we felt refreshed after the park trip, we also left wondering
+if we had been too lax and if we need to think carefully about what
+rules we set for Luke and ourselves and how we enforce them.
+
+On Sunday, I decided to avoid the park entirely, to avoid temptation.
+I decided to take Luke for a ride on his balance bike (the pedal bike
+is still a bit beyond him) and we'd go somewhere and look at trains.
+He did well, although as a new and unfamiliar trip he was uncertain,
+confused and nervous, and got easily upset.  But I think it's
+important to think about how we can responsibly exercise Luke and get
+him outside, and if we repeat this routine it should become more
+familiar and comfortable to him.  Late on Sunday, the leader of
+Southwark Council [[https://twitter.com/peterjohn6/status/1241738601316200450][announced that all play areas would be locked from
+midnight that night]], which thankfully made a decision for us.
+
+This morning, we used Zoom to do a video call with Luke's nursery
+friends.  We tried to recreate the start of the day that they have at
+nursery, which they call "circle time".  We had songs: their welcome
+song, the wheels on the bus, heads, shoulders knees and toes.  Then
+parents took turn to read stories to the call.  It was a bit ropey,
+feeling a bit adrift at times, but overall for something that had been
+self-organised pretty quickly by people who don't normally do this, it
+went pretty well!  We spent the rest of the morning in the garden
+playing with megablox.  In the afternoon, we had a one-on-one facetime
+with another nursery friend to paint a rainbow (there is a [[https://www.bbc.co.uk/news/uk-england-51988671][phenomenon
+of children painting rainbows and putting them in their windows]] so we
+were joining this bandwagon).  We had another walk to the park, and
+Luke is internalising our rules about not touching other children,
+even children he knows.  We explored less-well-travelled parts of the
+park, that we (and others) spent less time in, to help maintain a
+distance from others.  As promised, the play area was padlocked shut.
+Sonia had a nerve pain headache all day so was out of action, but
+thankfully I was in good enough health to be chief parent of Luke (if
+not of Robin, who needs frequent breastfeeding).
+
+** Robin's progress
+
+I showed a draft of this to Sonia and she pointed out I hadn't written
+about Robin very much.  This is true and I suppose it's for two
+reasons: one is that I've been much more focussed on Luke, our
+3-year-old, while she's been much more focussed on Robin.  This is
+pretty necessary as she is breastfeeding him and so has to be near him
+for much of the day.  The other reason I haven't talked much about
+Robin is that he's been doing really well, and there hasn't been much
+difficulty to talk about regarding him.
+
+The nights have been really good (as far as sleeping with a newborn
+can be described as "good").  Robin often wakes up only twice in the
+night, which is pretty good.  He has been feeding well - he had
+regained his birth weight and then some by day 10 and, although we
+don't regularly weigh him, we can see he is filling out.  He is
+generally quite a content baby.  He has occasional cluster feeds where
+he can be quite demanding, and these tend to happen in the evenings
+just when Luke is also tiring and becoming difficult to manage and
+needs bath and bed, which means the evenings as a whole can be a
+difficult time.
+
+Sonia and I have discussed the issue of me spending more time with
+Luke and her with Robin.  We've acknowledged it's a thing and note
+that there is a risk of entrenching these connections longer term, so
+we've also been trying to notice opportunities to swap over.  For
+example, I've been on a few walks taking Robin with me in the sling,
+and Sonia's done a few bedtime stories with Luke.  Hopefully as
+feeding becomes more regular and less frequent, we can rebalance how
+much we care for each of our children.
