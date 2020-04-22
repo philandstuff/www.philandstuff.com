@@ -64,7 +64,7 @@ pure-Java way to throw a checked exception.</p>
 }
 
 <span class="annotation">@SuppressWarnings</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">unchecked</span><span class="delimiter">&quot;</span></span>)
-<span class="directive">static</span> <span class="directive">private</span>  <span class="type">void</span> sneakyThrow0(<span class="predefined-type">Throwable</span> t) <span class="directive">throws</span> T {
+<span class="directive">static</span> <span class="directive">private</span> &lt;T extends Throwable&gt; <span class="type">void</span> sneakyThrow0(<span class="predefined-type">Throwable</span> t) <span class="directive">throws</span> T {
     <span class="keyword">throw</span> (T) t;
 }</pre></div>
 </div>
