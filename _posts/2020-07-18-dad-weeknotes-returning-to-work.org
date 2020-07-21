@@ -1,0 +1,127 @@
+---
+layout: post
+title: "Dadding, s2e5: Returning to work"
+tags:
+  - dadding
+  - weeknotes
+---
+
+I'm coming to the end of my first period of Shared Parental Leave and
+I'm slowly returning to work.  I thought I'd write about what I've
+been doing and how it's been.
+
+** The nurseries reopened
+
+First, the nurseries reopened.  I don't think I would have returned to
+work if they hadn't.  In principle I could book the whole year off via
+Shared Parental Leave, at a financial cost to myself, but looking
+after two young children is a full time job and I didn't see any way
+of making it work.  Now that our 3-year-old is back at nursery for 3
+days a week (soon to be 4), it felt viable to try to return to work.
+
+** Easing back in
+
+I've been using [[https://www.gov.uk/shared-parental-leave-and-pay/booking-blocks-of-leave][Shared Parental Leave in Touch (SPLIT)]] days to slowly
+return to work.  You get 20 of these, and I have been using them to
+gradually return to work more and more.  I started by working just 2
+days a week, so that we still had one day of respite where Luke was at
+nursery and both parents were around to look after baby Robin.  This
+was also a way we could see what it was like working with our
+newly-expanded family, before fully committing to return to work – I
+wouldn't formally return to work until I'd filled in a SPL variation
+form.
+
+Currently I'm up to 3 days a week and I will probably settle at a 4
+day week.  Luke only has 4 days childcare for the foreseeable future
+and I don't think I'll be ready to go back to full time for some time.
+
+** Structuring the day
+
+Of course, one big change since I went on leave is that everyone is
+home working now.  This has been a big benefit that allows me to more
+easily balance returning to work and being there for my family.
+
+My wife Sonia and I have had a lot of conversations about having some
+structure in the day to be able to manage expectations about the
+division of labour in the household.  As an example, one early
+sticking point was that normally when I work, I take my lunch break at
+a convenient time when I've finished a piece of work, any time between
+12 and 1.  This did not suit Sonia at all: as a breastfeeding mother,
+she was usually ravenous by 12 and could not wait until 1 for lunch;
+furthermore, it made it difficult to plan who would prepare lunch and
+often it would fall to her by default.  As a result I now down tools
+at 12 every day like clockwork, and we have lunch together.  Sometimes
+I prepare lunch, and sometimes she does.
+
+I take a morning and afternoon break of around 15 minutes to spend
+time with the baby.  Sometimes I put him in the sling and walk him
+around the local park.  This is excellent time because it gives Sonia
+a break and it gives me all-important bonding time with my baby boy.
+
+As always, the important factor has been that Sonia and I regularly
+discuss what is working and what isn't, and work towards finding a
+solution.  At work, my line manager and my team have also been very
+flexible and accommodating, which has made returning to work much
+easier and more productive.
+
+** Structuring my work
+
+Before I went on Shared Parental Leave, I was tech lead of a team.
+Obviously, the team needed a replacement tech lead when I went away.
+I am returning to work in the same team, but now as an individual
+contributor.  I have been a tech lead for most of the last 5 years so
+it's [[https://charity.wtf/2017/05/11/the-engineer-manager-pendulum/][a refreshing change]] to be a regular engineer again, writing code
+and solving problems.  Of course, I still apply my so-called "soft
+skills" that were so key to technical leadership, and I can still lead
+people as an IC in localised contexts, but I have much fewer meetings
+and the focus of my role is different.  I have more time to catch up
+on the depths of the technology that has changed in the last 5 years.
+
+Working only 2 days made it hard to have much continuity in my work:
+I'd pick up a piece of work, someone else would finish it while I was
+away, and I'd have to get context on a new thing when I returned to
+work.  I resolved some of this by being quite self-directed in what I
+worked on, rather than waiting for someone to be available to explain
+a task to me.  This was good in that I could be productive, although
+it meant I didn't necessarily feel too aligned to the team's
+priorities as I was kind of ignoring the prioritised backlog for a
+while.
+
+Some of the work I did was definitely valuable: for example,
+identifying quick cost savings in our infrastructure.  Some was
+perhaps less so: I upgraded a bunch of systems from Ubuntu Bionic to
+Focal, which is (probably) a thing that needs doing at some point, but
+certainly isn't urgent.
+
+Now that I'm up to 3 days, this has been less of a problem: 3 days is
+enough time to finish most tasks; and the two days away is less time
+to lose context on things.
+
+** Footnote: on home working
+
+I have always thought that I would hate full-time home working.  I
+really enjoy the face-to-face social contact of an office, and the
+serendipitous unintentional interactions with people.  Spontaneously
+grabbing lunch or coffee with someone you don't normally work with,
+for example.  I also find it easier to have difficult conversations
+face-to-face.  Finally, I enjoy having a commute (by bike) to bookend
+the day, to mark the transition from "work mode" to "home mode", and
+to build exercise into my daily routine.
+
+However, I have really enjoyed this recent period of home working.  I
+get to be close to my family – and spend my breaks with them.  My work
+has been effective.  Naturally, it is easier to work from home when
+*everyone* is working from home, rather than when only some people
+are.
+
+I know that this isn't the same as joining a remote-first or
+remote-only organisation from the ground up.  The people on my work
+slack are people I have spent months or years building up face-to-face
+social interactions with, which makes it easier to assume good faith
+in text-based interactions and to avoid misunderstandings.  I haven't
+had to do an annual review remotely (either my own, or for someone
+else).
+
+I'm certainly more open to the idea of home working more in future,
+but I'm also cautious that the current situation is not necessarily
+how it would always be.
